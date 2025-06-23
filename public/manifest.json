@@ -1,0 +1,40 @@
+{
+    "theme_color": "#8936FF",
+    "background_color": "#2EC6FE",
+    "icons": [
+        {
+            "purpose": "maskable",
+            "sizes": "512x512",
+            "src": "icon512_maskable.png",
+            "type": "image/png"
+        },
+        {
+            "purpose": "any",
+            "sizes": "512x512",
+            "src": "icon512_rounded.png",
+            "type": "image/png"
+        }
+    ],
+    "orientation": "any",
+    "display": "standalone",
+    "dir": "auto",
+    "lang": "en-US",
+    "name": "reservasi-barber",
+    "short_name": "reservasi-barber",
+    "description": "k-barbershop",
+    "start_url": "/",
+    "id": "/",
+    "screenshots": [
+        {
+            "src": "/screenshots/desktop-home.png",
+            "type": "image/png",
+            "sizes": "1280x720",
+            "form_factor": "wide"
+        },
+        {
+            "src": "/screenshots/mobile-home.png",
+            "type": "image/png",
+            "sizes": "375x667"
+        }
+    ]
+}
