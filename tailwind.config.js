@@ -19,11 +19,23 @@ module.exports = {
       },
     },
     extend: {
-      colors: {
-        bone: '#FAFAFA',
-        primary: "#33BBDD",
-        secondary: "#0EA5E9",
+      textColors: {
+        primary: '#041562'
       },
+      fontFamily: {
+        Geometric: ['Geometric', 'sans-serif'],
+        Inter: ['Inter', 'sans-serif'],
+        Gil: ['Gil', 'sans-serif'],
+      },
+      backgroundColor: {
+        primary: '#041562'
+      },
+      borderColor: {
+        primary: '#041562'
+      },
+      colors: {
+        primary: '#041562'
+      }
     },
   },
   plugins: [heroui()],
