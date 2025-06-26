@@ -1,5 +1,6 @@
+import HomeScreen from '@/view/HomeScreen'
 import React from 'react'
-import HomeScreen from './view/HomeScreen'
+
 
 type Props = {}
 
