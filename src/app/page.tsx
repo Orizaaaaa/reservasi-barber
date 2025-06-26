@@ -3,8 +3,9 @@ import Image from "next/image";
 import Dock from "./fragments/tabBar/Dock";
 import { VscAccount, VscArchive, VscHome, VscSettingsGear } from "react-icons/vsc";
 import { IoSearch } from "react-icons/io5";
-import { logo, mukti, yangyang } from "@/image";
+import { haircut, logo, mukti, yangyang } from "@/image";
 import { RiScissorsCutFill } from "react-icons/ri";
+import { Button } from "@heroui/react";
 
 export default function Home() {
   const items = [
@@ -31,13 +32,13 @@ export default function Home() {
         <h1 className="my-5 text-xl text-slate-400" >Barberman</h1>
         <div className="grid grid-cols-2 gap-5 ">
 
-          <div className="p-3 bg-pri flex bg-blue-800 flex-col justify-center items-center rounded-xl">
+          <div className="p-3 bg-pri flex bg-primary flex-col justify-center items-center rounded-xl">
             <div className="w-28 h-28">
               <Image src={yangyang} alt="logo" className="w-full h-full" />
             </div>
             <h1 className="text-white" >Yangyang.Skom</h1>
           </div>
-          <div className="p-3 bg-pri flex bg-blue-800 flex-col justify-center items-center rounded-xl">
+          <div className="p-3 bg-pri flex bg-primary flex-col justify-center items-center rounded-xl">
             <div className="w-28 h-28">
               <Image src={mukti} alt="logo" className="w-full h-full" />
             </div>
@@ -73,13 +74,14 @@ export default function Home() {
 
       <section className="top-haircut">
         <h1 className="my-5 text-xl text-slate-400" >Top Haicut</h1>
-        <div className="bg-blue-800">
-          <div className="flex gap-5 p-2">
-            <p className="text-white" >haii</p>
-            <Image src={logo} alt="logo" width={50} height={50} />
+        <div className="bg-primary rounded-xl w-60">
+          <div className="flex gap-5 p-3">
+            <h1 className="text-white text-sm" >Tapper Fade haircut</h1>
+            <Image src={haircut} alt="logo" width={90} height={90} />
           </div>
         </div>
       </section>
+
 
       <Dock
         items={items}
