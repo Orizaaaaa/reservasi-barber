@@ -38,5 +38,5 @@ module.exports = {
       }
     },
   },
-  plugins: [heroui()],
+  plugins: [heroui(),],
 }
