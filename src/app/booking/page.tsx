@@ -26,19 +26,19 @@ const page = (props: Props) => {
     return (
         <section className='container mx-auto p-3' >
             <ButtonBack />
-            <div className="grid grid-cols-2 gap-5 mt-4">
-
-                <div className="p-3 bg-pri flex bg-primary flex-col justify-center items-center rounded-xl">
-                    <div className="w-28 h-28">
-                        <Image src={yangyang} alt="logo" className="w-full h-full" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mt-8">
+                <div className="p-6 bg-gradient-to-b from-gray-900 to-black flex flex-col items-center justify-center rounded-2xl shadow-xl transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl">
+                    <div className="w-32 h-32 mb-4 ring-4 ring-gray-800 rounded-full overflow-hidden">
+                        <Image src={yangyang} alt="Profil Yangyang.Skom" className="w-full h-full object-cover" />
                     </div>
-                    <h1 className="text-white" >Yangyang.Skom</h1>
+                    <h1 className="text-white text-2xl font-bold tracking-wide mb-1">Yangyang.Skom</h1>
                 </div>
-                <div className="p-3 bg-pri flex bg-primary flex-col justify-center items-center rounded-xl">
-                    <div className="w-28 h-28">
-                        <Image src={mukti} alt="logo" className="w-full h-full" />
+
+                <div className="p-6 bg-gradient-to-b from-gray-900 to-black flex flex-col items-center justify-center rounded-2xl shadow-xl transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl">
+                    <div className="w-32 h-32 mb-4 ring-4 ring-gray-800 rounded-full overflow-hidden">
+                        <Image src={mukti} alt="Profil Mukti" className="w-full h-full object-cover" />
                     </div>
-                    <h1 className="text-white" >Mukti</h1>
+                    <h1 className="text-white text-2xl font-bold tracking-wide mb-1">Mukti</h1>
                 </div>
             </div>
             <div className="flex justify-center items-center mt-7">
@@ -76,7 +76,7 @@ const page = (props: Props) => {
             <div className="flex justify-end mt-7">
                 <button className='flex gap2 items-center p-2 bg-slate-300 rounded-lg' > <p>Next</p> <IoIosArrowForward /></button>
             </div>
-
+            {/* buat modal konfirmasi pembayaran */}
         </section>
     )
 }
