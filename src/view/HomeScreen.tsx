@@ -8,6 +8,7 @@ import { RiScissorsCutFill, RiTiktokFill } from "react-icons/ri";
 import { Button } from "@heroui/react";
 import Dock from "../fragments/tabBar/Dock";
 import { ImUserPlus } from "react-icons/im";
+import BottomNavigation from "@/fragments/nav/navigation";
 
 export default function HomeScreen() {
     const items = [
@@ -85,12 +86,7 @@ export default function HomeScreen() {
             </section>
 
 
-            <Dock
-                items={items}
-                panelHeight={68}
-                baseItemSize={50}
-                magnification={70}
-            />
+            <BottomNavigation />
 
         </div>
     );
