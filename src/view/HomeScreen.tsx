@@ -2,11 +2,12 @@
 import Image from "next/image";
 
 import { VscAccount, VscArchive, VscHome, VscSettingsGear } from "react-icons/vsc";
-import { IoSearch } from "react-icons/io5";
+import { IoImagesOutline, IoSearch } from "react-icons/io5";
 import { haircut, logo, mukti, yangyang } from "@/image";
-import { RiScissorsCutFill } from "react-icons/ri";
+import { RiScissorsCutFill, RiTiktokFill } from "react-icons/ri";
 import { Button } from "@heroui/react";
 import Dock from "../fragments/tabBar/Dock";
+import { ImUserPlus } from "react-icons/im";
 
 export default function HomeScreen() {
     const items = [
@@ -57,16 +58,16 @@ export default function HomeScreen() {
                         <h1 className="text-black text-sm" >Capster</h1>
                     </div>
                     <div className="box flex flex-col justify-center items-center boder-2 shadow-lg shadow-black/40 p-3 rounded-lg">
-                        <RiScissorsCutFill size={20} />
-                        <h1 className="text-black text-sm" >Capster</h1>
+                        <ImUserPlus size={20} />
+                        <h1 className="text-black text-sm" >Booking</h1>
                     </div>
                     <div className="box flex flex-col justify-center items-center boder-2 shadow-lg shadow-black/40 p-3 rounded-lg">
-                        <RiScissorsCutFill size={20} />
-                        <h1 className="text-black text-sm" >Capster</h1>
+                        <IoImagesOutline size={20} />
+                        <h1 className="text-black text-sm" >Haircut</h1>
                     </div>
                     <div className="box flex flex-col justify-center items-center boder-2 shadow-lg shadow-black/40 p-3 rounded-lg">
-                        <RiScissorsCutFill size={20} />
-                        <h1 className="text-black text-sm" >Capster</h1>
+                        <RiTiktokFill size={20} />
+                        <h1 className="text-black text-sm" >Social Media</h1>
                     </div>
 
                 </div>
