@@ -1,4 +1,5 @@
 'use client'
+import ButtonPrimary from '@/elements/buttonPrimary';
 import InputSecond from '@/elements/input/InputSecond';
 import DefaultLayout from '@/fragments/layout/adminLayout/DefaultLayout'
 import { users } from '@/utils/helper';
@@ -27,6 +28,7 @@ function page({ }: Props) {
         return users.slice(start, end);
     }, [page, users]);
 
+    const [formOpen, setFormOpen] = useState(false);
     const [form, setForm] = useState<ProfileForm>({
         username: '',
         phone: '',
@@ -41,76 +43,88 @@ function page({ }: Props) {
         setForm(prev => ({ ...prev, [name]: value }));
     };
 
+    const handleOpenFrom = () => {
+        setFormOpen(true);
+    };
+
     return (
         <DefaultLayout>
-            <h1 className='text-white'>Capster</h1>
-
-
-            <form className="space-y-3">
-                <InputSecond
-                    title="Username"
-                    htmlFor="username"
-                    type="text"
-                    className="w-full"
-                    value={form.username}
-                    onChange={handleChange}
-                />
-
-                <div className="flex gap-4">
-                    <div className="w-1/2">
-                        <InputSecond
-
-                            title="Email"
-                            htmlFor="email"
-                            type="email"
-                            className="w-full"
-                            value={form.email}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="w-1/2">
-                        <InputSecond
-                            className="w-full"
-                            htmlFor="phone"
-
-                            title="No Handphone"
-                            type="text"
-                            onChange={handleChange}
-                            value={form.phone}
-                        />
-                    </div>
+            <div className="flex justify-between items-center mb-3">
+                <h1 className='text-white'>Capster</h1>
+                <div className="">
+                    <ButtonPrimary className='py-2 px-3 rounded-xl' onClick={handleOpenFrom}>Tambah Capster</ButtonPrimary>
                 </div>
 
+            </div>
 
-                <InputSecond
+            {formOpen && (
+                <form className="space-y-3">
+                    <InputSecond
+                        title="Username"
+                        htmlFor="username"
+                        type="text"
+                        className="w-full"
+                        value={form.username}
+                        onChange={handleChange}
+                    />
 
-                    title="Alamat"
-                    htmlFor="address"
-                    type="text"
-                    className="w-full"
-                    value={form.address}
-                    onChange={handleChange}
-                />
+                    <div className="flex gap-4">
+                        <div className="w-1/2">
+                            <InputSecond
 
-                <h3 className='text-white' >Deskripsi</h3>
-                <textarea
-                    name="description"
-                    placeholder="Deskripsi"
-                    value={form.description}
-                    onChange={handleChange}
-                    className="w-full border p-2 rounded-md"
-                ></textarea>
+                                title="Email"
+                                htmlFor="email"
+                                type="email"
+                                className="w-full"
+                                value={form.email}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="w-1/2">
+                            <InputSecond
+                                className="w-full"
+                                htmlFor="phone"
 
-                {/* Avatar input bisa berupa file upload */}
-                <InputSecond
-                    title="Avatar URL"
-                    htmlFor="avatar"
-                    type="text"
-                    className="w-full"
-                    value={form.avatar}
-                    onChange={handleChange}
-                />
-            </form>
+                                title="No Handphone"
+                                type="text"
+                                onChange={handleChange}
+                                value={form.phone}
+                            />
+                        </div>
+                    </div>
+
+
+                    <InputSecond
+
+                        title="Alamat"
+                        htmlFor="address"
+                        type="text"
+                        className="w-full"
+                        value={form.address}
+                        onChange={handleChange}
+                    />
+
+                    <h3 className='text-white' >Deskripsi</h3>
+                    <textarea
+                        name="description"
+                        placeholder="Deskripsi"
+                        value={form.description}
+                        onChange={handleChange}
+                        className="w-full border p-2 rounded-md"
+                    ></textarea>
+
+                    {/* Avatar input bisa berupa file upload */}
+                    <InputSecond
+                        title="Avatar URL"
+                        htmlFor="avatar"
+                        type="text"
+                        className="w-full"
+                        value={form.avatar}
+                        onChange={handleChange}
+                    />
+                </form>
+            )}
+
 
             <Table
                 aria-label="Example table with client side pagination "
