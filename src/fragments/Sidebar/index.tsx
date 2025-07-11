@@ -6,8 +6,8 @@ import NavigationList from "../NavigationList/NavigationList";
 import { RxDashboard } from "react-icons/rx";
 
 import Image from "next/image";
-import { IoPricetags, IoReceiptOutline, IoStorefront } from "react-icons/io5";
-import { FaUserGear } from "react-icons/fa6";
+import { IoPeopleSharp, IoPricetags, IoReceiptOutline, IoStorefront } from "react-icons/io5";
+import { FaMoneyBillTransfer, FaUserGear } from "react-icons/fa6";
 
 import { LuBookDown, LuBookPlus } from "react-icons/lu";
 import { MdDashboard, MdOutlineLibraryBooks } from "react-icons/md";
@@ -123,7 +123,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             <ul className="mb-6 flex flex-col gap-1.5">
               {/* <!-- Menu Item Dashboard --> */}
               <NavigationList icon={<MdDashboard size={24} />} title="Home" pathname="/admin_dashboard" />
-              <NavigationList icon={<SiGitbook size={24} />} title="Service" pathname="/admin_service" />
+              <NavigationList icon={<IoPeopleSharp size={24} />} title="Capsters" pathname="/admin_capster" />
+              <NavigationList icon={<IoPricetags size={24} />} title="Payments" pathname="/admin_payment" />
+              <NavigationList icon={<FaMoneyBillTransfer size={24} />} title="Service" pathname="/admin_service" />
+
               <ButtonSecondary className="w-full py-1 rounded-md font-medium mt-20" onClick={handleLogout} >Logout</ButtonSecondary>
 
 
