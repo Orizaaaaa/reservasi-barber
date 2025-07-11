@@ -43,8 +43,8 @@ function page({ }: Props) {
         setForm(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleOpenFrom = () => {
-        setFormOpen(true);
+    const handleOpenForm = () => {
+        setFormOpen(!formOpen);
     };
 
     return (
@@ -52,7 +52,7 @@ function page({ }: Props) {
             <div className="flex justify-between items-center mb-3">
                 <h1 className='text-white'>Capster</h1>
                 <div className="">
-                    <ButtonPrimary className='py-2 px-3 rounded-xl' onClick={handleOpenFrom}>Tambah Capster</ButtonPrimary>
+                    <ButtonPrimary className='py-2 px-3 rounded-xl' onClick={handleOpenForm}>Tambah Capster</ButtonPrimary>
                 </div>
 
             </div>
