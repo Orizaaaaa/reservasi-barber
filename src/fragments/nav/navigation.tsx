@@ -6,7 +6,7 @@ import { BsCalendar } from 'react-icons/bs';
 
 const BottomNavigation = () => {
     return (
-        <nav className="fixed bottom-0 left-0 right-0 bg-white shadow-2xl shadow-gray-400 md:hidden z-50">
+        <nav className="fixed bottom-0 left-0 right-0 bg-grayCustom shadow-2xl shadow-gray-400 md:hidden z-50">
             {/*
         Penjelasan:
         - fixed bottom-0 left-0 right-0: Menempatkan nav di bagian bawah, full width.
