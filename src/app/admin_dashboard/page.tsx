@@ -20,7 +20,7 @@ const page = (props: Props) => {
     }, [page, users]);
     return (
         <DefaultLayout>
-            <h1 className='text-white' >ALL RESERVATION</h1>
+            <h1 className='text-white' >TODAY RESERVATION</h1>
             <Table
                 aria-label="Example table with client side pagination "
                 bottomContent={
