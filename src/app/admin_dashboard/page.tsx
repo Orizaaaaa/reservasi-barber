@@ -1,10 +1,14 @@
+import DefaultLayout from '@/fragments/layout/adminLayout/DefaultLayout'
 import React from 'react'
 
 type Props = {}
 
 const page = (props: Props) => {
     return (
-        <div>page</div>
+        <DefaultLayout>
+            <div>page</div>
+        </DefaultLayout>
+
     )
 }
 
