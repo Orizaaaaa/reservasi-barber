@@ -6,7 +6,7 @@ type Props = {}
 function page({ }: Props) {
     return (
         <DefaultLayout>
-            <h1 className='text-white'>Service</h1>
+            <h1 className='text-white'>Payments</h1>
         </DefaultLayout>
 
     )
