@@ -3,6 +3,7 @@
  @source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
  @custom-variant dark (&:is(.dark *));
 
+
  @theme {
    --font-display: "Satoshi", "sans-serif";
    --breakpoint-3xl: 120rem;
