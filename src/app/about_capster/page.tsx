@@ -4,14 +4,16 @@ import MobileLayout from '@/fragments/layout/mobileLayout/mobileLayout'
 import { haircut, regular_cut, yangyang2 } from '@/image'
 import { Button } from '@heroui/react'
 import Image from 'next/image'
-import React from 'react'
+import React, { useState } from 'react'
 import { FaCrown, FaHeart, FaStar } from 'react-icons/fa'
 import { Pagination } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
 
+
 type Props = {}
 
 const page = (props: Props) => {
+
     return (
         <section>
 

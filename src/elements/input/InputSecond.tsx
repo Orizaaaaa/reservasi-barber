@@ -21,7 +21,7 @@ const InputSecond = ({ htmlFor, title, type, onChange, value, placeholder, margi
                 onChange={onChange}
                 value={value}
                 placeholder={placeholder}
-                className='w-full bg-slate-300 rounded-md py-1 px-2 outline-none mt-2'
+                className='w-full bg-grayCustom rounded-md py-1 px-2 outline-none mt-2'
             />
         </div>
     )

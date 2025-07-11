@@ -1,11 +1,19 @@
 'use client'
+import InputSecond from '@/elements/input/InputSecond';
 import DefaultLayout from '@/fragments/layout/adminLayout/DefaultLayout'
 import { users } from '@/utils/helper';
 import { getKeyValue, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
-import React from 'react'
+import React, { useState } from 'react'
 
 type Props = {}
-
+interface ProfileForm {
+    username: string;
+    phone: string;
+    description: string;
+    avatar: string;
+    email: string;
+    address: string;
+}
 function page({ }: Props) {
     const [page, setPage]: any = React.useState(1);
     const rowsPerPage = 4;
@@ -18,9 +26,85 @@ function page({ }: Props) {
 
         return users.slice(start, end);
     }, [page, users]);
+
+    const [form, setForm] = useState<ProfileForm>({
+        username: '',
+        phone: '',
+        description: '',
+        avatar: '',
+        email: '',
+        address: ''
+    });
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        setForm(prev => ({ ...prev, [name]: value }));
+    };
+
     return (
         <DefaultLayout>
             <h1 className='text-white'>Capster</h1>
+            <form className="space-y-4">
+                <InputSecond
+
+                    title="Username"
+                    htmlFor="username"
+                    type="text"
+                    className="w-full"
+                    value={form.username}
+                    onChange={handleChange}
+                />
+
+                <InputSecond
+
+                    title="No. Handphone"
+                    htmlFor="phone"
+                    type="text"
+                    className="w-full"
+                    value={form.phone}
+                    onChange={handleChange}
+                />
+
+                <InputSecond
+
+                    title="Email"
+                    htmlFor="email"
+                    type="email"
+                    className="w-full"
+                    value={form.email}
+                    onChange={handleChange}
+                />
+
+                <InputSecond
+
+                    title="Alamat"
+                    htmlFor="address"
+                    type="text"
+                    className="w-full"
+                    value={form.address}
+                    onChange={handleChange}
+                />
+
+                <h3 className='text-white' >Deskripsi</h3>
+                <textarea
+                    name="description"
+                    placeholder="Deskripsi"
+                    value={form.description}
+                    onChange={handleChange}
+                    className="w-full border p-2 rounded-md"
+                ></textarea>
+
+                {/* Avatar input bisa berupa file upload */}
+                <InputSecond
+                    title="Avatar URL"
+                    htmlFor="avatar"
+                    type="text"
+                    className="w-full"
+                    value={form.avatar}
+                    onChange={handleChange}
+                />
+            </form>
+
             <Table
                 aria-label="Example table with client side pagination "
                 bottomContent={
