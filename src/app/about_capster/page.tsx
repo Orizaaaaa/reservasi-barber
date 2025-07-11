@@ -9,7 +9,8 @@ type Props = {}
 
 const page = (props: Props) => {
     return (
-        <MobileLayout>
+        <section>
+
             <section className="header w-full bg-primary p-4">
                 <ButtonBack />
                 <div className="flex flex-col justify-center items-center">
@@ -80,8 +81,8 @@ const page = (props: Props) => {
                     </div>
                 </div>
             </section>
+        </section>
 
-        </MobileLayout>
     )
 }
 
