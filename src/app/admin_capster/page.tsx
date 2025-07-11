@@ -44,9 +44,10 @@ function page({ }: Props) {
     return (
         <DefaultLayout>
             <h1 className='text-white'>Capster</h1>
-            <form className="space-y-4">
-                <InputSecond
 
+
+            <form className="space-y-3">
+                <InputSecond
                     title="Username"
                     htmlFor="username"
                     type="text"
@@ -55,25 +56,31 @@ function page({ }: Props) {
                     onChange={handleChange}
                 />
 
-                <InputSecond
+                <div className="flex gap-4">
+                    <div className="w-1/2">
+                        <InputSecond
 
-                    title="No. Handphone"
-                    htmlFor="phone"
-                    type="text"
-                    className="w-full"
-                    value={form.phone}
-                    onChange={handleChange}
-                />
+                            title="Email"
+                            htmlFor="email"
+                            type="email"
+                            className="w-full"
+                            value={form.email}
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div className="w-1/2">
+                        <InputSecond
+                            className="w-full"
+                            htmlFor="phone"
 
-                <InputSecond
+                            title="No Handphone"
+                            type="text"
+                            onChange={handleChange}
+                            value={form.phone}
+                        />
+                    </div>
+                </div>
 
-                    title="Email"
-                    htmlFor="email"
-                    type="email"
-                    className="w-full"
-                    value={form.email}
-                    onChange={handleChange}
-                />
 
                 <InputSecond
 
