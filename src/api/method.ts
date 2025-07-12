@@ -20,3 +20,40 @@ export const getAllCapster = async () => {
         return []; // atau null, tergantung kebutuhan
     }
 };
+
+export const getCapsterById = (id: string, callback: any) => {
+    axiosInterceptor(`/capster/${id}`)
+        .then((result) => {
+            callback(result.data)
+        }).catch((err) => {
+            console.log(err);
+        });
+}
+
+
+export const createCapster = async (form: any, callback: any) => {
+    await axiosInterceptor.post('/capster', form)
+        .then((result) => {
+            callback(result.data)
+        }).catch((err) => {
+            console.log(err);
+        });
+}
+
+export const updateBuilding = (id: any, form: any, callback: any) => {
+    axiosInterceptor.put(`/infrastucture/${id}`, form)
+        .then((result) => {
+            callback(result.data)
+        }).catch((err) => {
+            console.log(err);
+        });
+}
+
+export const deleteCategory = (id: any, callback: any) => {
+    axiosInterceptor.delete(`/category/${id}`)
+        .then((result) => {
+            callback(result.data)
+        }).catch((err) => {
+            console.log(err);
+        });
+}
