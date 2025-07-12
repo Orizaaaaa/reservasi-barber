@@ -179,3 +179,10 @@ export const formatDate = (tanggal: any) => {
 
 export const formatDateStr = (dateObj?: { month: number, day: number, year: number }) =>
     dateObj ? `${dateObj.month.toString().padStart(2, '0')}-${dateObj.day.toString().padStart(2, '0')}-${dateObj.year.toString().padStart(4, '0')}` : '';
+
+export function formatRupiah(amount: number | undefined): string {
+    if (amount === undefined) {
+        return 'Rp 0';
+    }
+    return 'Rp ' + amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}

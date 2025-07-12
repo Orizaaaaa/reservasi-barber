@@ -79,3 +79,24 @@ export const getAllPayments = async () => {
         return []; // atau null, tergantung kebutuhan
     }
 };
+
+
+// SERVICE
+export const createService = async (form: any, callback: any) => {
+    await axiosInterceptor.post('/service', form)
+        .then((result) => {
+            callback(result.data)
+        }).catch((err) => {
+            console.log(err);
+        });
+}
+
+export const getAllService = async () => {
+    try {
+        const res = await axiosInterceptor.get('/service');
+        return res.data; // ✅ return data
+    } catch (err) {
+        console.error(err);
+        return []; // atau null, tergantung kebutuhan
+    }
+};

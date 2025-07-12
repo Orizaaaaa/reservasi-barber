@@ -1,26 +1,65 @@
 'use client'
+import { createService, getAllService } from '@/api/method';
+import ButtonPrimary from '@/elements/buttonPrimary';
+import InputSecond from '@/elements/input/InputSecond';
 import DefaultLayout from '@/fragments/layout/adminLayout/DefaultLayout'
-import { users } from '@/utils/helper';
-import { getKeyValue, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
-import React from 'react'
+import ModalDefault from '@/fragments/modal/modal';
+import { formatRupiah, users } from '@/utils/helper';
+import { getKeyValue, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from '@heroui/react';
+import React, { useEffect } from 'react'
 
 type Props = {}
 
 function page({ }: Props) {
+    const { onOpen, onClose, isOpen } = useDisclosure();
+    const [services, setServices] = React.useState([])
+    const [form, setForm]: any = React.useState({
+        name: "",
+        description: "",
+        price: 0
+    });
+    const fetchData = async () => {
+        const data = await getAllService()
+        setServices(data?.data || [])
+    }
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
     const [page, setPage]: any = React.useState(1);
     const rowsPerPage = 4;
 
     const pages = Math.ceil(users.length / rowsPerPage);
 
-    const items = React.useMemo(() => {
-        const start = (page - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        setForm((prev: { name: string }) => ({ ...prev, [name]: value }));
+    };
 
-        return users.slice(start, end);
-    }, [page, users]);
+    const handleCreate = async (e: any) => {
+        e.preventDefault();
+        await createService(form, (res: any) => {
+            console.log(res);
+            fetchData()
+            onClose()
+            setForm({
+                name: "",
+                description: "",
+                price: 0
+            })
+        })
+    }
+
     return (
         <DefaultLayout>
-            <h1 className='text-white'>Service</h1>
+            <div className="flex justify-between items-center mb-3">
+                <h1 className='text-white'>Service</h1>
+                <div className="">
+                    <ButtonPrimary className='py-2 px-3 rounded-xl' onClick={onOpen}>Add Capster</ButtonPrimary>
+                </div>
+            </div>
+
             <Table
                 aria-label="Example table with client side pagination "
                 bottomContent={
@@ -37,25 +76,76 @@ function page({ }: Props) {
                     </div>
                 }
                 classNames={{
-                    // bagian kepala tabel
-                    th: "text-white bg-black",        // teks kolom header
-                    // teks isi cell
+                    th: "text-white bg-black",
                     wrapper: "min-h-[222px] bg-[#16181a] text-white",
                 }}
             >
                 <TableHeader>
                     <TableColumn key="name">NAME</TableColumn>
-                    <TableColumn key="role">ROLE</TableColumn>
-                    <TableColumn key="status">STATUS</TableColumn>
+                    <TableColumn key="description">DESCRIPTION</TableColumn>
+                    <TableColumn key="price">PRICE</TableColumn>
                 </TableHeader>
-                <TableBody items={items}>
+                <TableBody items={services}>
                     {(item: any) => (
                         <TableRow key={item.name}>
-                            {(columnKey: any) => <TableCell>{getKeyValue(item, columnKey)}</TableCell>}
+                            {(columnKey: any) => (
+                                <TableCell>
+                                    {columnKey === 'price'
+                                        ? formatRupiah(item[columnKey])
+                                        : getKeyValue(item, columnKey)}
+                                </TableCell>
+                            )}
                         </TableRow>
                     )}
                 </TableBody>
             </Table>
+
+            <ModalDefault isOpen={isOpen} onClose={onClose} className='w-full max-w-2xl bg-secondBlack' closeButton={false} >
+                <h1 className='text-white' >CREATE PAYMENTS</h1>
+                <form className="" onSubmit={handleCreate}>
+                    <InputSecond
+                        marginY='my-2'
+                        title="Name"
+                        htmlFor="name"
+                        type="text"
+                        className="w-full"
+                        value={form.name}
+                        onChange={handleChange}
+                    />
+                    <InputSecond
+                        marginY='my-2'
+                        title="Description"
+                        htmlFor="description"
+                        type="text"
+                        className="w-full"
+                        value={form.description}
+                        onChange={handleChange}
+                    />
+                    <InputSecond
+                        marginY='my-2'
+                        title="Price"
+                        htmlFor="price"
+                        type="number"
+                        className="w-full"
+                        value={form.price}
+                        onChange={handleChange}
+                    />
+                    <div className="flex justify-end gap-2 mt-4">
+                        <button
+                            type='submit'
+                            className="bg-blue-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-blue-700 transition"
+                        >
+                            Save
+                        </button>
+                        <button
+                            className="bg-red-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-red-700 transition"
+                            onClick={onClose}
+                        >
+                            Close
+                        </button>
+                    </div>
+                </form>
+            </ModalDefault>
         </DefaultLayout>
 
     )
