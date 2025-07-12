@@ -11,6 +11,7 @@ export const getAllReservation = async () => {
     }
 };
 
+// CAPSTER
 export const getAllCapster = async () => {
     try {
         const res = await axiosInterceptor.get('/capster');
@@ -57,3 +58,24 @@ export const deleteCategory = (id: any, callback: any) => {
             console.log(err);
         });
 }
+
+
+// PAYMENTS
+export const createPayment = async (form: any, callback: any) => {
+    await axiosInterceptor.post('/payment-method', form)
+        .then((result) => {
+            callback(result.data)
+        }).catch((err) => {
+            console.log(err);
+        });
+}
+
+export const getAllPayments = async () => {
+    try {
+        const res = await axiosInterceptor.get('/payment-method/list');
+        return res.data; // ✅ return data
+    } catch (err) {
+        console.error(err);
+        return []; // atau null, tergantung kebutuhan
+    }
+};

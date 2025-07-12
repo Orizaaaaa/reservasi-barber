@@ -1,26 +1,59 @@
 'use client'
+import { createPayment, getAllPayments } from '@/api/method';
+import ButtonPrimary from '@/elements/buttonPrimary';
+import InputSecond from '@/elements/input/InputSecond';
 import DefaultLayout from '@/fragments/layout/adminLayout/DefaultLayout'
+import ModalDefault from '@/fragments/modal/modal';
 import { users } from '@/utils/helper';
-import { getKeyValue, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
-import React from 'react'
+import { getKeyValue, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from '@heroui/react';
+import React, { useEffect } from 'react'
 
 type Props = {}
 
 function page({ }: Props) {
+    const { onOpen, onClose, isOpen } = useDisclosure();
+    const [form, setForm]: any = React.useState({
+        name: ''
+    });
+    const [payments, setPayments] = React.useState([])
+    const fetchData = async () => {
+        const data = await getAllPayments()
+        setPayments(data?.data || [])
+    }
+    useEffect(() => {
+        fetchData()
+    }, []);
+
     const [page, setPage]: any = React.useState(1);
     const rowsPerPage = 4;
 
     const pages = Math.ceil(users.length / rowsPerPage);
 
-    const items = React.useMemo(() => {
-        const start = (page - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        setForm((prev: { name: string }) => ({ ...prev, [name]: value }));
+    };
 
-        return users.slice(start, end);
-    }, [page, users]);
+    const handleCreate = async (e: any) => {
+        e.preventDefault();
+        await createPayment(form, (res: any) => {
+            console.log(res);
+            fetchData()
+            onClose()
+            setForm({
+                name: ''
+            })
+        })
+    }
     return (
         <DefaultLayout>
-            <h1 className='text-white'>Payments</h1>
+            <div className="flex justify-between items-center mb-3">
+                <h1 className='text-white'>PAYMENTS</h1>
+                <div className="">
+                    <ButtonPrimary className='py-2 px-3 rounded-xl' onClick={onOpen}>Add Capster</ButtonPrimary>
+                </div>
+            </div>
+
             <Table
                 aria-label="Example table with client side pagination "
                 bottomContent={
@@ -44,11 +77,11 @@ function page({ }: Props) {
                 }}
             >
                 <TableHeader>
+                    <TableColumn key="_id">ID</TableColumn>
                     <TableColumn key="name">NAME</TableColumn>
-                    <TableColumn key="role">ROLE</TableColumn>
-                    <TableColumn key="status">STATUS</TableColumn>
+
                 </TableHeader>
-                <TableBody items={items}>
+                <TableBody items={payments}>
                     {(item: any) => (
                         <TableRow key={item.name}>
                             {(columnKey: any) => <TableCell>{getKeyValue(item, columnKey)}</TableCell>}
@@ -56,6 +89,35 @@ function page({ }: Props) {
                     )}
                 </TableBody>
             </Table>
+
+            <ModalDefault isOpen={isOpen} onClose={onClose} className='w-full max-w-2xl bg-secondBlack' closeButton={false} >
+                <h1 className='text-white' >CREATE PAYMENTS</h1>
+                <form className="" onSubmit={handleCreate}>
+                    <InputSecond
+                        marginY='my-2'
+                        title="Name"
+                        htmlFor="name"
+                        type="text"
+                        className="w-full"
+                        value={form.name}
+                        onChange={handleChange}
+                    />
+                    <div className="flex justify-end gap-2 mt-4">
+                        <button
+                            type='submit'
+                            className="bg-blue-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-blue-700 transition"
+                        >
+                            Save
+                        </button>
+                        <button
+                            className="bg-red-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-red-700 transition"
+                            onClick={onClose}
+                        >
+                            Close
+                        </button>
+                    </div>
+                </form>
+            </ModalDefault>
         </DefaultLayout>
 
     )
