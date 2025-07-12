@@ -51,7 +51,16 @@ const Page = () => {
         return data.slice(start, end)
     }, [page, data])
 
-    console.log(data);
+    // Aksi Edit dan Delete
+    const handleEdit = (item: any) => {
+        console.log('Edit:', item._id)
+        // bisa navigasi ke halaman edit atau buka modal
+    }
+
+    const handleDelete = (item: any) => {
+        console.log('Delete:', item._id)
+        // bisa buka konfirmasi hapus
+    }
 
     return (
         <DefaultLayout>
@@ -86,12 +95,32 @@ const Page = () => {
                     <TableColumn key="hour">HOUR</TableColumn>
                     <TableColumn key="payment_name">PAYMENT</TableColumn>
                     <TableColumn key="status">STATUS</TableColumn>
+                    <TableColumn key="action">ACTION</TableColumn>
                 </TableHeader>
                 <TableBody items={items} isLoading={loading}>
                     {(item: any) => (
                         <TableRow key={item._id}>
                             {(columnKey: any) => (
-                                <TableCell>{getKeyValue(item, columnKey)}</TableCell>
+                                <TableCell>
+                                    {columnKey === 'action' ? (
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={() => handleEdit(item)}
+                                                className="bg-blue-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-blue-700 transition"
+                                            >
+                                                Edit
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(item)}
+                                                className="bg-red-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-red-700 transition"
+                                            >
+                                                Delete
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        getKeyValue(item, columnKey)
+                                    )}
+                                </TableCell>
                             )}
                         </TableRow>
                     )}
