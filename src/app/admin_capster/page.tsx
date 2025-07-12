@@ -1,5 +1,5 @@
 'use client'
-import { getAllCapster } from '@/api/method';
+import { createCapster, getAllCapster } from '@/api/method';
 import ButtonPrimary from '@/elements/buttonPrimary';
 import InputSecond from '@/elements/input/InputSecond';
 import DefaultLayout from '@/fragments/layout/adminLayout/DefaultLayout'
@@ -18,6 +18,10 @@ interface ProfileForm {
     address: string;
 }
 function page({ }: Props) {
+    const fetchData = async () => {
+        const capster = await getAllCapster()
+        setCapters(capster?.data || [])
+    }
     const { onOpen, onClose, isOpen } = useDisclosure();
     const { onOpen: onOpenEdit, onClose: onCloseEdit, isOpen: isOpenEdit } = useDisclosure();
     const { isOpen: isWarningOpen, onOpen: onWarningOpen, onClose: onWarningClose } = useDisclosure();
@@ -59,11 +63,6 @@ function page({ }: Props) {
 
 
     useEffect(() => {
-        const fetchData = async () => {
-            const capster = await getAllCapster()
-            setCapters(capster?.data || [])
-        }
-
         fetchData()
     }, [])
 
@@ -86,7 +85,22 @@ function page({ }: Props) {
         // bisa navigasi ke halaman edit atau buka modal
     }
 
-
+    const handleCreate = async (e: any) => {
+        e.preventDefault();
+        await createCapster(form, (res: any) => {
+            console.log(res);
+            fetchData()
+            onClose()
+            setForm({
+                username: '',
+                phone: '',
+                description: '',
+                avatar: '',
+                email: '',
+                address: ''
+            })
+        })
+    }
 
     console.log('capters', capters);
 
@@ -165,7 +179,7 @@ function page({ }: Props) {
 
             <ModalDefault className='bg-secondBlack' isOpen={isOpen} onClose={onClose}>
                 <h1 className='text-white' >CREATE</h1>
-                <div className="">
+                <form className="" onSubmit={handleCreate}>
                     <InputSecond
                         marginY='my-2'
                         title="Username"
@@ -235,6 +249,7 @@ function page({ }: Props) {
 
                     <div className="flex justify-end gap-2 mt-4">
                         <button
+                            type='submit'
                             className="bg-blue-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-blue-700 transition"
                         >
                             Save
@@ -246,7 +261,7 @@ function page({ }: Props) {
                             Close
                         </button>
                     </div>
-                </div>
+                </form>
             </ModalDefault>
 
             <ModalDefault className='bg-secondBlack' isOpen={isOpenEdit} onClose={onCloseEdit}>
