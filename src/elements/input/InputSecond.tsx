@@ -14,7 +14,7 @@ type Props = {
 
 const InputSecond = ({ htmlFor, title, type, onChange, value, placeholder, marginY = 'my-6' }: Props) => {
     return (
-        <div className={`input ${marginY}`}>
+        <div className={`input text-white ${marginY}`}>
             <label htmlFor={htmlFor} className="font-medium text-white" >{title} </label>
             <input type={type}
                 name={htmlFor}

@@ -1,10 +1,12 @@
 'use client'
+import { getAllCapster } from '@/api/method';
 import ButtonPrimary from '@/elements/buttonPrimary';
 import InputSecond from '@/elements/input/InputSecond';
 import DefaultLayout from '@/fragments/layout/adminLayout/DefaultLayout'
+import ModalDefault from '@/fragments/modal/modal';
 import { users } from '@/utils/helper';
-import { getKeyValue, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
-import React, { useState } from 'react'
+import { Autocomplete, AutocompleteItem, getKeyValue, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from '@heroui/react';
+import React, { useEffect, useState } from 'react'
 
 type Props = {}
 interface ProfileForm {
@@ -16,6 +18,10 @@ interface ProfileForm {
     address: string;
 }
 function page({ }: Props) {
+    const { onOpen, onClose, isOpen } = useDisclosure();
+    const { onOpen: onOpenEdit, onClose: onCloseEdit, isOpen: isOpenEdit } = useDisclosure();
+    const { isOpen: isWarningOpen, onOpen: onWarningOpen, onClose: onWarningClose } = useDisclosure();
+    const [capters, setCapters] = useState([])
     const [page, setPage]: any = React.useState(1);
     const rowsPerPage = 4;
 
@@ -27,9 +33,16 @@ function page({ }: Props) {
 
         return users.slice(start, end);
     }, [page, users]);
-
-    const [formOpen, setFormOpen] = useState(false);
     const [form, setForm] = useState<ProfileForm>({
+        username: '',
+        phone: '',
+        description: '',
+        avatar: '',
+        email: '',
+        address: ''
+    });
+
+    const [formEdit, setFormEdit] = useState<ProfileForm>({
         username: '',
         phone: '',
         description: '',
@@ -43,87 +56,50 @@ function page({ }: Props) {
         setForm(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleOpenForm = () => {
-        setFormOpen(!formOpen);
-    };
+
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const capster = await getAllCapster()
+            setCapters(capster?.data || [])
+        }
+
+        fetchData()
+    }, [])
+
+
+    const openModalCreate = () => {
+        onOpen()
+    }
+
+    const openModalEdit = (item: any) => {
+        onOpenEdit()
+        console.log('Edit:', item);
+        setFormEdit({
+            username: item.username,
+            phone: item.phone,
+            description: item.description,
+            avatar: item.avatar,
+            email: item.email,
+            address: item.address
+        })
+        // bisa navigasi ke halaman edit atau buka modal
+    }
+
+
+
+    console.log('capters', capters);
+
 
     return (
         <DefaultLayout>
             <div className="flex justify-between items-center mb-3">
-                <h1 className='text-white'>Capster</h1>
+                <h1 className='text-white'>ALL CAPSTERS</h1>
                 <div className="">
-                    <ButtonPrimary className='py-2 px-3 rounded-xl' onClick={handleOpenForm}>Tambah Capster</ButtonPrimary>
+                    <ButtonPrimary className='py-2 px-3 rounded-xl' onClick={openModalCreate}>Add Capster</ButtonPrimary>
                 </div>
 
             </div>
-
-            {formOpen && (
-                <form className="space-y-3">
-                    <InputSecond
-                        title="Username"
-                        htmlFor="username"
-                        type="text"
-                        className="w-full"
-                        value={form.username}
-                        onChange={handleChange}
-                    />
-
-                    <div className="flex gap-4">
-                        <div className="w-1/2">
-                            <InputSecond
-
-                                title="Email"
-                                htmlFor="email"
-                                type="email"
-                                className="w-full"
-                                value={form.email}
-                                onChange={handleChange}
-                            />
-                        </div>
-                        <div className="w-1/2">
-                            <InputSecond
-                                className="w-full"
-                                htmlFor="phone"
-
-                                title="No Handphone"
-                                type="text"
-                                onChange={handleChange}
-                                value={form.phone}
-                            />
-                        </div>
-                    </div>
-
-
-                    <InputSecond
-
-                        title="Alamat"
-                        htmlFor="address"
-                        type="text"
-                        className="w-full"
-                        value={form.address}
-                        onChange={handleChange}
-                    />
-
-                    <h3 className='text-white' >Deskripsi</h3>
-                    <textarea
-                        name="description"
-                        placeholder="Deskripsi"
-                        value={form.description}
-                        onChange={handleChange}
-                        className="w-full border p-2 rounded-md"
-                    ></textarea>
-
-                    {/* Avatar input bisa berupa file upload */}
-                    <InputSecond
-                        title="Avatar URL"
-                        htmlFor="avatar"
-                        type="text"
-                        className="w-full"
-                        value={form.avatar}
-                        onChange={handleChange}
-                    />
-                </form>
-            )}
 
 
             <Table
@@ -149,18 +125,215 @@ function page({ }: Props) {
                 }}
             >
                 <TableHeader>
-                    <TableColumn key="name">NAME</TableColumn>
-                    <TableColumn key="role">ROLE</TableColumn>
-                    <TableColumn key="status">STATUS</TableColumn>
+                    <TableColumn key="username">NAME</TableColumn>
+                    <TableColumn key="phone">PHONE</TableColumn>
+                    <TableColumn key="email">EMAIL</TableColumn>
+                    <TableColumn key="address">ADRESS</TableColumn>
+                    <TableColumn key="rating">RATING</TableColumn>
+                    <TableColumn key="description">DESCRIPTION</TableColumn>
+                    <TableColumn key="action">ACTION</TableColumn>
                 </TableHeader>
-                <TableBody items={items}>
+                <TableBody items={capters}>
                     {(item: any) => (
-                        <TableRow key={item.name}>
-                            {(columnKey: any) => <TableCell>{getKeyValue(item, columnKey)}</TableCell>}
+                        <TableRow key={item._id}>
+                            {(columnKey: any) => (
+                                <TableCell>
+                                    {columnKey === 'action' ? (
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={openModalEdit.bind(null, item)}
+                                                className="bg-blue-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-blue-700 transition"
+                                            >
+                                                Edit
+                                            </button>
+                                            <button
+
+                                                className="bg-red-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-red-700 transition"
+                                            >
+                                                Delete
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        getKeyValue(item, columnKey)
+                                    )}
+                                </TableCell>
+                            )}
                         </TableRow>
                     )}
                 </TableBody>
             </Table>
+
+            <ModalDefault className='bg-secondBlack' isOpen={isOpen} onClose={onClose}>
+                <h1 className='text-white' >CREATE</h1>
+                <div className="">
+                    <InputSecond
+                        marginY='my-2'
+                        title="Username"
+                        htmlFor="username"
+                        type="text"
+                        className="w-full"
+                        value={form.username}
+                        onChange={handleChange}
+                    />
+
+                    <div className="flex gap-4">
+                        <div className="w-1/2">
+                            <InputSecond
+                                marginY='my-2'
+                                title="Email"
+                                htmlFor="email"
+                                type="email"
+                                className="w-full"
+                                value={form.email}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="w-1/2">
+                            <InputSecond
+                                className="w-full"
+                                htmlFor="phone"
+                                marginY='my-2'
+                                title="No Handphone"
+                                type="text"
+                                onChange={handleChange}
+                                value={form.phone}
+                            />
+                        </div>
+                    </div>
+
+
+                    <InputSecond
+                        marginY='my-2'
+                        title="Alamat"
+                        htmlFor="address"
+                        type="text"
+                        className="w-full"
+                        value={form.address}
+                        onChange={handleChange}
+                    />
+
+                    <h3 className='text-white mb-1 mt-3' >Deskripsi</h3>
+                    <textarea
+                        name="description"
+                        placeholder="Deskripsi"
+                        value={form.description}
+                        onChange={handleChange}
+                        className="w-full border border-white focus:border-white focus:outline-none focus:ring-0 p-2 rounded-md text-white bg-transparent"
+                    />
+
+
+                    {/* Avatar input bisa berupa file upload */}
+                    <InputSecond
+                        marginY='my-2'
+                        title="Avatar URL"
+                        htmlFor="avatar"
+                        type="text"
+                        className="w-full"
+                        value={form.avatar}
+                        onChange={handleChange}
+                    />
+
+                    <div className="flex justify-end gap-2 mt-4">
+                        <button
+                            className="bg-blue-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-blue-700 transition"
+                        >
+                            Save
+                        </button>
+                        <button
+                            className="bg-red-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-red-700 transition"
+                            onClick={onClose}
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </ModalDefault>
+
+            <ModalDefault className='bg-secondBlack' isOpen={isOpenEdit} onClose={onCloseEdit}>
+                <h1 className='text-white' >EDIT</h1>
+                <div className="">
+                    <InputSecond
+                        marginY='my-2'
+                        title="Username"
+                        htmlFor="username"
+                        type="text"
+                        className="w-full"
+                        value={formEdit.username}
+                        onChange={handleChange}
+                    />
+
+                    <div className="flex gap-4">
+                        <div className="w-1/2">
+                            <InputSecond
+                                marginY='my-2'
+                                title="Email"
+                                htmlFor="email"
+                                type="email"
+                                className="w-full"
+                                value={formEdit.email}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="w-1/2">
+                            <InputSecond
+                                className="w-full"
+                                htmlFor="phone"
+                                marginY='my-2'
+                                title="No Handphone"
+                                type="text"
+                                onChange={handleChange}
+                                value={formEdit.phone}
+                            />
+                        </div>
+                    </div>
+
+
+                    <InputSecond
+                        marginY='my-2'
+                        title="Alamat"
+                        htmlFor="address"
+                        type="text"
+                        className="w-full"
+                        value={formEdit.address}
+                        onChange={handleChange}
+                    />
+
+                    <h3 className='text-white mb-1 mt-3' >Deskripsi</h3>
+                    <textarea
+                        name="description"
+                        placeholder="Deskripsi"
+                        value={formEdit.description}
+                        onChange={handleChange}
+                        className="w-full border border-white focus:border-white focus:outline-none focus:ring-0 p-2 rounded-md text-white bg-transparent"
+                    />
+
+
+                    {/* Avatar input bisa berupa file upload */}
+                    <InputSecond
+                        marginY='my-2'
+                        title="Avatar URL"
+                        htmlFor="avatar"
+                        type="text"
+                        className="w-full"
+                        value={formEdit.avatar}
+                        onChange={handleChange}
+                    />
+
+                    <div className="flex justify-end gap-2 mt-4">
+                        <button
+                            className="bg-blue-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-blue-700 transition"
+                        >
+                            Save
+                        </button>
+                        <button
+                            className="bg-red-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-red-700 transition"
+                            onClick={onCloseEdit}
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </ModalDefault>
         </DefaultLayout>
     )
 }
