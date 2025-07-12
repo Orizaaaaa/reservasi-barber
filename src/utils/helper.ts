@@ -150,3 +150,32 @@ export const users = [
         status: "Active",
     },
 ];
+
+
+
+export const formatDate = (tanggal: any) => {
+    if (!tanggal) {
+        console.error("Tanggal tidak ada:", tanggal);
+        return "Invalid date";  // Mengembalikan nilai default jika tanggal tidak ada
+    }
+
+    // Pastikan bahwa 'tanggal' merupakan string atau objek Date yang valid
+    const date = new Date(tanggal);
+
+    // Cek apakah objek Date valid
+    if (isNaN(date.getTime())) {
+        console.error("Format tanggal tidak valid:", tanggal);
+        return "Invalid date";  // Mengembalikan nilai default jika format tanggal tidak valid
+    }
+
+    const tahun = date.getFullYear();
+    const bulan = String(date.getMonth() + 1).padStart(2, '0'); // Bulan dimulai dari 0, jadi tambahkan 1
+    const hari = String(date.getDate()).padStart(2, '0');
+
+    return `${tahun}-${bulan}-${hari}`;
+};
+
+
+
+export const formatDateStr = (dateObj?: { month: number, day: number, year: number }) =>
+    dateObj ? `${dateObj.month.toString().padStart(2, '0')}-${dateObj.day.toString().padStart(2, '0')}-${dateObj.year.toString().padStart(4, '0')}` : '';
