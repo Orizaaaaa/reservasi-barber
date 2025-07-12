@@ -10,3 +10,13 @@ export const getAllReservation = async () => {
         return []; // atau null, tergantung kebutuhan
     }
 };
+
+export const getAllCapster = async () => {
+    try {
+        const res = await axiosInterceptor.get('/capster');
+        return res.data; // ✅ return data
+    } catch (err) {
+        console.error(err);
+        return []; // atau null, tergantung kebutuhan
+    }
+};

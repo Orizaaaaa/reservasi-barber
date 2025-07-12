@@ -1,7 +1,11 @@
 'use client'
-import { getAllReservation } from '@/api/method'
+import { getAllCapster, getAllReservation } from '@/api/method'
+import InputForm from '@/elements/input/InputForm'
 import DefaultLayout from '@/fragments/layout/adminLayout/DefaultLayout'
+import ModalDefault from '@/fragments/modal/modal'
 import {
+    Autocomplete,
+    AutocompleteItem,
     getKeyValue,
     Pagination,
     Table,
@@ -9,21 +13,30 @@ import {
     TableCell,
     TableColumn,
     TableHeader,
-    TableRow
+    TableRow,
+    useDisclosure
 } from '@heroui/react'
 import React, { useEffect } from 'react'
 
 const Page = () => {
+    const { onOpen, onClose, isOpen } = useDisclosure();
+    const { isOpen: isWarningOpen, onOpen: onWarningOpen, onClose: onWarningClose } = useDisclosure();
     const [loading, setLoading] = React.useState(false)
+    const [capsters, setCapster] = React.useState<any[]>([])
     const [data, setData] = React.useState<any[]>([])
     const [page, setPage] = React.useState(1)
     const rowsPerPage = 4
-
+    const [form, setForm] = React.useState({
+        payment_id: '',
+        status: '',
+        capster_id: '',
+    })
     // Fetch data
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true)
             const result = await getAllReservation()
+            const capster = await getAllCapster()
             const formatted = result?.data?.map((item: any) => ({
                 ...item,
                 capster_name: item.capster_id?.username || '-',
@@ -36,6 +49,7 @@ const Page = () => {
                 }),
             }))
             setData(formatted || [])
+            setCapster(capster?.data || [])
             setLoading(false)
         }
 
@@ -52,8 +66,14 @@ const Page = () => {
     }, [page, data])
 
     // Aksi Edit dan Delete
-    const handleEdit = (item: any) => {
-        console.log('Edit:', item._id)
+    const openModalEdit = (item: any) => {
+        onOpen()
+        console.log('Edit:', item);
+        setForm({
+            payment_id: item.payment_id._id,
+            status: item.status,
+            capster_id: item.capster_id._id,
+        })
         // bisa navigasi ke halaman edit atau buka modal
     }
 
@@ -61,6 +81,22 @@ const Page = () => {
         console.log('Delete:', item._id)
         // bisa buka konfirmasi hapus
     }
+    const handleChange = (e: any) => {
+        setForm({
+            ...form,
+            [e.target.name]: e.target.value
+        })
+    }
+    const onSelectionChange = (_id: string) => {
+        setForm({
+            ...form,
+            capster_id: _id
+        });
+    };
+    console.log('caoster', capsters);
+    console.log('form', form);
+    console.log('data', data);
+
 
     return (
         <DefaultLayout>
@@ -105,7 +141,7 @@ const Page = () => {
                                     {columnKey === 'action' ? (
                                         <div className="flex gap-2">
                                             <button
-                                                onClick={() => handleEdit(item)}
+                                                onClick={openModalEdit.bind(null, item)}
                                                 className="bg-blue-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-blue-700 transition"
                                             >
                                                 Edit
@@ -126,6 +162,16 @@ const Page = () => {
                     )}
                 </TableBody>
             </Table>
+
+            <ModalDefault isOpen={isOpen} onClose={onClose}>
+                <h1>EDIT</h1>
+
+                <Autocomplete className="max-w-xs" onSelectionChange={(e: any) => onSelectionChange(e)} value={form.capster_id} selectedKey={form.capster_id}>
+                    {capsters.map((item: any) => (
+                        <AutocompleteItem key={item._id}>{item.username}</AutocompleteItem>
+                    ))}
+                </Autocomplete>
+            </ModalDefault>
         </DefaultLayout>
     )
 }
