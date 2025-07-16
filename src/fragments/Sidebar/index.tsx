@@ -126,6 +126,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               <NavigationList icon={<IoPeopleSharp size={24} />} title="Capsters" pathname="/admin_capster" />
               <NavigationList icon={<IoPricetags size={24} />} title="Payments" pathname="/admin_payment" />
               <NavigationList icon={<FaMoneyBillTransfer size={24} />} title="Service" pathname="/admin_service" />
+              <NavigationList icon={<FaMoneyBillTransfer size={24} />} title="Booking" pathname="/admin_booking" />
 
               <ButtonSecondary className="w-full py-1 rounded-md font-medium mt-20" onClick={handleLogout} >Logout</ButtonSecondary>
 
