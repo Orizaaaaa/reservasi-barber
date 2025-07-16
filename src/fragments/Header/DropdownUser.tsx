@@ -52,10 +52,9 @@ const DropdownUser = () => {
         href="#"
       >
         <span className="hidden text-right lg:block">
-          <span className="block text-sm font-medium text-white ">
+          <span className="block text-sm font-medium text-black ">
             Admin
           </span>
-
         </span>
 
         {/* image yang ini mengapa tidak bulat dan memenuhi ukuran */}
