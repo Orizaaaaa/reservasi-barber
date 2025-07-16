@@ -126,7 +126,7 @@ const Page = () => {
 
             <div className="border  border-gray-400 p-3 rounded-2xl">
                 <h1 className='text-xl font-semibold mb-3' >Jumlah Antrian</h1>
-                <div className="grid grid-cols-2 gap-10">
+                <div className="grid  grid-cols-1  lg:grid-cols-2 gap-10">
                     <div className="content">
                         <h1 className='text-lg mb-2'>Capster Yangyang</h1>
                         <hr />
