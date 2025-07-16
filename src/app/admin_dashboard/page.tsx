@@ -18,6 +18,18 @@ import {
 } from '@heroui/react'
 import React, { useEffect } from 'react'
 
+type User = {
+    jam: number;
+    name: string;
+    email: string;
+};
+
+const users: User[] = [
+    { jam: 10, name: "Andi", email: "andi@example.com" },
+    { jam: 20, name: "Budi", email: "budi@example.com" },
+    { jam: 19, name: "Citra", email: "citra@example.com" },
+];
+
 const Page = () => {
     const { onOpen, onClose, isOpen } = useDisclosure();
     const { isOpen: isWarningOpen, onOpen: onWarningOpen, onClose: onWarningClose } = useDisclosure();
@@ -113,18 +125,41 @@ const Page = () => {
             </div>
 
             <div className="border  border-gray-400 p-3 rounded-2xl">
-                <h1 className='text-xl font-semibold' >Jumlah Antrian</h1>
+                <h1 className='text-xl font-semibold mb-3' >Jumlah Antrian</h1>
                 <div className="grid grid-cols-2 gap-5">
                     <div className="content">
                         <h1 className='text-lg mb-2'>Capster Yangyang</h1>
                         <hr />
-                        <h1 className='text-black text-3xl font-extrabold mt-2' >5</h1>
+                        <h1 className='text-black text-3xl font-extrabold my-5' >5</h1>
+
+                        <div className="overflow-x-auto">
+                            <table className="min-w-full divide-y divide-gray-200 rounded-md shadow-md">
+                                <thead className="">
+                                    <tr>
+                                        <th className="pr-6 py-3 text-left text-sm font-semibold">Nama Customer</th>
+                                        <th className="pr-6 py-3 text-left text-sm font-semibold">Jam</th>
+                                        <th className="pr-6 py-3 text-left text-sm font-semibold">Email</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-200">
+                                    {users.map((user) => (
+                                        <tr key={user.jam * 10} className="hover:bg-gray-50 transition">
+                                            <td className="pr-6 py-4 text-sm text-gray-900">{user.name}</td>
+                                            <td className="pr-6 py-4 text-sm text-gray-900">{user.jam + ':00'}</td>
+                                            <td className="pr-6 py-4 text-sm text-gray-900">{user.email}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
                     </div>
 
                     <div className="content">
                         <h1 className='text-lg mb-2'>Capster Yangyang</h1>
                         <hr />
-                        <h1 className='text-black text-3xl font-extrabold mt-2' >5</h1>
+                        <h1 className='text-black text-3xl font-extrabold my-5' >5</h1>
+
                     </div>
                 </div>
             </div>
