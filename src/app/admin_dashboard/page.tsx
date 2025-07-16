@@ -100,7 +100,35 @@ const Page = () => {
 
     return (
         <DefaultLayout>
-            <h1 className="text-white mb-4">TODAY RESERVATION</h1>
+
+            <div className="grid grid-cols-2 gap-4 mb-4" >
+                <div className="text border border-gray-400 rounded-2xl p-3">
+                    <h1 className='text-black text-2xl font-semibold' >Jumlah Barberman Aktif</h1>
+                    <h2 className='text-black text-3xl font-extrabold ' >2</h2>
+                </div>
+                <div className="text border border-gray-400 rounded-2xl p-3">
+                    <h1 className='text-black text-2xl  font-semibold' >Total Booking Hari Ini</h1>
+                    <h2 className='text-black text-3xl font-extrabold' >2</h2>
+                </div>
+            </div>
+
+            <div className="border  border-gray-400 p-3 rounded-2xl">
+                <h1 className='text-xl font-semibold' >Jumlah Antrian</h1>
+                <div className="grid grid-cols-2 gap-5">
+                    <div className="content">
+                        <h1 className='text-lg mb-2'>Capster Yangyang</h1>
+                        <hr />
+                        <h1 className='text-black text-3xl font-extrabold mt-2' >5</h1>
+                    </div>
+
+                    <div className="content">
+                        <h1 className='text-lg mb-2'>Capster Yangyang</h1>
+                        <hr />
+                        <h1 className='text-black text-3xl font-extrabold mt-2' >5</h1>
+                    </div>
+                </div>
+            </div>
+            {/* <h1 className="text-black mb-4">TODAY RESERVATION</h1>
             <Table
                 aria-label="Tabel Booking"
                 bottomContent={
@@ -161,7 +189,7 @@ const Page = () => {
                         </TableRow>
                     )}
                 </TableBody>
-            </Table>
+            </Table> */}
 
             <ModalDefault isOpen={isOpen} onClose={onClose}>
                 <h1>EDIT</h1>
