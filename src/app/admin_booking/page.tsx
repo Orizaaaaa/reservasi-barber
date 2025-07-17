@@ -163,11 +163,6 @@ function page({ }: Props) {
                         value={form.haircut_type}
                     />
                 </div>
-
-
-
-
-
             </div>
         </DefaultLayout>
     )

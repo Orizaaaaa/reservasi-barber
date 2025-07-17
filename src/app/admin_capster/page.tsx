@@ -116,66 +116,40 @@ function page({ }: Props) {
             </div>
 
 
-            <Table
-                aria-label="Example table with client side pagination "
-                bottomContent={
-                    <div className="flex w-full justify-center">
-                        <Pagination
-                            isCompact
-                            showControls
-                            showShadow
-                            color="primary"
-                            page={page}
-                            total={pages}
-                            onChange={(page) => setPage(page)}
-                        />
+            <div className="content p-3 border border-gray-400 rounded-xl">
+                <div className="flex gap-4 ">
+                    <div className="w-52">
+                        <img className='rounded-lg' src="https://infokalteng.co/foto_berita/135642-dbb76965-0732-4b1b-bbe2-cbea751844c6.jpeg" alt="" />
                     </div>
-                }
-                classNames={{
-                    // bagian kepala tabel
-                    th: "text-white bg-black",        // teks kolom header
-                    // teks isi cell
-                    wrapper: "min-h-[222px] bg-[#16181a] text-white",
-                }}
-            >
-                <TableHeader>
-                    <TableColumn key="username">NAME</TableColumn>
-                    <TableColumn key="phone">PHONE</TableColumn>
-                    <TableColumn key="email">EMAIL</TableColumn>
-                    <TableColumn key="address">ADRESS</TableColumn>
-                    <TableColumn key="rating">RATING</TableColumn>
-                    <TableColumn key="description">DESCRIPTION</TableColumn>
-                    <TableColumn key="action">ACTION</TableColumn>
-                </TableHeader>
-                <TableBody items={capters}>
-                    {(item: any) => (
-                        <TableRow key={item._id}>
-                            {(columnKey: any) => (
-                                <TableCell>
-                                    {columnKey === 'action' ? (
-                                        <div className="flex gap-2">
-                                            <button
-                                                onClick={openModalEdit.bind(null, item)}
-                                                className="bg-blue-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-blue-700 transition"
-                                            >
-                                                Edit
-                                            </button>
-                                            <button
 
-                                                className="bg-red-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-red-700 transition"
-                                            >
-                                                Delete
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        getKeyValue(item, columnKey)
-                                    )}
-                                </TableCell>
-                            )}
-                        </TableRow>
-                    )}
-                </TableBody>
-            </Table>
+
+                    <div className="text">
+                        <h1 className='text-lg font-bold' >Yangyang</h1>
+                        <h2>Fadding Sepesilis</h2>
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti voluptatem ex esse inventore perferendis, a nam quisquam est incidunt consequatur minus
+                            rem illum reprehenderit nostrum! Iure ipsa reprehenderit adipisci laboriosam.</p>
+                    </div>
+                </div>
+
+                <div className="flex justify-between mt-4">
+                    <div className="flex gap-5">
+                        <img className='w-20 h-20 object-cover rounded-lg' src="https://www.apetogentleman.com/wp-content/uploads/2021/05/bald-fade-buzz-cut.jpg" alt="" />
+                        <img className='w-20 h-20 object-cover rounded-lg' src="https://www.apetogentleman.com/wp-content/uploads/2021/05/bald-fade-buzz-cut.jpg" alt="" />
+                        <img className='w-20 h-20 object-cover rounded-lg' src="https://www.apetogentleman.com/wp-content/uploads/2021/05/bald-fade-buzz-cut.jpg" alt="" />
+                        <img className='w-20 h-20 object-cover rounded-lg' src="https://www.apetogentleman.com/wp-content/uploads/2021/05/bald-fade-buzz-cut.jpg" alt="" />
+                        <img className='w-20 h-20 object-cover rounded-lg' src="https://www.apetogentleman.com/wp-content/uploads/2021/05/bald-fade-buzz-cut.jpg" alt="" />
+                    </div>
+
+                    <div className="flex items-end">
+                        <div className="flex gap-3">
+                            <ButtonPrimary className='py-2 px-3 rounded-xl' onClick={openModalCreate}> + Tambah Foto</ButtonPrimary>
+                            <ButtonPrimary className='py-2 px-3 rounded-xl' onClick={openModalCreate}> Edit Capster</ButtonPrimary>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <ButtonPrimary className='py-2 px-3 rounded-xl mt-6' onClick={openModalCreate}> + Tambah Capster</ButtonPrimary>
 
             <ModalDefault className='bg-secondBlack' isOpen={isOpen} onClose={onClose}>
                 <h1 className='text-white' >CREATE</h1>
