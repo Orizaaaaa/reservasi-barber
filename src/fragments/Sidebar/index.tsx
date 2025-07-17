@@ -10,7 +10,7 @@ import { IoPeopleSharp, IoPricetags, IoReceiptOutline, IoStorefront } from "reac
 import { FaMoneyBillTransfer, FaUserGear } from "react-icons/fa6";
 
 import { LuBookDown, LuBookPlus } from "react-icons/lu";
-import { MdDashboard, MdOutlineLibraryBooks } from "react-icons/md";
+import { MdCalendarMonth, MdDashboard, MdOutlineLibraryBooks } from "react-icons/md";
 import { RiBook2Line } from "react-icons/ri";
 import { TbMoneybag } from "react-icons/tb";
 import { HiOutlineArchiveBox } from "react-icons/hi2";
@@ -86,9 +86,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
         }`}
     >
       {/* <!-- SIDEBAR HEADER --> */}
-      <div className="flex items-center justify-between lg:justify-center gap-2 px-6 py-5.5 lg:py-6.5">
+      <div className="flex items-center justify-between lg:justify-start gap-2 px-6 py-5.5 lg:py-6.5">
         <div >
-          <Image className="h-10" src={logo} alt="logo" />
+          <Image className="h-12" src={logo} alt="logo" />
         </div>
 
         <button
@@ -123,10 +123,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             <ul className="mb-6 flex flex-col gap-1.5">
               {/* <!-- Menu Item Dashboard --> */}
               <NavigationList icon={<MdDashboard size={24} />} title="Home" pathname="/admin_dashboard" />
+              <NavigationList icon={<MdCalendarMonth size={24} />} title="Tambah Booking" pathname="/admin_booking" />
+              <NavigationList icon={<MdCalendarMonth size={24} />} title="List Booking" pathname="/admin_list_booking" />
               <NavigationList icon={<IoPeopleSharp size={24} />} title="Capsters" pathname="/admin_capster" />
               <NavigationList icon={<IoPricetags size={24} />} title="Payments" pathname="/admin_payment" />
               <NavigationList icon={<FaMoneyBillTransfer size={24} />} title="Service" pathname="/admin_service" />
-              <NavigationList icon={<FaMoneyBillTransfer size={24} />} title="Booking" pathname="/admin_booking" />
+
 
               <ButtonSecondary className="w-full py-1 rounded-md font-medium mt-20" onClick={handleLogout} >Logout</ButtonSecondary>
 
