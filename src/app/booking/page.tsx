@@ -1,4 +1,6 @@
 'use client'
+
+import React from 'react'
 import ButtonPrimary from '@/elements/buttonPrimary';
 import DropdownCustom from '@/elements/dropdown/Dropdown';
 import InputForm from '@/elements/input/InputForm'
@@ -8,13 +10,14 @@ import ModalDefault from '@/fragments/modal/modal';
 import { formatDate, hours } from '@/utils/helper';
 import { AutocompleteItem, Calendar, DatePicker, useDisclosure } from '@heroui/react';
 import { parseDate } from '@internationalized/date';
-import React from 'react'
+import { useRouter } from 'next/navigation';
 import { IoArrowBackCircleOutline } from 'react-icons/io5';
 import { MdOutlineAccessTime } from 'react-icons/md';
 
 type Props = {}
 
 function page({ }: Props) {
+    const router = useRouter();
     const { onOpen, onClose, isOpen } = useDisclosure();
     const dateNow = new Date();
     const [form, setForm] = React.useState({
@@ -54,7 +57,7 @@ function page({ }: Props) {
 
     return (
         <div className='container mx-auto px-3 py-4' >
-            <div className="rounded-full my-4">
+            <div className="rounded-full my-4 cursor-pointer" onClick={() => router.back()}>
                 <IoArrowBackCircleOutline size={25} />
             </div>
             <h1 className='text-2xl font-semibold ' >Booking</h1>
