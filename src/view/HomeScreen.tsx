@@ -12,7 +12,7 @@ import { Pagination } from "swiper/modules";
 export default function HomeScreen() {
 
     return (
-        <section className="bg-black" >
+        <section className="bg-white" >
             <div className=" container mx-auto px-2  h-screen">
                 <div className="flex justify-between items-center">
                     <IoIosNotifications size={25} color="#656565" />
@@ -20,9 +20,9 @@ export default function HomeScreen() {
                     <IoIosSettings size={25} color="#656565" />
                 </div>
 
-                <div className="flex justify-between font-medium text-xl text-white mt-2">
-                    <h1 className="text-white">HEY,</h1>
-                    <h1 className="text-white">MICHAEL</h1>
+                <div className="flex justify-between font-medium text-xl text-black mt-2">
+                    <h1 className="text-black">HEY,</h1>
+                    <h1 className="text-black">MICHAEL</h1>
                 </div>
 
                 <div className="flex w-full px-3 py-2 items-center gap-3 rounded-lg shadow-lg shadow-black/30 mt-4 border-2 border-grayCustom" >
@@ -53,29 +53,31 @@ export default function HomeScreen() {
                                         <IoStar color="#f9d41c" />
                                         <h1 className="text-white">4.9</h1>
                                         <GoDotFill size={5} />
-                                        <h1 className="text-sm">114 review</h1>
+                                        <h1 className="text-sm text-white">114 review</h1>
                                     </div>
                                 </div>
                             </div>
                         </SwiperSlide>
 
-                        {/* Tambahkan slide lainnya */}
                         <SwiperSlide className="!w-[90%]">
                             <div className="flex gap-4 border border-grayCustom bg-secondBlack p-2 rounded-xl">
                                 <div className="h-12 w-12">
                                     <Image className="w-full h-full object-cover rounded-lg" src={mukti} alt="logo" />
                                 </div>
                                 <div className="text-grayCustom">
-                                    <h1 className="text-white">JOHN DOE</h1>
+                                    <h1 className="text-white">GABRIEL YONATHAN</h1>
                                     <div className="flex items-center gap-2">
                                         <IoStar color="#f9d41c" />
-                                        <h1 className="text-white">4.8</h1>
+                                        <h1 className="text-white">4.9</h1>
                                         <GoDotFill size={5} />
-                                        <h1 className="text-sm">89 review</h1>
+                                        <h1 className="text-sm text-white">114 review</h1>
                                     </div>
                                 </div>
                             </div>
                         </SwiperSlide>
+
+
+
 
                     </Swiper>
                 </div>
