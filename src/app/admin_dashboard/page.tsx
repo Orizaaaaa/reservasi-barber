@@ -113,7 +113,7 @@ const Page = () => {
     return (
         <DefaultLayout>
 
-            <div className="grid grid-cols-2 gap-4 mb-4" >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4" >
                 <div className="text border border-gray-400 rounded-2xl p-3">
                     <h1 className='text-black text-2xl font-semibold' >Jumlah Barberman Aktif</h1>
                     <h2 className='text-black text-3xl font-extrabold ' >2</h2>
