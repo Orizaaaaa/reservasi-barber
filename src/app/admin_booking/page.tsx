@@ -4,14 +4,17 @@ import DropdownCustom from '@/elements/dropdown/Dropdown';
 import InputForm from '@/elements/input/InputForm'
 import InputSecond from '@/elements/input/InputSecond';
 import DefaultLayout from '@/fragments/layout/adminLayout/DefaultLayout'
-import { formatDate } from '@/utils/helper';
-import { AutocompleteItem, Calendar, DatePicker } from '@heroui/react';
+import ModalDefault from '@/fragments/modal/modal';
+import { formatDate, hours } from '@/utils/helper';
+import { AutocompleteItem, Calendar, DatePicker, useDisclosure } from '@heroui/react';
 import { parseDate } from '@internationalized/date';
 import React from 'react'
+import { MdOutlineAccessTime } from 'react-icons/md';
 
 type Props = {}
 
 function page({ }: Props) {
+    const { onOpen, onClose, isOpen } = useDisclosure();
     const dateNow = new Date();
     const [form, setForm] = React.useState({
         name: '',
@@ -42,8 +45,15 @@ function page({ }: Props) {
         { label: "Perempuan", value: "Perempuan" },
     ];
 
+    const handleSelectTime = (time: string) => {
+        const [hour] = time.split(':');
+        setForm(prev => ({ ...prev, hour: parseInt(hour) }));
+    };
+
+
     return (
         <DefaultLayout>
+            <h1 className='text-2xl font-semibold ' >Booking</h1>
             <div className="form">
                 <InputSecond
                     styleTitle="text-black"
@@ -93,17 +103,15 @@ function page({ }: Props) {
                     />
                 </div>
 
-                <InputSecond
-                    styleTitle="text-black"
-                    bg="bg-none border border-gray-400 placeholder-gray-400"
-                    className="w-full"
-                    htmlFor="hour"
-                    placeholder="Masukan Jam (0-23)"
-                    title="Jam"
-                    type="number"
-                    onChange={handleChange}
-                    value={form.hour}
-                />
+
+                <div className='my-6' >
+                    <h1 className='text-black mb-2 font-medium' >Jam</h1>
+                    <div className='border border-gray-400 flex justify-between py-1 px-3 rounded-lg items-center cursor-pointer' onClick={onOpen}>
+                        <p>{form.hour}.00</p>
+                        <MdOutlineAccessTime size={20} color='gray' />
+                    </div>
+                </div>
+
 
                 <InputSecond
                     styleTitle="text-black"
@@ -166,9 +174,40 @@ function page({ }: Props) {
                 </div>
 
                 <ButtonPrimary className='py-2 px-3 rounded-xl mt-4 '>
-                    Tambah Capster
+                    Booking
                 </ButtonPrimary>
             </div>
+
+            <ModalDefault isOpen={isOpen} onClose={onClose}>
+                <h1 className="text-black text-xl font-semibold mb-4">JAM</h1>
+                <div className="bg-gray-100  rounded-md shadow text-center  w-full">
+                    <h2 className="text-gray-600 font-semibold text-lg mb-4 tracking-wide uppercase">
+                        Waktu tersedia
+                    </h2>
+                    <div className="grid grid-cols-3 gap-4">
+                        {Object.entries(hours).map(([label, times]) => (
+                            <div key={label}>
+                                <h3 className="font-bold mb-2">{label}</h3>
+                                <div className="flex flex-col items-center gap-3">
+                                    {times.map((time) => (
+                                        <button
+                                            key={time}
+                                            className="bg-yellow-300 px-3 py-1 rounded hover:bg-yellow-400 transition"
+                                            onClick={() => handleSelectTime(time)}
+                                        >
+                                            {time}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <p className="mt-6 text-sm text-gray-500">
+                        Waktu dipilih: <strong>{form.hour ? `${form.hour}:00` : 'Belum dipilih'}</strong>
+                    </p>
+                </div>
+            </ModalDefault>
         </DefaultLayout>
     )
 }

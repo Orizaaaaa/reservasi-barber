@@ -186,3 +186,10 @@ export function formatRupiah(amount: number | undefined): string {
     }
     return 'Rp ' + amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
+
+
+export const hours = {
+    Pagi: ['10:00', '11:00', '12:00'],
+    Siang: ['12:00', '13:00', '14:00', '15:00', '16:00', '17:00'],
+    Malam: ['18:00', '19:00', '20:00', '21:00'],
+};
