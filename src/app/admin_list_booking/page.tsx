@@ -4,6 +4,8 @@ import DefaultLayout from '@/fragments/layout/adminLayout/DefaultLayout';
 import ModalDefault from '@/fragments/modal/modal';
 import { Autocomplete, AutocompleteItem, getKeyValue, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from '@heroui/react'
 import React, { useEffect } from 'react'
+import { FaTrashAlt } from 'react-icons/fa';
+import { RiEdit2Line } from 'react-icons/ri';
 
 type Props = {}
 
@@ -132,13 +134,13 @@ function page({ }: Props) {
                                                 onClick={openModalEdit.bind(null, item)}
                                                 className="bg-blue-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-blue-700 transition"
                                             >
-                                                Edit
+                                                <RiEdit2Line />
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(item)}
                                                 className="bg-red-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-red-700 transition"
                                             >
-                                                Delete
+                                                <FaTrashAlt />
                                             </button>
                                         </div>
                                     ) : (

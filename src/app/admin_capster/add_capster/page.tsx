@@ -127,6 +127,11 @@ const page = (props: Props) => {
                     onChange={handleChange}
                     className="w-full border border-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0 p-2 rounded-md text-black bg-transparent"
                 />
+
+
+                <ButtonPrimary className='py-2 px-3 rounded-xl mt-4 '>
+                    Tambah Capster
+                </ButtonPrimary>
             </form>
         </DefaultLayout >
 

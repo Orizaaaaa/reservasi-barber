@@ -1,14 +1,9 @@
 'use client'
 import Image from "next/image";
 
-import { VscAccount, VscArchive, VscHome, VscSettingsGear } from "react-icons/vsc";
-import { IoImagesOutline, IoSearch, IoStar } from "react-icons/io5";
-import { haircut, logo, mukti, regular_cut, yangyang } from "@/image";
-import { RiScissorsCutFill, RiTiktokFill } from "react-icons/ri";
+import { IoSearch, IoStar } from "react-icons/io5";
+import { mukti, regular_cut } from "@/image";
 import { Button } from "@heroui/react";
-import Dock from "../fragments/tabBar/Dock";
-import { ImUserPlus } from "react-icons/im";
-import BottomNavigation from "@/fragments/nav/navigation";
 import { IoIosNotifications, IoIosSettings } from "react-icons/io";
 import { GoDotFill } from "react-icons/go";
 import { Swiper, SwiperSlide } from "swiper/react";

@@ -6,6 +6,7 @@ import DefaultLayout from '@/fragments/layout/adminLayout/DefaultLayout'
 import ModalDefault from '@/fragments/modal/modal';
 import { users } from '@/utils/helper';
 import { Autocomplete, AutocompleteItem, getKeyValue, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from '@heroui/react';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 
 type Props = {}
@@ -103,16 +104,12 @@ function page({ }: Props) {
     }
 
     console.log('capters', capters);
-
+    const router = useRouter();
 
     return (
         <DefaultLayout>
             <div className="flex justify-between items-center mb-3">
-                <h1 className='text-white'>ALL CAPSTERS</h1>
-                <div className="">
-                    <ButtonPrimary className='py-2 px-3 rounded-xl' onClick={openModalCreate}>Add Capster</ButtonPrimary>
-                </div>
-
+                <h1 className='text-black text-xl font-semibold'>ALL CAPSTERS</h1>
             </div>
 
 
@@ -149,7 +146,7 @@ function page({ }: Props) {
 
                 </div>
             </div>
-            <ButtonPrimary className='py-2 px-3 rounded-xl mt-6' onClick={openModalCreate}> + Tambah Capster</ButtonPrimary>
+            <ButtonPrimary className='py-2 px-3 rounded-xl mt-6' onClick={() => (router.push('/admin_capster/add_capster'))}> + Tambah Capster</ButtonPrimary>
 
             <ModalDefault className='bg-secondBlack' isOpen={isOpen} onClose={onClose}>
                 <h1 className='text-white' >CREATE</h1>
