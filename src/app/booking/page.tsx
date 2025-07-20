@@ -1,40 +1,27 @@
 'use client'
-import ButtonBack from '@/elements/buttonBack'
-import DropdownCustom from '@/elements/dropdown/Dropdown'
-import InputSecond from '@/elements/input/InputSecond'
-import { mukti, yangyang } from '@/image'
-import { AutocompleteItem, Calendar } from '@heroui/react'
-import Image from 'next/image'
-import React, { useState } from 'react'
-import { IoIosArrowForward } from 'react-icons/io'
+import ButtonPrimary from '@/elements/buttonPrimary';
+import DropdownCustom from '@/elements/dropdown/Dropdown';
+import InputForm from '@/elements/input/InputForm'
+import InputSecond from '@/elements/input/InputSecond';
+import DefaultLayout from '@/fragments/layout/adminLayout/DefaultLayout'
+import ModalDefault from '@/fragments/modal/modal';
+import { formatDate, hours } from '@/utils/helper';
+import { AutocompleteItem, Calendar, DatePicker, useDisclosure } from '@heroui/react';
+import { parseDate } from '@internationalized/date';
+import React from 'react'
+import { IoArrowBackCircleOutline } from 'react-icons/io5';
+import { MdOutlineAccessTime } from 'react-icons/md';
 
-interface FormData {
-    name: string;
-    email: string;
-    phone: string;
-    date: string;
-    hour: number;
-    capster_id: string;
-    payment_id: string;
-    rating: number;
-    image: string;
-    haircut_type: string;
-    service_id: string;
-    status: string;
-}
+type Props = {}
 
-const Page = () => {
-    const hours = {
-        Pagi: ['10:00', '11:00', '12:00'],
-        Siang: ['12:00', '13:00', '14:00', '15:00', '16:00', '17:00'],
-        Malam: ['18:00', '19:00', '20:00', '21:00'],
-    };
-
-    const [form, setForm] = useState<FormData>({
+function page({ }: Props) {
+    const { onOpen, onClose, isOpen } = useDisclosure();
+    const dateNow = new Date();
+    const [form, setForm] = React.useState({
         name: '',
         email: '',
         phone: '',
-        date: '',
+        date: parseDate(formatDate(dateNow)),
         hour: 0,
         capster_id: '',
         payment_id: '',
@@ -44,24 +31,14 @@ const Page = () => {
         service_id: '',
         status: 'Menunggu',
     });
-
-    const handleSelectTime = (time: string) => {
-        const [hour] = time.split(':');
-        setForm(prev => ({ ...prev, hour: parseInt(hour) }));
-    };
-
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setForm(prev => ({ ...prev, [name]: value }));
+        setForm({ ...form, [name]: value });
+
     };
 
-    const handleDropdownChange = (key: string, field: keyof FormData) => {
+    const handleDropdownChange = (key: string, field: any) => {
         setForm(prev => ({ ...prev, [field]: key }));
-    };
-
-    const handleDateChange = (date: any) => {
-        const isoString = date.toISOString(); // example: "2025-06-23T10:00:00Z"
-        setForm(prev => ({ ...prev, date: isoString }));
     };
 
     const dataStatus = [
@@ -69,44 +46,149 @@ const Page = () => {
         { label: "Perempuan", value: "Perempuan" },
     ];
 
-    console.log(form);
+    const handleSelectTime = (time: string) => {
+        const [hour] = time.split(':');
+        setForm(prev => ({ ...prev, hour: parseInt(hour) }));
+    };
 
 
     return (
-        <section className="bg-black">
-            <section className="container mx-auto p-3">
-                <ButtonBack />
+        <div className='container mx-auto px-3 py-4' >
+            <div className="rounded-full my-4">
+                <IoArrowBackCircleOutline size={25} />
+            </div>
+            <h1 className='text-2xl font-semibold ' >Booking</h1>
 
-                {/* Profile Capster */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mt-8">
-                    <div className="p-6 bg-gradient-to-b from-yellowCustom to-black flex flex-col items-center justify-center rounded-2xl shadow-xl hover:scale-105 transition-transform duration-300">
-                        <div className="w-32 h-32 mb-4 ring-2 ring-grayCustom rounded-full overflow-hidden relative">
-                            <Image src={yangyang} alt="Profil Yangyang.Skom" className="w-full h-full object-cover" />
+            <div className="form">
+                <InputSecond
+                    styleTitle="text-black"
+                    bg="bg-none border border-gray-400 placeholder-gray-400"
+                    className="w-full"
+                    htmlFor="name"
+                    placeholder="Masukan Nama Customer"
+                    title="Nama Customer"
+                    type="text"
+                    onChange={handleChange}
+                    value={form.name}
+                />
 
-                        </div>
-                        <h1 className="text-white text-2xl font-bold tracking-wide mb-1">Yangyang.Skom</h1>
-                    </div>
+                <InputSecond
+                    styleTitle="text-black"
+                    bg="bg-none border border-gray-400 placeholder-gray-400"
+                    className="w-full"
+                    htmlFor="email"
+                    placeholder="Masukan Email Customer"
+                    title="Email Customer"
+                    type="email"
+                    onChange={handleChange}
+                    value={form.email}
+                />
 
-                    <div className="p-6 bg-gradient-to-b from-yellowCustom to-black flex flex-col items-center justify-center rounded-2xl shadow-xl hover:scale-105 transition-transform duration-300">
-                        <div className="w-32 h-32 mb-4 ring-2 ring-grayCustom rounded-full overflow-hidden relative">
-                            <Image src={mukti} alt="Profil Mukti" className="w-full h-full object-cover" />
+                <InputSecond
+                    styleTitle="text-black"
+                    bg="bg-none border border-gray-400 placeholder-gray-400"
+                    className="w-full"
+                    htmlFor="phone"
+                    placeholder="Masukan Nomor Telepon"
+                    title="Nomor Telepon"
+                    type="tel"
+                    onChange={handleChange}
+                    value={form.phone}
+                />
 
-                        </div>
-                        <h1 className="text-white text-2xl font-bold tracking-wide mb-1">Mukti</h1>
+                <div >
+                    <h1 className='text-black mb-2 font-medium'>Tanggal</h1>
+                    <DatePicker
+                        aria-label='date'
+                        name='date'
+                        variant='bordered'
+                        value={form.date}
+                        showMonthAndYearPickers
+                        onChange={(e: any) => setForm({ ...form, date: e })}
+                    />
+                </div>
+
+
+                <div className='my-6' >
+                    <h1 className='text-black mb-2 font-medium' >Jam</h1>
+                    <div className='border border-gray-400 flex justify-between py-1 px-3 rounded-lg items-center cursor-pointer' onClick={onOpen}>
+                        <p>{form.hour}.00</p>
+                        <MdOutlineAccessTime size={20} color='gray' />
                     </div>
                 </div>
 
-                {/* Calendar */}
-                <div className="flex justify-center items-center mt-7">
-                    <Calendar aria-label="Date Picker" calendarWidth="100%" onChange={handleDateChange} />
+
+                <InputSecond
+                    styleTitle="text-black"
+                    bg="bg-none border border-gray-400 placeholder-gray-400"
+                    className="w-full"
+                    htmlFor="capster_id"
+                    placeholder="Masukan ID Capster"
+                    title="ID Capster"
+                    type="text"
+                    onChange={handleChange}
+                    value={form.capster_id}
+                />
+
+                <InputSecond
+                    styleTitle="text-black"
+                    bg="bg-none border border-gray-400 placeholder-gray-400"
+                    className="w-full"
+                    htmlFor="payment_id"
+                    placeholder="Masukan ID Pembayaran"
+                    title="ID Pembayaran"
+                    type="text"
+                    onChange={handleChange}
+                    value={form.payment_id}
+                />
+
+                <div className="w-full">
+                    <h1 className="text-lg font-medium text-black mb-2">Jenis Pembayaran</h1>
+                    <DropdownCustom
+                        clearButton={false}
+                        defaultItems={dataStatus}
+                        onSelect={(key: string) => handleDropdownChange(key, 'payment_id')}
+                    >
+                        {(item: any) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+                    </DropdownCustom>
                 </div>
 
-                {/* Waktu tersedia */}
-                <div className="bg-gray-100 p-6 rounded-md shadow text-center max-w-xl mx-auto mt-7">
+                <div className="flex flex-col">
+                    <div className="w-full mt-5">
+                        <h1 className="text-lg font-medium text-black mb-2">Jenis Layanan</h1>
+                        <DropdownCustom
+                            clearButton={false}
+                            defaultItems={dataStatus}
+                            onSelect={(key: string) => handleDropdownChange(key, 'payment_id')}
+                        >
+                            {(item: any) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+                        </DropdownCustom>
+                    </div>
+
+                    <InputSecond
+                        styleTitle="text-black"
+                        bg="bg-none border border-gray-400 placeholder-gray-400"
+                        className="w-full"
+                        htmlFor="haircut_type"
+                        placeholder="Masukan Jenis Potongan"
+                        title="Jenis Potongan"
+                        type="text"
+                        onChange={handleChange}
+                        value={form.haircut_type}
+                    />
+                </div>
+
+                <ButtonPrimary className='py-2 px-3 rounded-xl mt-4 w-full '>
+                    Booking
+                </ButtonPrimary>
+            </div>
+
+            <ModalDefault isOpen={isOpen} onClose={onClose}>
+                <h1 className="text-black text-xl font-semibold mb-4">JAM</h1>
+                <div className="bg-gray-100  rounded-md shadow text-center  w-full">
                     <h2 className="text-gray-600 font-semibold text-lg mb-4 tracking-wide uppercase">
                         Waktu tersedia
                     </h2>
-
                     <div className="grid grid-cols-3 gap-4">
                         {Object.entries(hours).map(([label, times]) => (
                             <div key={label}>
@@ -126,96 +208,13 @@ const Page = () => {
                         ))}
                     </div>
 
-                    <p className="mt-6 text-sm text-gray-500">
+                    <p className="mt-3 text-sm text-gray-500">
                         Waktu dipilih: <strong>{form.hour ? `${form.hour}:00` : 'Belum dipilih'}</strong>
                     </p>
                 </div>
+            </ModalDefault>
+        </div>
+    )
+}
 
-                {/* Input Fields */}
-                <div className="flex gap-4 mt-6">
-                    <div className="w-1/2">
-                        <InputSecond
-                            className="w-full"
-                            htmlFor="haircut_type"
-
-                            title="Jenis Cukuran"
-                            type="text"
-                            onChange={handleChange}
-                            value={form.haircut_type}
-                        />
-                    </div>
-                    <div className="w-1/2">
-                        <InputSecond
-                            className="w-full"
-                            htmlFor="phone"
-
-                            title="No Handphone"
-                            type="text"
-                            onChange={handleChange}
-                            value={form.phone}
-                        />
-                    </div>
-                </div>
-
-                <div className="flex gap-4 mt-4">
-                    <div className="w-1/2">
-                        <InputSecond
-                            className="w-full"
-                            htmlFor="name"
-
-                            title="Nama"
-                            type="text"
-                            onChange={handleChange}
-                            value={form.name}
-                        />
-                    </div>
-                    <div className="w-1/2">
-                        <InputSecond
-                            className="w-full"
-                            htmlFor="email"
-
-                            title="Email"
-                            type="email"
-                            onChange={handleChange}
-                            value={form.email}
-                        />
-                    </div>
-                </div>
-
-                {/* Dropdown Fields */}
-                <div className="flex gap-3 mt-6">
-                    <div className="w-full">
-                        <h1 className="text-sm text-gray-400">Jenis Layanan</h1>
-                        <DropdownCustom
-                            clearButton={false}
-                            defaultItems={dataStatus}
-                            onSelect={(key: string) => handleDropdownChange(key, 'service_id')}
-                        >
-                            {(item: any) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
-                        </DropdownCustom>
-                    </div>
-
-                    <div className="w-full">
-                        <h1 className="text-sm text-gray-400">Jenis Pembayaran</h1>
-                        <DropdownCustom
-                            clearButton={false}
-                            defaultItems={dataStatus}
-                            onSelect={(key: string) => handleDropdownChange(key, 'payment_id')}
-                        >
-                            {(item: any) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
-                        </DropdownCustom>
-                    </div>
-                </div>
-
-                {/* Next Button */}
-                <div className="flex justify-end mt-7">
-                    <button className="flex gap-2 items-center p-2 bg-slate-300 rounded-lg">
-                        <p>Next</p> <IoIosArrowForward />
-                    </button>
-                </div>
-            </section>
-        </section>
-    );
-};
-
-export default Page;
+export default page
