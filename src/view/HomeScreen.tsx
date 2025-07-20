@@ -8,9 +8,11 @@ import { IoIosNotifications, IoIosSettings } from "react-icons/io";
 import { GoDotFill } from "react-icons/go";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
+import { useRouter } from "next/navigation";
+import BottomNavigation from "@/fragments/nav/navigation";
 
 export default function HomeScreen() {
-
+    const router = useRouter();
     return (
         <section className="bg-white" >
             <div className=" container mx-auto px-2  h-screen">
@@ -125,7 +127,7 @@ export default function HomeScreen() {
                                         <h1 className="text-white">REGULAR CUT</h1>
                                         <h1 className="text-white">50K</h1>
                                     </div>
-                                    <Button className="bg-yellowCustom font-bold rounded-md px-4 py-2 text-black text-sm whitespace-nowrap">
+                                    <Button onClick={() => router.push('/booking')} className="bg-yellowCustom font-bold rounded-md px-4 py-2 text-black text-sm whitespace-nowrap">
                                         BOOK NOW
                                     </Button>
                                 </div>
@@ -133,8 +135,6 @@ export default function HomeScreen() {
                         </SwiperSlide>
                     </Swiper>
                 </div>
-
-
 
 
                 {/* <BottomNavigation /> */}

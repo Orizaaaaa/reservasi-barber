@@ -145,7 +145,7 @@ function page({ }: Props) {
                     value={form.payment_id}
                 />
 
-                <div className="w-full">
+                {/* <div className="w-full">
                     <h1 className="text-lg font-medium text-black mb-2">Jenis Pembayaran</h1>
                     <DropdownCustom
                         clearButton={false}
@@ -154,7 +154,7 @@ function page({ }: Props) {
                     >
                         {(item: any) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
                     </DropdownCustom>
-                </div>
+                </div> */}
 
                 <div className="flex flex-col">
                     <div className="w-full mt-5">
