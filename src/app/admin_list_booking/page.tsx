@@ -89,7 +89,7 @@ function page({ }: Props) {
     console.log('data', data);
     return (
         <DefaultLayout>
-            <h1 className="text-black mb-4">TODAY RESERVATION</h1>
+            <h1 className="text-black text-xl font-semibold mb-4">TODAY RESERVATION</h1>
             <Table
                 aria-label="Tabel Booking"
                 bottomContent={

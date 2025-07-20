@@ -1,4 +1,5 @@
 'use client'
+import ButtonPrimary from '@/elements/buttonPrimary';
 import DropdownCustom from '@/elements/dropdown/Dropdown';
 import InputForm from '@/elements/input/InputForm'
 import InputSecond from '@/elements/input/InputSecond';
@@ -163,6 +164,10 @@ function page({ }: Props) {
                         value={form.haircut_type}
                     />
                 </div>
+
+                <ButtonPrimary className='py-2 px-3 rounded-xl mt-4 '>
+                    Tambah Capster
+                </ButtonPrimary>
             </div>
         </DefaultLayout>
     )

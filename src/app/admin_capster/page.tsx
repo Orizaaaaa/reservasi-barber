@@ -114,22 +114,31 @@ function page({ }: Props) {
 
 
             <div className="content p-3 border border-gray-400 rounded-xl">
-                <div className="flex gap-4 ">
-                    <div className="w-52">
-                        <img className='rounded-lg' src="https://infokalteng.co/foto_berita/135642-dbb76965-0732-4b1b-bbe2-cbea751844c6.jpeg" alt="" />
+                <div className="flex flex-col items-center md:flex-row md:items-start md:gap-4 mx-auto">
+                    {/* Gambar di tengah (mobile) dan kiri (desktop) */}
+                    <div className="w-32 md:w-48 mb-4 md:mb-0">
+                        <img
+                            className="rounded-lg mx-auto"
+                            src="https://infokalteng.co/foto_berita/135642-dbb76965-0732-4b1b-bbe2-cbea751844c6.jpeg"
+                            alt="Yangyang"
+                        />
                     </div>
 
-
-                    <div className="text">
-                        <h1 className='text-lg font-bold' >Yangyang</h1>
-                        <h2>Fadding Sepesilis</h2>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti voluptatem ex esse inventore perferendis, a nam quisquam est incidunt consequatur minus
-                            rem illum reprehenderit nostrum! Iure ipsa reprehenderit adipisci laboriosam.</p>
+                    {/* Teks */}
+                    <div className=" md:text-left px-2 md:px-4">
+                        <h1 className="text-lg font-bold text-center md:text-left">Yangyang</h1>
+                        <h2 className="text-sm text-gray-600 mb-2 text-center md:text-left">Fadding Sepesilis</h2>
+                        <p className="text-sm text-gray-700">
+                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti voluptatem ex esse inventore perferendis, a nam
+                            quisquam est incidunt consequatur minus rem illum reprehenderit nostrum! Iure ipsa reprehenderit adipisci
+                            laboriosam.
+                        </p>
                     </div>
                 </div>
 
-                <div className="flex justify-between mt-4">
-                    <div className="flex gap-5">
+
+                <div className="flex-row lg:flex justify-between mt-4">
+                    <div className="grid grid-cols-4 md:grid-cols-5 gap-5">
                         <img className='w-20 h-20 object-cover rounded-lg' src="https://www.apetogentleman.com/wp-content/uploads/2021/05/bald-fade-buzz-cut.jpg" alt="" />
                         <img className='w-20 h-20 object-cover rounded-lg' src="https://www.apetogentleman.com/wp-content/uploads/2021/05/bald-fade-buzz-cut.jpg" alt="" />
                         <img className='w-20 h-20 object-cover rounded-lg' src="https://www.apetogentleman.com/wp-content/uploads/2021/05/bald-fade-buzz-cut.jpg" alt="" />
@@ -137,13 +146,12 @@ function page({ }: Props) {
                         <img className='w-20 h-20 object-cover rounded-lg' src="https://www.apetogentleman.com/wp-content/uploads/2021/05/bald-fade-buzz-cut.jpg" alt="" />
                     </div>
 
-                    <div className="flex items-end">
+                    <div className="flex items-end mt-4 lg:mt0">
                         <div className="flex gap-3">
                             <ButtonPrimary className='py-2 px-3 rounded-xl' onClick={openModalCreate}> + Tambah Foto</ButtonPrimary>
                             <ButtonPrimary className='py-2 px-3 rounded-xl' onClick={openModalCreate}> Edit Capster</ButtonPrimary>
                         </div>
                     </div>
-
                 </div>
             </div>
             <ButtonPrimary className='py-2 px-3 rounded-xl mt-6' onClick={() => (router.push('/admin_capster/add_capster'))}> + Tambah Capster</ButtonPrimary>
