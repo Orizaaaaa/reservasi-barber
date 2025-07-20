@@ -50,7 +50,7 @@ function page({ }: Props) {
             <div className="flex justify-between items-center mb-3">
                 <h1 className='text-white'>PAYMENTS</h1>
                 <div className="">
-                    <ButtonPrimary className='py-2 px-3 rounded-xl' onClick={onOpen}>Add Capster</ButtonPrimary>
+                    <ButtonPrimary className='py-2 px-3 rounded-xl' onClick={onOpen}>Add Payments</ButtonPrimary>
                 </div>
             </div>
 
@@ -70,10 +70,9 @@ function page({ }: Props) {
                     </div>
                 }
                 classNames={{
-                    // bagian kepala tabel
-                    th: "text-white bg-black",        // teks kolom header
-                    // teks isi cell
-                    wrapper: "min-h-[222px] bg-[#16181a] text-white",
+                    th: 'bg-gray-100 text-black font-semibold',
+                    td: 'text-black',
+                    wrapper: 'bg-white text-black',
                 }}
             >
                 <TableHeader>
