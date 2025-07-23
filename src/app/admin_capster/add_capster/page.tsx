@@ -1,11 +1,14 @@
 'use client'
+import { postImage } from '@/api/image_post'
 import { createCapster } from '@/api/method'
 import ButtonPrimary from '@/elements/buttonPrimary'
 import ButtonSecondary from '@/elements/buttonSecondary'
 import InputForm from '@/elements/input/InputForm'
 import InputSecond from '@/elements/input/InputSecond'
 import DefaultLayout from '@/fragments/layout/adminLayout/DefaultLayout'
+import { useRouter } from 'next/router'
 import React, { useState } from 'react'
+import toast from 'react-hot-toast'
 import { CiCamera } from 'react-icons/ci'
 import { IoCameraOutline } from 'react-icons/io5'
 import { MdOutlineCameraAlt } from 'react-icons/md'
@@ -22,6 +25,7 @@ interface ProfileForm {
 }
 
 const page = (props: Props) => {
+    const router = useRouter()
     const [form, setForm] = useState<ProfileForm>({
         username: '',
         phone: '',
@@ -31,20 +35,48 @@ const page = (props: Props) => {
         address: ''
     });
 
-    const handleCreate = async (e: any) => {
+
+    const handleCreate = async (e: React.FormEvent) => {
         e.preventDefault();
-        await createCapster(form, (res: any) => {
-            console.log(res);
-            setForm({
-                username: '',
-                phone: '',
-                description: '',
-                avatar: null as File | null,
-                email: '',
-                address: ''
-            })
-        })
-    }
+
+        try {
+            let imageUrl = '';
+
+            if (form.avatar) {
+                const uploadToast = toast.loading('Mengunggah gambar...');
+                try {
+                    imageUrl = await postImage({ image: form.avatar });
+                    toast.success('Gambar berhasil diunggah', { id: uploadToast });
+                } catch (error) {
+                    toast.error('Gagal mengunggah gambar', { id: uploadToast });
+                    return;
+                }
+            }
+
+            const createToast = toast.loading('Menyimpan data capster...');
+            await createCapster(
+                { ...form, avatar: imageUrl },
+                (res: any) => {
+                    toast.success('Capster berhasil ditambahkan!', { id: createToast });
+                    router.push('/admin_capster');
+                    setForm({
+                        username: '',
+                        phone: '',
+                        description: '',
+                        avatar: null,
+                        email: '',
+                        address: ''
+                    });
+                    console.log(res);
+
+                }
+            );
+        } catch (error) {
+            console.error('Gagal membuat capster:', error);
+            toast.error('Terjadi kesalahan saat membuat capster.');
+        }
+    };
+
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -69,6 +101,7 @@ const page = (props: Props) => {
 
         }
     };
+
     return (
         <DefaultLayout>
             <div className="flex justify-center items-center">
@@ -158,13 +191,14 @@ const page = (props: Props) => {
                 <h3 className='text-black mb-1 mt-3' >Deskripsi</h3>
                 <textarea
                     placeholder="Deskripsi"
+                    name='description'
                     value={form.description}
                     onChange={handleChange}
                     className="w-full border border-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0 p-2 rounded-md text-black bg-transparent"
                 />
 
 
-                <ButtonPrimary className='py-2 px-3 rounded-xl mt-4 '>
+                <ButtonPrimary typeButon={'submit'} className='py-2 px-3 rounded-xl mt-4 '>
                     Tambah Capster
                 </ButtonPrimary>
             </form>
