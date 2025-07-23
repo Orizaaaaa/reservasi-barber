@@ -41,26 +41,7 @@ export const createCapster = async (form: any, callback: any) => {
         });
 }
 
-export const updatePayment = async (id: any, form: any) => {
-    try {
-        const response = await axiosInterceptor.put(`/payment-method/${id}`, form);
-        return response.data;
 
-    } catch (err) {
-        console.log(err);
-        throw err; // penting agar bisa ditangkap di catch()
-    }
-};
-
-export const deletePayment = async (id: any) => {
-    try {
-        const result = await axiosInterceptor.delete(`/payment-method/${id}`)
-        return result.data; // ✅ return data langsung
-    } catch (err) {
-        console.error(err);
-        throw err;
-    }
-}
 
 export const deleteCategory = (id: any, callback: any) => {
     axiosInterceptor.delete(`/category/${id}`)
@@ -92,6 +73,26 @@ export const getAllPayments = async () => {
     }
 };
 
+export const updatePayment = async (id: any, form: any) => {
+    try {
+        const response = await axiosInterceptor.put(`/payment-method/${id}`, form);
+        return response.data;
+
+    } catch (err) {
+        console.log(err);
+        throw err; // penting agar bisa ditangkap di catch()
+    }
+};
+
+export const deletePayment = async (id: any) => {
+    try {
+        const result = await axiosInterceptor.delete(`/payment-method/${id}`)
+        return result.data; // ✅ return data langsung
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
+}
 
 // SERVICE
 export const createService = async (form: any, callback: any) => {
