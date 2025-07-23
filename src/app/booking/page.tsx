@@ -184,6 +184,8 @@ function page({ }: Props) {
                 <ButtonPrimary className='py-2 px-3 rounded-xl mt-4 w-full '>
                     Booking
                 </ButtonPrimary>
+
+
             </div>
 
             <ModalDefault isOpen={isOpen} onClose={onClose}>

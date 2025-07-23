@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import 'swiper/css';
+import { Toaster } from "react-hot-toast";
 import { HeroUIProvider } from "@heroui/react";
 
 const inter = Inter({
@@ -36,6 +37,7 @@ export default function RootLayout({
         suppressHydrationWarning={true}
       >
         <HeroUIProvider>
+          <Toaster position="top-center" />
           {children}
         </HeroUIProvider>
       </body>

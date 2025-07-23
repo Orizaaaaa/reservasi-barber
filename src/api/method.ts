@@ -41,13 +41,25 @@ export const createCapster = async (form: any, callback: any) => {
         });
 }
 
-export const updateBuilding = (id: any, form: any, callback: any) => {
-    axiosInterceptor.put(`/infrastucture/${id}`, form)
-        .then((result) => {
-            callback(result.data)
-        }).catch((err) => {
-            console.log(err);
-        });
+export const updatePayment = async (id: any, form: any) => {
+    try {
+        const response = await axiosInterceptor.put(`/payment-method/${id}`, form);
+        return response.data;
+
+    } catch (err) {
+        console.log(err);
+        throw err; // penting agar bisa ditangkap di catch()
+    }
+};
+
+export const deletePayment = async (id: any) => {
+    try {
+        const result = await axiosInterceptor.delete(`/payment-method/${id}`)
+        return result.data; // ✅ return data langsung
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
 }
 
 export const deleteCategory = (id: any, callback: any) => {
