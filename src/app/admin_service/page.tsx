@@ -7,6 +7,8 @@ import ModalDefault from '@/fragments/modal/modal';
 import { formatRupiah, users } from '@/utils/helper';
 import { getKeyValue, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from '@heroui/react';
 import React, { useEffect } from 'react'
+import { FaTrash } from 'react-icons/fa';
+import { RiEdit2Fill } from 'react-icons/ri';
 
 type Props = {}
 
@@ -85,15 +87,31 @@ function page({ }: Props) {
                     <TableColumn key="name">NAME</TableColumn>
                     <TableColumn key="description">DESCRIPTION</TableColumn>
                     <TableColumn key="price">PRICE</TableColumn>
+                    <TableColumn key="actions">ACTION</TableColumn>
                 </TableHeader>
                 <TableBody items={services}>
                     {(item: any) => (
-                        <TableRow key={item.name}>
+                        <TableRow key={item._id}>
                             {(columnKey: any) => (
                                 <TableCell>
-                                    {columnKey === 'price'
-                                        ? formatRupiah(item[columnKey])
-                                        : getKeyValue(item, columnKey)}
+                                    {columnKey === 'actions' ? (
+                                        <div className="flex gap-2">
+                                            <button
+
+                                                className="px-2 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
+                                            >
+                                                <RiEdit2Fill color='white' />
+                                            </button>
+                                            <button
+
+                                                className="px-2 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600"
+                                            >
+                                                <FaTrash color='white' />
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        getKeyValue(item, columnKey)
+                                    )}
                                 </TableCell>
                             )}
                         </TableRow>
