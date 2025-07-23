@@ -16,7 +16,7 @@ interface ProfileForm {
     username: string;
     phone: string;
     description: string;
-    avatar: string;
+    avatar: any;
     email: string;
     address: string;
 }
@@ -26,7 +26,7 @@ const page = (props: Props) => {
         username: '',
         phone: '',
         description: '',
-        avatar: '',
+        avatar: null as File | null,
         email: '',
         address: ''
     });
@@ -39,7 +39,7 @@ const page = (props: Props) => {
                 username: '',
                 phone: '',
                 description: '',
-                avatar: '',
+                avatar: null as File | null,
                 email: '',
                 address: ''
             })
@@ -50,17 +50,52 @@ const page = (props: Props) => {
         const { name, value } = e.target;
         setForm(prev => ({ ...prev, [name]: value }));
     };
+
+    const handleFileManager = (fileName: string) => {
+        if (fileName === 'add') {
+            const fileInput = document.getElementById("image-input-add") as HTMLInputElement | null;
+            fileInput ? fileInput.click() : null;
+        } else {
+            console.log('error');
+
+        }
+    };
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, InputSelect: string) => {
+        if (InputSelect === 'add') {
+            const selectedImage = e.target.files?.[0];
+            setForm({ ...form, avatar: selectedImage || null });
+        } else {
+            console.log('error');
+
+        }
+    };
     return (
         <DefaultLayout>
             <div className="flex justify-center items-center">
                 <div>
-                    <div className='border border-gray-400 py-20 px-10 rounded-lg flex justify-center items-center'>
-                        <CiCamera size={50} color='black' />
-                    </div>
 
+                    {form.avatar && form.avatar instanceof Blob ? (
+                        <img
+                            className="h-[200px] w-[200px] mx-auto object-cover border border-gray-400 rounded-lg"
+                            src={URL.createObjectURL(form.avatar)}
+                            alt="Preview"
+                        />
+                    ) : (
+                        <div className="h-[200px] w-[200px] mx-auto border border-gray-400 rounded-lg flex items-center justify-center bg-gray-100">
+                            <CiCamera size={50} color="gray" />
+                        </div>
+                    )}
+                    <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        id="image-input-add"
+                        onChange={(e) => handleImageChange(e, 'add')}
+                    />
                     <div className='flex justify-center items-center gap-2 mt-5'>
-                        <ButtonPrimary className='border-2 border-black px-3 py-2 rounded-lg'>Ubah Foto </ButtonPrimary>
-                        <ButtonSecondary className=' px-3 py-2 rounded-lg' >Hapus Foto</ButtonSecondary>
+                        <ButtonPrimary className='border-2 border-black px-3 py-2 rounded-lg'
+                            onClick={() => handleFileManager('add')}>Ubah Foto </ButtonPrimary>
+                        <ButtonSecondary onClick={() => setForm({ ...form, avatar: null })} className=' px-3 py-2 rounded-lg' >Hapus Foto</ButtonSecondary>
                     </div>
                 </div>
             </div>
