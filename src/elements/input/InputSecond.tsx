@@ -13,7 +13,7 @@ type Props = {
     bg?: string
 }
 
-const InputSecond = ({ htmlFor, title, type, onChange, value, placeholder, marginY = 'my-6', bg = 'bg-grayCustom', styleTitle = 'text-white' }: Props) => {
+const InputSecond = ({ htmlFor, title, type, onChange, value, placeholder, marginY = 'my-6', bg = 'bg-slate-200', styleTitle = 'text-black' }: Props) => {
     return (
         <div className={`input text-black ${marginY}`}>
             <label htmlFor={htmlFor} className={`font-medium  ${styleTitle}`} >{title} </label>

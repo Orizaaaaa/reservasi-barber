@@ -1,17 +1,16 @@
 'use client'
+
 import { postImage } from '@/api/image_post'
 import { createCapster } from '@/api/method'
 import ButtonPrimary from '@/elements/buttonPrimary'
 import ButtonSecondary from '@/elements/buttonSecondary'
-import InputForm from '@/elements/input/InputForm'
 import InputSecond from '@/elements/input/InputSecond'
 import DefaultLayout from '@/fragments/layout/adminLayout/DefaultLayout'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import toast from 'react-hot-toast'
 import { CiCamera } from 'react-icons/ci'
-import { IoCameraOutline } from 'react-icons/io5'
-import { MdOutlineCameraAlt } from 'react-icons/md'
+
 
 type Props = {}
 
@@ -101,6 +100,8 @@ const page = (props: Props) => {
 
         }
     };
+
+    console.log(form);
 
     return (
         <DefaultLayout>

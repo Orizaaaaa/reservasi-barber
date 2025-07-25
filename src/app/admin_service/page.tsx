@@ -119,8 +119,8 @@ function page({ }: Props) {
                 </TableBody>
             </Table>
 
-            <ModalDefault isOpen={isOpen} onClose={onClose} className='w-full max-w-2xl bg-secondBlack' closeButton={false} >
-                <h1 className='text-white' >CREATE PAYMENTS</h1>
+            <ModalDefault isOpen={isOpen} onClose={onClose} className='w-full max-w-2xl ' closeButton={false} >
+                <h1 className='text-black' >CREATE SERVICE</h1>
                 <form className="" onSubmit={handleCreate}>
                     <InputSecond
                         marginY='my-2'

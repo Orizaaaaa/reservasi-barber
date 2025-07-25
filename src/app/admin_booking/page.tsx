@@ -1,12 +1,12 @@
 'use client'
-import { getAllCapster, getAllPayments, getAllService } from '@/api/method';
+import { createBooking, getAllCapster, getAllPayments, getAllService } from '@/api/method';
 import ButtonPrimary from '@/elements/buttonPrimary';
 import DropdownCustom from '@/elements/dropdown/Dropdown';
 import InputForm from '@/elements/input/InputForm'
 import InputSecond from '@/elements/input/InputSecond';
 import DefaultLayout from '@/fragments/layout/adminLayout/DefaultLayout'
 import ModalDefault from '@/fragments/modal/modal';
-import { formatDate, hours } from '@/utils/helper';
+import { formatDate, formatDateStr, hours } from '@/utils/helper';
 import { Autocomplete, AutocompleteItem, Calendar, DatePicker, useDisclosure } from '@heroui/react';
 import { parseDate } from '@internationalized/date';
 import React, { useEffect } from 'react'
@@ -54,13 +54,15 @@ function page({ }: Props) {
         setForm(prev => ({ ...prev, hour: parseInt(hour) }));
     };
 
-    const onSelectionChange = (item: string) => {
-        console.log('item', item);
-        setForm({
-            ...form,
-            payment_id: item
-        });
+    const onSelectionChange = (item: string | null, field: keyof typeof form) => {
+        if (!item) return;
+
+        setForm((prev) => ({
+            ...prev,
+            [field]: item,
+        }));
     };
+
 
     const dataTipe = [
         { key: 'dipinjam', label: 'Dipinjam', value: 'dipinjam' },
@@ -87,9 +89,31 @@ function page({ }: Props) {
         fetchDataDropdown();
     }, []);
 
+    const handleSubmit = async () => {
+
+        // Format tanggal jika ada
+        const formattedForm = {
+            ...form,
+            date: formatDateStr(form.date), // pastikan form.tanggal adalah object { day, month, year }
+        };
+
+        // Kirim data ke API
+        try {
+            await createBooking(formattedForm, (res: any) => {
+                console.log("Booking berhasil:", res);
+                // lakukan sesuatu setelah berhasil, misal reset form atau redirect
+            });
+        } catch (err) {
+            console.error("Gagal membuat booking", err);
+        }
+    };
+
+
     console.log(capsters);
     console.log(services);
     console.log(payments);
+    console.log(formatDateStr(form.date));
+    console.log(form);
 
 
     return (
@@ -163,11 +187,11 @@ function page({ }: Props) {
                         placeholder="Pilih Capster"
                         className="w-full"
                         variant='bordered'
-                        onSelectionChange={(e: any) => onSelectionChange(e)}
-                        value={form.payment_id}
+                        onSelectionChange={(e: any) => onSelectionChange(e, 'capster_id')}
+                        value={form.capster_id}
                     >
-                        {dataTipe.map((item) => (
-                            <AutocompleteItem key={item.key}>{item.label}</AutocompleteItem>
+                        {capsters.map((item: any) => (
+                            <AutocompleteItem key={item._id}>{item.username}</AutocompleteItem>
                         ))}
                     </Autocomplete>
                 </div>
@@ -179,11 +203,11 @@ function page({ }: Props) {
                         variant='bordered'
                         placeholder="Pilih Jenis Layanan"
                         className="w-full"
-                        onSelectionChange={(e: any) => onSelectionChange(e)}
-                        value={form.payment_id}
+                        onSelectionChange={(e: any) => onSelectionChange(e, 'service_id')}
+                        value={form.service_id}
                     >
-                        {dataTipe.map((item) => (
-                            <AutocompleteItem key={item.key}>{item.label}</AutocompleteItem>
+                        {services.map((item: any) => (
+                            <AutocompleteItem key={item._id}>{item.name}</AutocompleteItem>
                         ))}
                     </Autocomplete>
                 </div>
@@ -192,7 +216,7 @@ function page({ }: Props) {
                     styleTitle="text-black"
                     bg="bg-none border border-gray-400 placeholder-gray-400"
                     className="w-full"
-                    htmlFor="capster_id"
+                    htmlFor="haircut_type"
                     placeholder="Masukan Jenis Cukuran"
                     title="Jenis Cukuran"
                     type="text"
@@ -208,17 +232,17 @@ function page({ }: Props) {
                         variant='bordered'
                         placeholder="Pilih Jenis Pembayaran"
                         className="w-full"
-                        onSelectionChange={(e: any) => onSelectionChange(e)}
+                        onSelectionChange={(e: any) => onSelectionChange(e, 'payment_id')}
                         value={form.payment_id}
                     >
-                        {dataTipe.map((item) => (
-                            <AutocompleteItem key={item.key}>{item.label}</AutocompleteItem>
+                        {payments.map((item: any) => (
+                            <AutocompleteItem key={item._id}>{item.name}</AutocompleteItem>
                         ))}
                     </Autocomplete>
                 </div>
 
 
-                <ButtonPrimary className='py-2 px-3 rounded-xl mt-4 '>
+                <ButtonPrimary onClick={handleSubmit} className='py-2 px-3 rounded-xl mt-4 '>
                     Booking
                 </ButtonPrimary>
             </div>
