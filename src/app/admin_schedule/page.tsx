@@ -9,7 +9,7 @@ const page = (props: Props) => {
         <DefaultLayout>
 
             <div className="p-3 border-2 border-slate-300 rounded-lg">
-                <div className='flex gap-10'>
+                <div className='flex gap-10 px-4'>
                     <div className='h-28 w-28 rounded-full'>
                         <img className='cover w-full h-full  rounded-full'
                             src="https://awsimages.detik.net.id/community/media/visual/2017/12/06/6414c1ae-fcd1-49a6-8316-4a71c29f93ff_43.jpg?w=600&q=90"
@@ -26,38 +26,46 @@ const page = (props: Props) => {
 
                 </div>
 
-                <h1 className='font-medium mt-4'>Jam Kerja</h1>
-                <div className="grid grid-cols-5 gap-4 md:grid-cols-7 mt-2 text-sm">
-                    <div className=" gap-2 items-center font-light">
+                <h1 className='font-medium mt-4 px-4'>Jam Kerja</h1>
+                <div className="grid grid-cols-3 gap-4 md:grid-cols-7 mt-2 text-sm">
+                    <div className=" gap-2 items-center font-light mx-auto">
                         <h1>Senin</h1>
                         <h1 >08:00 - 12:00</h1>
+                        <h1 className='p-1 bg-slate-300 rounded-full text-center px-3 mt-2' >08:00</h1>
+                        <h1 className='p-1 border border-black rounded-full text-center px-3 mt-2' >08:00</h1>
                     </div>
-                    <div className=" gap-2 items-center font-light">
+                    <div className=" gap-2 items-center font-light mx-auto">
+                        <h1>Senin</h1>
+                        <h1 >08:00 - 17:00</h1>
+                        <h1 className='p-1 border border-black rounded-full text-center px-3 mt-2' >08:00</h1>
+                        <h1 className='p-1 bg-slate-300 rounded-full text-center px-3 mt-2' >08:00</h1>
+                    </div>
+                    <div className=" gap-2 items-center font-light mx-auto">
                         <h1>Senin</h1>
                         <h1 >08:00 - 17:00</h1>
                     </div>
-                    <div className=" gap-2 items-center font-light">
+                    <div className=" gap-2 items-center font-light mx-auto">
                         <h1>Senin</h1>
                         <h1 >08:00 - 17:00</h1>
                     </div>
-                    <div className=" gap-2 items-center font-light">
+                    <div className=" gap-2 items-center font-light mx-auto">
                         <h1>Senin</h1>
                         <h1 >08:00 - 17:00</h1>
                     </div>
-                    <div className=" gap-2 items-center font-light">
+                    <div className=" gap-2 items-center font-light mx-auto">
                         <h1>Senin</h1>
                         <h1 >08:00 - 17:00</h1>
                     </div>
-                    <div className=" gap-2 items-center font-light">
-                        <h1>Senin</h1>
-                        <h1 >08:00 - 17:00</h1>
-                    </div>
-                    <div className=" gap-2 items-center font-light">
+                    <div className=" gap-2 items-center font-light mx-auto">
                         <h1>Senin</h1>
                         <h1 >08:00 - 17:00</h1>
                     </div>
                 </div>
-                <ButtonPrimary className='py-2 px-3 mt-4 rounded-lg'> Atur Jadwal</ButtonPrimary>
+
+                <div className="px-4">
+                    <ButtonPrimary className='py-1 px-3 mt-5 rounded-xl'> Atur Jadwal</ButtonPrimary>
+                </div>
+
             </div>
 
         </DefaultLayout>
