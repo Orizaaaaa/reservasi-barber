@@ -10,6 +10,7 @@ import { formatDate, formatDateStr, hours } from '@/utils/helper';
 import { Autocomplete, AutocompleteItem, Calendar, DatePicker, useDisclosure } from '@heroui/react';
 import { parseDate } from '@internationalized/date';
 import React, { useEffect } from 'react'
+import toast from 'react-hot-toast';
 import { MdOutlineAccessTime } from 'react-icons/md';
 
 type Props = {}
@@ -90,23 +91,61 @@ function page({ }: Props) {
     }, []);
 
     const handleSubmit = async () => {
+        // Validasi: pastikan semua field (kecuali image) tidak kosong
+        const requiredFields = [
+            'name',
+            'email',
+            'phone',
+            'date',
+            'hour',
+            'capster_id',
+            'payment_id',
+            'rating',
+            'haircut_type',
+            'service_id',
+            'status',
+        ];
 
-        // Format tanggal jika ada
+        const isValid = requiredFields.every((field) => {
+            const value = form[field as keyof typeof form];
+            if (typeof value === 'number') {
+                return value !== 0;
+            }
+            return value !== '' && value !== null && value !== undefined;
+        });
+
+        if (!isValid) {
+            toast.error('Harap isi semua field terlebih dahulu!');
+            return;
+        }
+
+        // Tampilkan toast loading
+        const loadingToast = toast.loading('Membuat booking...');
+
+        // Format tanggal sebelum kirim
         const formattedForm = {
             ...form,
-            date: formatDateStr(form.date), // pastikan form.tanggal adalah object { day, month, year }
+            date: formatDateStr(form.date),
         };
 
-        // Kirim data ke API
         try {
             await createBooking(formattedForm, (res: any) => {
-                console.log("Booking berhasil:", res);
-                // lakukan sesuatu setelah berhasil, misal reset form atau redirect
+                toast.success('Booking berhasil!', {
+                    id: loadingToast,
+                });
+
+                console.log('Booking berhasil:', res);
+                // Reset form atau redirect jika perlu
             });
         } catch (err) {
-            console.error("Gagal membuat booking", err);
+            console.error('Gagal membuat booking', err);
+            toast.error('Gagal membuat booking.', {
+                id: loadingToast,
+            });
         }
     };
+
+
 
 
     console.log(capsters);
