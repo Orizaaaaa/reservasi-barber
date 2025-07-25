@@ -11,6 +11,17 @@ export const getAllReservation = async () => {
     }
 };
 
+
+// BOOKING
+export const createBooking = async (form: any, callback: any) => {
+    await axiosInterceptor.post('/booking', form)
+        .then((result) => {
+            callback(result.data)
+        }).catch((err) => {
+            console.log(err);
+        });
+}
+
 // CAPSTER
 export const getAllCapster = async () => {
     try {

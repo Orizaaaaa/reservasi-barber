@@ -1,4 +1,5 @@
 'use client'
+import { getAllCapster, getAllPayments, getAllService } from '@/api/method';
 import ButtonPrimary from '@/elements/buttonPrimary';
 import DropdownCustom from '@/elements/dropdown/Dropdown';
 import InputForm from '@/elements/input/InputForm'
@@ -8,12 +9,15 @@ import ModalDefault from '@/fragments/modal/modal';
 import { formatDate, hours } from '@/utils/helper';
 import { Autocomplete, AutocompleteItem, Calendar, DatePicker, useDisclosure } from '@heroui/react';
 import { parseDate } from '@internationalized/date';
-import React from 'react'
+import React, { useEffect } from 'react'
 import { MdOutlineAccessTime } from 'react-icons/md';
 
 type Props = {}
 
 function page({ }: Props) {
+    const [capsters, setCapsters] = React.useState<any>([]);
+    const [services, setServices] = React.useState<any>([]);
+    const [payments, setPayments] = React.useState<any>([]);
     const { onOpen, onClose, isOpen } = useDisclosure();
     const dateNow = new Date();
     const [form, setForm] = React.useState({
@@ -65,6 +69,27 @@ function page({ }: Props) {
         { key: 'terlambat', label: 'Terlambat', value: 'terlambat' },
         { key: 'hilang', label: 'Hilang', value: 'hilang' },
     ];
+
+    const fetchDataDropdown = async () => {
+        try {
+            const resServices: any = await getAllService();
+            const resPayments: any = await getAllPayments();
+            const resCapsters: any = await getAllCapster();
+            setCapsters(resCapsters.data);
+            setServices(resServices.data);
+            setPayments(resPayments.data);
+        } catch (error) {
+            console.error('Gagal fetch data:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchDataDropdown();
+    }, []);
+
+    console.log(capsters);
+    console.log(services);
+    console.log(payments);
 
 
     return (
