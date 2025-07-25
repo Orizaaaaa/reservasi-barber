@@ -3,21 +3,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import NavigationList from "../NavigationList/NavigationList";
-import { RxDashboard } from "react-icons/rx";
-
 import Image from "next/image";
-import { IoPeopleSharp, IoPricetags, IoReceiptOutline, IoStorefront } from "react-icons/io5";
-import { FaMoneyBillTransfer, FaUserGear } from "react-icons/fa6";
-
-import { LuBookDown, LuBookPlus } from "react-icons/lu";
-import { MdCalendarMonth, MdDashboard, MdOutlineLibraryBooks } from "react-icons/md";
-import { RiBook2Line } from "react-icons/ri";
-import { TbMoneybag } from "react-icons/tb";
-import { HiOutlineArchiveBox } from "react-icons/hi2";
-import { SiGitbook } from "react-icons/si";
-import { BsPersonFillGear } from "react-icons/bs";
+import { IoPeopleSharp, IoPricetags, IoTimeOutline } from "react-icons/io5";
+import { FaMoneyBillTransfer } from "react-icons/fa6";
+import { MdCalendarMonth, MdDashboard } from "react-icons/md";
 import ButtonSecondary from "@/elements/buttonSecondary";
 import { logo } from "@/image";
+import { FaFolder } from "react-icons/fa";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -86,7 +78,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
         }`}
     >
       {/* <!-- SIDEBAR HEADER --> */}
-      <div className="flex items-center justify-between lg:justify-start gap-2 px-6 py-5.5 lg:py-6.5">
+      <div className="flex items-center justify-between lg:justify-start gap-2 px-6 py-2 lg:py-2">
         <div >
           <Image className="h-12" src={logo} alt="logo" />
         </div>
@@ -117,7 +109,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
       <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
         {/* <!-- Sidebar Menu --> */}
-        <nav className="mt-5 px-4 py-4 lg:mt-5 lg:px-6">
+        <nav className="mt-1 px-4 py-1 lg:mt-3 lg:px-6">
           {/* <!-- Menu Group --> */}
           <div>
             <ul className="mb-6 flex flex-col gap-1.5">
@@ -128,8 +120,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               <NavigationList icon={<IoPeopleSharp size={24} />} title="Capsters" pathname="/admin_capster" />
               <NavigationList icon={<IoPricetags size={24} />} title="Payments" pathname="/admin_payment" />
               <NavigationList icon={<FaMoneyBillTransfer size={24} />} title="Service" pathname="/admin_service" />
-
-
+              <NavigationList icon={<IoTimeOutline size={24} />} title="Jadwal Capster" pathname="/admin_schedule" />
+              <NavigationList icon={<FaFolder size={24} />} title="Data Customer" pathname="/admin_customer_data" />
               <ButtonSecondary className="w-full py-1 rounded-md font-medium mt-20" onClick={handleLogout} >Logout</ButtonSecondary>
 
 
