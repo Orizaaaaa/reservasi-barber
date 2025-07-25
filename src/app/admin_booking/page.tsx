@@ -157,7 +157,7 @@ function page({ }: Props) {
 
 
                 <div className="w-full">
-                    <h1 className="text-lg font-medium text-black mb-1">Pilih Capster</h1>
+                    <h1 className=" font-medium text-black mb-1">Pilih Capster</h1>
 
                     <Autocomplete
                         placeholder="Pilih Capster"
@@ -173,7 +173,7 @@ function page({ }: Props) {
                 </div>
 
                 <div className="w-full mt-5">
-                    <h1 className="text-lg font-medium text-black mb-1">Jenis Layanan</h1>
+                    <h1 className=" font-medium text-black mb-1">Jenis Layanan</h1>
 
                     <Autocomplete
                         variant='bordered'
@@ -202,7 +202,7 @@ function page({ }: Props) {
 
 
                 <div className="w-full mt-5">
-                    <h1 className="text-lg font-medium text-black mb-1">Jenis Pembayaran</h1>
+                    <h1 className=" font-medium text-black mb-1">Jenis Pembayaran</h1>
 
                     <Autocomplete
                         variant='bordered'
