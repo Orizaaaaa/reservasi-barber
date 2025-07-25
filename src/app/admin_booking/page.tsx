@@ -6,7 +6,7 @@ import InputSecond from '@/elements/input/InputSecond';
 import DefaultLayout from '@/fragments/layout/adminLayout/DefaultLayout'
 import ModalDefault from '@/fragments/modal/modal';
 import { formatDate, hours } from '@/utils/helper';
-import { AutocompleteItem, Calendar, DatePicker, useDisclosure } from '@heroui/react';
+import { Autocomplete, AutocompleteItem, Calendar, DatePicker, useDisclosure } from '@heroui/react';
 import { parseDate } from '@internationalized/date';
 import React from 'react'
 import { MdOutlineAccessTime } from 'react-icons/md';
@@ -49,6 +49,22 @@ function page({ }: Props) {
         const [hour] = time.split(':');
         setForm(prev => ({ ...prev, hour: parseInt(hour) }));
     };
+
+    const onSelectionChange = (item: string) => {
+        console.log('item', item);
+        setForm({
+            ...form,
+            payment_id: item
+        });
+    };
+
+    const dataTipe = [
+        { key: 'dipinjam', label: 'Dipinjam', value: 'dipinjam' },
+        { key: 'belum diambil', label: 'Belum diambil', value: 'belum diambil' },
+        { key: 'dikembalikan', label: 'Dikembalikan', value: 'dikembalikan' },
+        { key: 'terlambat', label: 'Terlambat', value: 'terlambat' },
+        { key: 'hilang', label: 'Hilang', value: 'hilang' },
+    ];
 
 
     return (
@@ -113,65 +129,69 @@ function page({ }: Props) {
                 </div>
 
 
+
+
+                <div className="w-full">
+                    <h1 className="text-lg font-medium text-black mb-1">Pilih Capster</h1>
+
+                    <Autocomplete
+                        placeholder="Pilih Capster"
+                        className="w-full"
+                        variant='bordered'
+                        onSelectionChange={(e: any) => onSelectionChange(e)}
+                        value={form.payment_id}
+                    >
+                        {dataTipe.map((item) => (
+                            <AutocompleteItem key={item.key}>{item.label}</AutocompleteItem>
+                        ))}
+                    </Autocomplete>
+                </div>
+
+                <div className="w-full mt-5">
+                    <h1 className="text-lg font-medium text-black mb-1">Jenis Layanan</h1>
+
+                    <Autocomplete
+                        variant='bordered'
+                        placeholder="Pilih Jenis Layanan"
+                        className="w-full"
+                        onSelectionChange={(e: any) => onSelectionChange(e)}
+                        value={form.payment_id}
+                    >
+                        {dataTipe.map((item) => (
+                            <AutocompleteItem key={item.key}>{item.label}</AutocompleteItem>
+                        ))}
+                    </Autocomplete>
+                </div>
+
                 <InputSecond
                     styleTitle="text-black"
                     bg="bg-none border border-gray-400 placeholder-gray-400"
                     className="w-full"
                     htmlFor="capster_id"
-                    placeholder="Masukan ID Capster"
-                    title="ID Capster"
+                    placeholder="Masukan Jenis Cukuran"
+                    title="Jenis Cukuran"
                     type="text"
                     onChange={handleChange}
-                    value={form.capster_id}
+                    value={form.haircut_type}
                 />
 
-                <InputSecond
-                    styleTitle="text-black"
-                    bg="bg-none border border-gray-400 placeholder-gray-400"
-                    className="w-full"
-                    htmlFor="payment_id"
-                    placeholder="Masukan ID Pembayaran"
-                    title="ID Pembayaran"
-                    type="text"
-                    onChange={handleChange}
-                    value={form.payment_id}
-                />
 
-                <div className="w-full">
-                    <h1 className="text-lg font-medium text-black mb-2">Jenis Pembayaran</h1>
-                    <DropdownCustom
-                        clearButton={false}
-                        defaultItems={dataStatus}
-                        onSelect={(key: string) => handleDropdownChange(key, 'payment_id')}
-                    >
-                        {(item: any) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
-                    </DropdownCustom>
-                </div>
+                <div className="w-full mt-5">
+                    <h1 className="text-lg font-medium text-black mb-1">Jenis Pembayaran</h1>
 
-                <div className="flex flex-col">
-                    <div className="w-full mt-5">
-                        <h1 className="text-lg font-medium text-black mb-2">Jenis Layanan</h1>
-                        <DropdownCustom
-                            clearButton={false}
-                            defaultItems={dataStatus}
-                            onSelect={(key: string) => handleDropdownChange(key, 'payment_id')}
-                        >
-                            {(item: any) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
-                        </DropdownCustom>
-                    </div>
-
-                    <InputSecond
-                        styleTitle="text-black"
-                        bg="bg-none border border-gray-400 placeholder-gray-400"
+                    <Autocomplete
+                        variant='bordered'
+                        placeholder="Pilih Jenis Pembayaran"
                         className="w-full"
-                        htmlFor="haircut_type"
-                        placeholder="Masukan Jenis Potongan"
-                        title="Jenis Potongan"
-                        type="text"
-                        onChange={handleChange}
-                        value={form.haircut_type}
-                    />
+                        onSelectionChange={(e: any) => onSelectionChange(e)}
+                        value={form.payment_id}
+                    >
+                        {dataTipe.map((item) => (
+                            <AutocompleteItem key={item.key}>{item.label}</AutocompleteItem>
+                        ))}
+                    </Autocomplete>
                 </div>
+
 
                 <ButtonPrimary className='py-2 px-3 rounded-xl mt-4 '>
                     Booking
