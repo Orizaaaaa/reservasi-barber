@@ -1,5 +1,5 @@
 'use client'
-import { getAllCapster, getAllReservation } from '@/api/method';
+import { getAllCapster, getAllReservation, updateBooking } from '@/api/method';
 import DefaultLayout from '@/fragments/layout/adminLayout/DefaultLayout';
 import ModalDefault from '@/fragments/modal/modal';
 import { Autocomplete, AutocompleteItem, getKeyValue, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from '@heroui/react'
@@ -12,6 +12,8 @@ import { RiEdit2Line } from 'react-icons/ri';
 type Props = {}
 
 function page({ }: Props) {
+
+    const [id, setId] = React.useState('')
     const { onOpen, onClose, isOpen } = useDisclosure();
     const { isOpen: isWarningOpen, onOpen: onWarningOpen, onClose: onWarningClose } = useDisclosure();
     const [loading, setLoading] = React.useState(false)
@@ -24,28 +26,29 @@ function page({ }: Props) {
         status: '',
         capster_id: '',
     })
+
+    const fetchData = async () => {
+        setLoading(true)
+        const result = await getAllReservation()
+        const capster = await getAllCapster()
+        const formatted = result?.data?.map((item: any) => ({
+            ...item,
+            capster_name: item.capster_id?.username || '-',
+            service_name: item.service_id?.name || '-',
+            payment_name: item.payment_id?.name || '-',
+            formatted_date: new Date(item.date).toLocaleDateString('id-ID', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+            }),
+        }))
+        setData(formatted || [])
+        setCapster(capster?.data || [])
+        setLoading(false)
+    }
+
     // Fetch data
     useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true)
-            const result = await getAllReservation()
-            const capster = await getAllCapster()
-            const formatted = result?.data?.map((item: any) => ({
-                ...item,
-                capster_name: item.capster_id?.username || '-',
-                service_name: item.service_id?.name || '-',
-                payment_name: item.payment_id?.name || '-',
-                formatted_date: new Date(item.date).toLocaleDateString('id-ID', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                }),
-            }))
-            setData(formatted || [])
-            setCapster(capster?.data || [])
-            setLoading(false)
-        }
-
         fetchData()
     }, [])
 
@@ -61,6 +64,7 @@ function page({ }: Props) {
     // Aksi Edit dan Delete
     const openModalEdit = (item: any) => {
         onOpen()
+        setId(item._id)
         console.log('Edit:', item);
         setForm({
             payment_id: item.payment_id._id,
@@ -101,6 +105,38 @@ function page({ }: Props) {
     console.log('caoster', capsters);
     console.log('form', form);
     console.log('data', data);
+
+    const handleUpdate = async (e: any) => {
+        e.preventDefault()
+        await updateBooking(id, form, () => {
+            fetchData()
+            onClose()
+        })
+    }
+    const handleStatusFinished = async (item: any) => {
+        // Validasi apakah payment_id dan capster_id ada
+        if (!item || !item.payment_id || !item.capster_id) {
+            console.error("Data tidak lengkap", item);
+            return;
+        }
+
+        const updatedForm = {
+            payment_id: item.payment_id._id,
+            status: 'Selesai',
+            capster_id: item.capster_id._id,
+        };
+
+        console.log('form bosss', updatedForm);
+
+        setId(item._id);
+        setForm(updatedForm);
+
+        await updateBooking(item._id, updatedForm, () => {
+            fetchData();
+            onClose();
+        });
+    };
+
     return (
         <DefaultLayout>
             <h1 className="text-black text-xl font-semibold mb-4">LIST BOOKING</h1>
@@ -145,6 +181,7 @@ function page({ }: Props) {
                                     {columnKey === 'action' ? (
                                         <div className="flex gap-2">
                                             <button
+                                                onClick={() => handleStatusFinished(item)}
                                             >
                                                 {item.status === 'Menunggu' ? (
                                                     <MdCheckBoxOutlineBlank size={23} />
@@ -204,7 +241,7 @@ function page({ }: Props) {
 
                 <div className="flex justify-end gap-2 mt-4">
                     <button
-                        type='submit'
+                        onClick={handleUpdate}
                         className="bg-blue-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-blue-700 transition"
                     >
                         Save

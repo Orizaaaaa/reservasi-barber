@@ -23,6 +23,15 @@ export const createBooking = async (form: any, callback: any) => {
         });
 }
 
+export const updateBooking = async (id: any, form: any, callback: any) => {
+    await axiosInterceptor.put(`/booking/${id}`, form)
+        .then((result) => {
+            callback(result.data)
+        }).catch((err) => {
+            console.log(err);
+        });
+}
+
 // CAPSTER
 export const getAllCapster = async () => {
     try {
