@@ -53,6 +53,15 @@ export const createCapster = async (form: any, callback: any) => {
 }
 
 
+export const updateCapster = async (id: any, form: any, callback: any) => {
+    await axiosInterceptor.put(`/capster/${id}`, form)
+        .then((result) => {
+            callback(result.data)
+        }).catch((err) => {
+            console.log(err);
+        });
+}
+
 
 export const deleteCategory = (id: any, callback: any) => {
     axiosInterceptor.delete(`/category/${id}`)

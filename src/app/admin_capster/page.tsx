@@ -10,58 +10,14 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 
 type Props = {}
-interface ProfileForm {
-    username: string;
-    phone: string;
-    description: string;
-    avatar: string;
-    email: string;
-    address: string;
-}
+
 function page({ }: Props) {
+    const { onOpen, onClose, isOpen } = useDisclosure();
+    const [capters, setCapters] = useState([])
     const fetchData = async () => {
         const capster = await getAllCapster()
         setCapters(capster?.data || [])
     }
-    const { onOpen, onClose, isOpen } = useDisclosure();
-    const { onOpen: onOpenEdit, onClose: onCloseEdit, isOpen: isOpenEdit } = useDisclosure();
-    const { isOpen: isWarningOpen, onOpen: onWarningOpen, onClose: onWarningClose } = useDisclosure();
-    const [capters, setCapters] = useState([])
-    const [page, setPage]: any = React.useState(1);
-    const rowsPerPage = 4;
-
-    const pages = Math.ceil(users.length / rowsPerPage);
-
-    const items = React.useMemo(() => {
-        const start = (page - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
-
-        return users.slice(start, end);
-    }, [page, users]);
-    const [form, setForm] = useState<ProfileForm>({
-        username: '',
-        phone: '',
-        description: '',
-        avatar: '',
-        email: '',
-        address: ''
-    });
-
-    const [formEdit, setFormEdit] = useState<ProfileForm>({
-        username: '',
-        phone: '',
-        description: '',
-        avatar: '',
-        email: '',
-        address: ''
-    });
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setForm(prev => ({ ...prev, [name]: value }));
-    };
-
-
 
     useEffect(() => {
         fetchData()
@@ -73,6 +29,8 @@ function page({ }: Props) {
     }
 
     const router = useRouter();
+
+    console.log(capters);
 
     return (
         <DefaultLayout>
@@ -115,7 +73,7 @@ function page({ }: Props) {
                         <div className="flex items-end mt-4 lg:mt0">
                             <div className="flex gap-3">
                                 <ButtonPrimary className='py-2 px-3 rounded-xl' onClick={openModalCreate}> + Tambah Foto</ButtonPrimary>
-                                <ButtonPrimary className='py-2 px-3 rounded-xl' onClick={openModalCreate}> Edit Capster</ButtonPrimary>
+                                <ButtonPrimary className='py-2 px-3 rounded-xl' onClick={() => router.push(`/admin_capster/edit_capster/${item._id}`)}> Edit Capster</ButtonPrimary>
                             </div>
                         </div>
                     </div>
