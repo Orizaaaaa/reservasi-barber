@@ -72,38 +72,6 @@ function page({ }: Props) {
         onOpen()
     }
 
-    const openModalEdit = (item: any) => {
-        onOpenEdit()
-        console.log('Edit:', item);
-        setFormEdit({
-            username: item.username,
-            phone: item.phone,
-            description: item.description,
-            avatar: item.avatar,
-            email: item.email,
-            address: item.address
-        })
-        // bisa navigasi ke halaman edit atau buka modal
-    }
-
-    const handleCreate = async (e: any) => {
-        e.preventDefault();
-        await createCapster(form, (res: any) => {
-            console.log(res);
-            fetchData()
-            onClose()
-            setForm({
-                username: '',
-                phone: '',
-                description: '',
-                avatar: '',
-                email: '',
-                address: ''
-            })
-        })
-    }
-
-    console.log('capters', capters);
     const router = useRouter();
 
     return (
@@ -116,9 +84,9 @@ function page({ }: Props) {
                 <div key={index} className="content p-3 border border-gray-400 rounded-xl mb-5">
                     <div className="flex flex-col items-center md:flex-row md:items-start md:gap-4 mx-auto">
                         {/* Gambar di tengah (mobile) dan kiri (desktop) */}
-                        <div className="w-32 md:w-48 mb-4 md:mb-0">
+                        <div className="w-28 h-52 md:w-40 md:h-56  mb-4 md:mb-0">
                             <img
-                                className="rounded-lg mx-auto"
+                                className="rounded-lg mx-auto w-full h-full object-cover"
                                 src={item.avatar || 'https://infokalteng.co/foto_berita/135642-dbb76965-0732-4b1b-bbe2-cbea751844c6.jpeg'}
                                 alt="Yangyang"
                             />
@@ -127,7 +95,7 @@ function page({ }: Props) {
                         {/* Teks */}
                         <div className=" md:text-left px-2 md:px-4">
                             <h1 className="text-lg font-bold text-center md:text-left">{item.username}</h1>
-                            <h2 className="text-sm text-gray-600 mb-2 text-center md:text-left">Fadding Sepesilis</h2>
+                            <h2 className="text-sm text-gray-600 mb-2 text-center md:text-left">{item.spesialis}</h2>
                             <p className="text-sm text-gray-700">
                                 {item.description}
                             </p>
@@ -156,178 +124,12 @@ function page({ }: Props) {
 
             <ButtonPrimary className='py-2 px-3 rounded-xl mt-6' onClick={() => (router.push('/admin_capster/add_capster'))}> + Tambah Capster</ButtonPrimary>
 
-            <ModalDefault className='bg-secondBlack' isOpen={isOpen} onClose={onClose}>
-                <h1 className='text-white' >CREATE</h1>
-                <form className="" onSubmit={handleCreate}>
-                    <InputSecond
-                        marginY='my-2'
-                        title="Username"
-                        htmlFor="username"
-                        type="text"
-                        className="w-full"
-                        value={form.username}
-                        onChange={handleChange}
-                    />
+            <ModalDefault isOpen={isOpen} onClose={onClose}>
+                <h1 className='text-black' >ADD FOTO</h1>
 
-                    <div className="flex gap-4">
-                        <div className="w-1/2">
-                            <InputSecond
-                                marginY='my-2'
-                                title="Email"
-                                htmlFor="email"
-                                type="email"
-                                className="w-full"
-                                value={form.email}
-                                onChange={handleChange}
-                            />
-                        </div>
-                        <div className="w-1/2">
-                            <InputSecond
-                                className="w-full"
-                                htmlFor="phone"
-                                marginY='my-2'
-                                title="No Handphone"
-                                type="text"
-                                onChange={handleChange}
-                                value={form.phone}
-                            />
-                        </div>
-                    </div>
-
-
-                    <InputSecond
-                        marginY='my-2'
-                        title="Alamat"
-                        htmlFor="address"
-                        type="text"
-                        className="w-full"
-                        value={form.address}
-                        onChange={handleChange}
-                    />
-
-                    <h3 className='text-white mb-1 mt-3' >Deskripsi</h3>
-                    <textarea
-                        name="description"
-                        placeholder="Deskripsi"
-                        value={form.description}
-                        onChange={handleChange}
-                        className="w-full border border-white focus:border-white focus:outline-none focus:ring-0 p-2 rounded-md text-white bg-transparent"
-                    />
-
-
-                    {/* Avatar input bisa berupa file upload */}
-                    <InputSecond
-                        marginY='my-2'
-                        title="Avatar URL"
-                        htmlFor="avatar"
-                        type="text"
-                        className="w-full"
-                        value={form.avatar}
-                        onChange={handleChange}
-                    />
-
-                    <div className="flex justify-end gap-2 mt-4">
-                        <button
-                            type='submit'
-                            className="bg-blue-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-blue-700 transition"
-                        >
-                            Save
-                        </button>
-                        <button
-                            className="bg-red-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-red-700 transition"
-                            onClick={onClose}
-                        >
-                            Close
-                        </button>
-                    </div>
-                </form>
             </ModalDefault>
 
-            <ModalDefault className='bg-secondBlack' isOpen={isOpenEdit} onClose={onCloseEdit}>
-                <h1 className='text-white' >EDIT</h1>
-                <div className="">
-                    <InputSecond
-                        marginY='my-2'
-                        title="Username"
-                        htmlFor="username"
-                        type="text"
-                        className="w-full"
-                        value={formEdit.username}
-                        onChange={handleChange}
-                    />
 
-                    <div className="flex gap-4">
-                        <div className="w-1/2">
-                            <InputSecond
-                                marginY='my-2'
-                                title="Email"
-                                htmlFor="email"
-                                type="email"
-                                className="w-full"
-                                value={formEdit.email}
-                                onChange={handleChange}
-                            />
-                        </div>
-                        <div className="w-1/2">
-                            <InputSecond
-                                className="w-full"
-                                htmlFor="phone"
-                                marginY='my-2'
-                                title="No Handphone"
-                                type="text"
-                                onChange={handleChange}
-                                value={formEdit.phone}
-                            />
-                        </div>
-                    </div>
-
-
-                    <InputSecond
-                        marginY='my-2'
-                        title="Alamat"
-                        htmlFor="address"
-                        type="text"
-                        className="w-full"
-                        value={formEdit.address}
-                        onChange={handleChange}
-                    />
-
-                    <h3 className='text-white mb-1 mt-3' >Deskripsi</h3>
-                    <textarea
-                        name="description"
-                        placeholder="Deskripsi"
-                        value={formEdit.description}
-                        onChange={handleChange}
-                        className="w-full border border-white focus:border-white focus:outline-none focus:ring-0 p-2 rounded-md text-white bg-transparent"
-                    />
-
-
-                    {/* Avatar input bisa berupa file upload */}
-                    <InputSecond
-                        marginY='my-2'
-                        title="Avatar URL"
-                        htmlFor="avatar"
-                        type="text"
-                        className="w-full"
-                        value={formEdit.avatar}
-                        onChange={handleChange}
-                    />
-
-                    <div className="flex justify-end gap-2 mt-4">
-                        <button
-                            className="bg-blue-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-blue-700 transition"
-                        >
-                            Save
-                        </button>
-                        <button
-                            className="bg-red-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-red-700 transition"
-                            onClick={onCloseEdit}
-                        >
-                            Close
-                        </button>
-                    </div>
-                </div>
-            </ModalDefault>
         </DefaultLayout>
     )
 }

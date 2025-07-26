@@ -15,6 +15,7 @@ import { CiCamera } from 'react-icons/ci'
 type Props = {}
 
 interface ProfileForm {
+    spesialis: string
     username: string;
     phone: string;
     description: string;
@@ -31,12 +32,22 @@ const page = (props: Props) => {
         description: '',
         avatar: null as File | null,
         email: '',
-        address: ''
+        address: '',
+        spesialis: ''
     });
 
 
     const handleCreate = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Validasi semua field harus diisi
+        const requiredFields = ['username', 'phone', 'description', 'email', 'address', 'spesialis'];
+        const isEmpty = requiredFields.some((key) => !form[key as keyof typeof form] || form[key as keyof typeof form]?.toString().trim() === '');
+
+        if (isEmpty) {
+            toast.error('⚠️ Semua data di form harus diisi!');
+            return;
+        }
 
         try {
             let imageUrl = '';
@@ -45,9 +56,9 @@ const page = (props: Props) => {
                 const uploadToast = toast.loading('Mengunggah gambar...');
                 try {
                     imageUrl = await postImage({ image: form.avatar });
-                    toast.success('Gambar berhasil diunggah', { id: uploadToast });
+                    toast.success('✅ Gambar berhasil diunggah', { id: uploadToast });
                 } catch (error) {
-                    toast.error('Gagal mengunggah gambar', { id: uploadToast });
+                    toast.error('❌ Gagal mengunggah gambar', { id: uploadToast });
                     return;
                 }
             }
@@ -56,7 +67,7 @@ const page = (props: Props) => {
             await createCapster(
                 { ...form, avatar: imageUrl },
                 (res: any) => {
-                    toast.success('Capster berhasil ditambahkan!', { id: createToast });
+                    toast.success('🎉 Capster berhasil ditambahkan!', { id: createToast });
                     router.push('/admin_capster');
                     setForm({
                         username: '',
@@ -64,17 +75,18 @@ const page = (props: Props) => {
                         description: '',
                         avatar: null,
                         email: '',
-                        address: ''
+                        address: '',
+                        spesialis: ''
                     });
                     console.log(res);
-
                 }
             );
         } catch (error) {
             console.error('Gagal membuat capster:', error);
-            toast.error('Terjadi kesalahan saat membuat capster.');
+            toast.error('❌ Terjadi kesalahan saat membuat capster.');
         }
     };
+
 
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -186,6 +198,18 @@ const page = (props: Props) => {
                     type="text"
                     className="w-full"
                     value={form.address}
+                    onChange={handleChange}
+                />
+
+                <InputSecond
+                    styleTitle={'text-black'}
+                    bg={'bg-transparent border border-gray-400'}
+                    marginY='my-1'
+                    title="Spesialis"
+                    htmlFor="spesialis"
+                    type="text"
+                    className="w-full"
+                    value={form.spesialis}
                     onChange={handleChange}
                 />
 
