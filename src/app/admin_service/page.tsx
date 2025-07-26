@@ -1,25 +1,41 @@
 'use client'
-import { createService, getAllService } from '@/api/method';
+import { postImage } from '@/api/image_post';
+import { createService, deleteService, getAllService } from '@/api/method';
 import ButtonPrimary from '@/elements/buttonPrimary';
+import ButtonSecondary from '@/elements/buttonSecondary';
 import InputSecond from '@/elements/input/InputSecond';
 import DefaultLayout from '@/fragments/layout/adminLayout/DefaultLayout'
 import ModalDefault from '@/fragments/modal/modal';
+import ModalAlert from '@/fragments/modal/modalAlert';
 import { formatRupiah, users } from '@/utils/helper';
-import { getKeyValue, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from '@heroui/react';
+import { getKeyValue, image, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from '@heroui/react';
 import React, { useEffect } from 'react'
+import toast from 'react-hot-toast';
+import { CiCamera } from 'react-icons/ci';
 import { FaTrash } from 'react-icons/fa';
 import { RiEdit2Fill } from 'react-icons/ri';
 
 type Props = {}
 
 function page({ }: Props) {
+    const { isOpen: isOpenDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure();
     const { onOpen, onClose, isOpen } = useDisclosure();
     const [services, setServices] = React.useState([])
+    const [id, setId] = React.useState('')
     const [form, setForm]: any = React.useState({
         name: "",
         description: "",
-        price: 0
+        price: 0,
+        image: null as File | null,
     });
+
+    const [formUpdate, setFormUpdate]: any = React.useState({
+        name: "",
+        description: "",
+        price: 0,
+        image: null as File | null,
+    })
+
     const fetchData = async () => {
         const data = await getAllService()
         setServices(data?.data || [])
@@ -39,19 +55,99 @@ function page({ }: Props) {
         setForm((prev: { name: string }) => ({ ...prev, [name]: value }));
     };
 
-    const handleCreate = async (e: any) => {
+    const handleCreate = async (e: React.FormEvent) => {
         e.preventDefault();
-        await createService(form, (res: any) => {
-            console.log(res);
-            fetchData()
-            onClose()
-            setForm({
-                name: "",
-                description: "",
-                price: 0
-            })
-        })
+
+        // Validasi form
+        if (!form.name || !form.description || !form.price || !form.image) {
+            toast.error("Semua field wajib diisi!");
+            return;
+        }
+
+        try {
+            toast.loading("Mengunggah gambar...");
+
+            let imageUrl = "";
+
+            // Upload gambar ke Cloudinary
+            if (form.image) {
+                imageUrl = await postImage({ image: form.image });
+            }
+
+            toast.dismiss(); // Hapus toast loading sebelumnya
+
+            const payload = {
+                ...form,
+                image: imageUrl, // Ganti File dengan URL
+            };
+
+            toast.loading("Menyimpan data...");
+
+            await createService(payload, (res: any) => {
+                toast.dismiss(); // Hapus toast loading sebelumnya
+                toast.success("Layanan berhasil dibuat!");
+                console.log(res);
+                fetchData();
+                onClose();
+                setForm({
+                    image: null,
+                    name: "",
+                    description: "",
+                    price: 0
+                });
+            });
+
+        } catch (error) {
+            toast.dismiss();
+            toast.error("Terjadi kesalahan saat membuat layanan.");
+            console.error("Terjadi kesalahan:", error);
+        }
+    };
+
+    const handleDelete = async () => {
+        const toastId = toast.loading('Menghapus layanan...');
+        try {
+            const result = await deleteService(id);
+            if (result) {
+                toast.success('Layanan berhasil dihapus!', { id: toastId });
+                fetchData();
+                onCloseDelete();
+            } else {
+                toast.error('Gagal menghapus layanan.', { id: toastId });
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error('Terjadi kesalahan saat menghapus.', { id: toastId });
+        }
+    };
+
+    const handleFileManager = (fileName: string) => {
+        if (fileName === 'add') {
+            const fileInput = document.getElementById("image-input-add") as HTMLInputElement | null;
+            fileInput ? fileInput.click() : null;
+        } else {
+            console.log('error');
+
+        }
+    };
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, InputSelect: string) => {
+        if (InputSelect === 'add') {
+            const selectedImage = e.target.files?.[0];
+            setForm({ ...form, image: selectedImage || null });
+        } else {
+            console.log('error');
+
+        }
+    };
+
+    const handleOpenModalDelete = (id: string) => {
+        setId(id)
+        console.log('id', id);
+
+        onOpenDelete()
     }
+
+    console.log(services);
 
     return (
         <DefaultLayout>
@@ -84,6 +180,7 @@ function page({ }: Props) {
                 }}
             >
                 <TableHeader>
+                    <TableColumn key="image">IMAGE</TableColumn>
                     <TableColumn key="name">NAME</TableColumn>
                     <TableColumn key="description">DESCRIPTION</TableColumn>
                     <TableColumn key="price">PRICE</TableColumn>
@@ -103,15 +200,23 @@ function page({ }: Props) {
                                                 <RiEdit2Fill color='white' />
                                             </button>
                                             <button
-
+                                                onClick={() => handleOpenModalDelete(item._id)}
                                                 className="px-2 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600"
                                             >
                                                 <FaTrash color='white' />
                                             </button>
                                         </div>
-                                    ) : (
-                                        getKeyValue(item, columnKey)
-                                    )}
+                                    )
+                                        : columnKey === 'image' ? (
+                                            <div>
+                                                {item.image && <img src={item.image} className='w-12 h-12 object-cover rounded-full' />}
+                                            </div>
+
+                                        )
+
+                                            : (
+                                                getKeyValue(item, columnKey)
+                                            )}
                                 </TableCell>
                             )}
                         </TableRow>
@@ -122,6 +227,31 @@ function page({ }: Props) {
             <ModalDefault isOpen={isOpen} onClose={onClose} className='w-full max-w-2xl ' closeButton={false} >
                 <h1 className='text-black' >CREATE SERVICE</h1>
                 <form className="" onSubmit={handleCreate}>
+                    <div>
+                        {form.image && form.image instanceof Blob ? (
+                            <img
+                                className="h-[150px] w-[150px] mx-auto object-cover border border-gray-400 rounded-lg"
+                                src={URL.createObjectURL(form.image)}
+                                alt="Preview"
+                            />
+                        ) : (
+                            <div className="h-[150px] w-[150px] mx-auto border border-gray-400 rounded-lg flex items-center justify-center bg-gray-100">
+                                <CiCamera size={50} color="gray" />
+                            </div>
+                        )}
+                        <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            id="image-input-add"
+                            onChange={(e) => handleImageChange(e, 'add')}
+                        />
+                        <div className='flex justify-center items-center gap-2 mt-5'>
+                            <ButtonPrimary className='border-2 border-black px-3 py-2 rounded-lg'
+                                onClick={() => handleFileManager('add')}>Ubah Foto </ButtonPrimary>
+                            <ButtonSecondary onClick={() => setForm({ ...form, image: null })} className=' px-3 py-2 rounded-lg' >Hapus Foto</ButtonSecondary>
+                        </div>
+                    </div>
                     <InputSecond
                         marginY='my-2'
                         title="Name"
@@ -165,6 +295,13 @@ function page({ }: Props) {
                     </div>
                 </form>
             </ModalDefault>
+            <ModalAlert isOpen={isOpenDelete} onClose={onCloseDelete} closeButton={false} className='w-full max-w-2xl ' >
+                <h1>Apakah anda yakin akan menghapus service ini ?</h1>
+                <div className="flex justify-end gap-3">
+                    <button className='bg-red-900  rounded-lg p-1 cursor-pointer py-2 px-3 text-white' onClick={onCloseDelete}>Tidak</button>
+                    <button className='bg-blue-500  rounded-lg p-1 cursor-pointer py-2 px-3 text-white' onClick={handleDelete} >Ya</button>
+                </div>
+            </ModalAlert>
         </DefaultLayout>
 
     )

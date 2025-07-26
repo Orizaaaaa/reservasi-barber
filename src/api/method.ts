@@ -12,6 +12,7 @@ export const getAllReservation = async () => {
 };
 
 
+
 // BOOKING
 export const createBooking = async (form: any, callback: any) => {
     await axiosInterceptor.post('/booking', form)
@@ -133,3 +134,13 @@ export const getAllService = async () => {
         return []; // atau null, tergantung kebutuhan
     }
 };
+
+export const deleteService = async (id: any) => {
+    try {
+        const result = await axiosInterceptor.delete(`/service/${id}`)
+        return result.data; // ✅ return data langsung
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
+}
