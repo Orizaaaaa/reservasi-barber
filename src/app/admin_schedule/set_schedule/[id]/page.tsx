@@ -213,12 +213,12 @@ const Page = () => {
 
                                     <TableCell>
                                         {item.is_active ? (
-                                            <div className="flex">
+                                            <div className="flex justify-center items-center">
                                                 <button
                                                     onClick={() =>
                                                         openTimeModal(item._id, 'jam_kerja', 'start')
                                                     }
-                                                    className="py-1 px-3 border border-black rounded-md hover:bg-gray-100"
+                                                    className="py-1 px-3 border border-black rounded-md hover:bg-gray-100 text-center"
                                                 >
                                                     {item.jam_kerja?.split(' - ')[0] || '--:--'}
                                                 </button>
@@ -227,7 +227,7 @@ const Page = () => {
                                                     onClick={() =>
                                                         openTimeModal(item._id, 'jam_kerja', 'end')
                                                     }
-                                                    className="py-1 px-3 border border-black rounded-md hover:bg-gray-100"
+                                                    className="py-1 px-3 border border-black rounded-md hover:bg-gray-100 text-center"
                                                 >
                                                     {item.jam_kerja?.split(' - ')[1] || '--:--'}
                                                 </button>
@@ -239,12 +239,12 @@ const Page = () => {
 
                                     <TableCell>
                                         {item.is_active ? (
-                                            <div className="flex">
+                                            <div className="flex justify-center items-center">
                                                 <button
                                                     onClick={() =>
                                                         openTimeModal(item._id, 'jam_istirahat', 'start')
                                                     }
-                                                    className="py-1 px-3 border border-black rounded-md hover:bg-gray-100"
+                                                    className="py-1 px-3 border border-black rounded-md hover:bg-gray-100 text-center"
                                                 >
                                                     {item.jam_istirahat?.split(' - ')[0] || '--:--'}
                                                 </button>
@@ -253,7 +253,7 @@ const Page = () => {
                                                     onClick={() =>
                                                         openTimeModal(item._id, 'jam_istirahat', 'end')
                                                     }
-                                                    className="py-1 px-3 border border-black rounded-md hover:bg-gray-100"
+                                                    className="py-1 px-3 border border-black rounded-md hover:bg-gray-100 text-center"
                                                 >
                                                     {item.jam_istirahat?.split(' - ')[1] || '--:--'}
                                                 </button>
