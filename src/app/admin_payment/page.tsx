@@ -46,26 +46,39 @@ function page({ }: Props) {
 
     const handleCreate = async (e: any) => {
         e.preventDefault();
-        await createPayment(form, (res: any) => {
-            console.log(res);
-            fetchData()
-            onClose()
-            setForm({
-                name: ''
-            })
-        })
-    }
+
+        if (!form.name.trim()) {
+            toast.error('⚠️ Nama pembayaran tidak boleh kosong!');
+            return;
+        }
+
+        const createToast = toast.loading('Menyimpan data pembayaran...');
+
+        try {
+            await createPayment(form, (res: any) => {
+                console.log(res);
+                fetchData();
+                onClose();
+                setForm({ name: '' });
+                toast.success('✅ Pembayaran berhasil ditambahkan!', { id: createToast });
+            });
+        } catch (error) {
+            console.error(error);
+            toast.error('❌ Gagal menambahkan pembayaran.', { id: createToast });
+        }
+    };
+
 
     const handleUpdate = async (e: any) => {
-        e.priventDefault();
+        e.preventDefault();
         const toastId = toast.loading('Menyimpan perubahan...');
 
         try {
             const result = await updatePayment(id, form);
             if (result) {
                 toast.success('Template berhasil diperbarui!', { id: toastId });
-                console.log('babi');
-
+                fetchData()
+                onClose()
             } else {
                 toast.error('Gagal memperbarui template.', { id: toastId });
             }
@@ -76,7 +89,7 @@ function page({ }: Props) {
     };
 
     const openModalUpdate = (item: any) => {
-        setId(item.id)
+        setId(item._id)
         setForm({
             name: item.name
         })
@@ -85,7 +98,7 @@ function page({ }: Props) {
     }
 
     const openModalDelete = (item: any) => {
-        setId(item.id)
+        setId(item._id)
         onWarningOpen()
     }
 
