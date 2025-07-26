@@ -86,6 +86,18 @@ function page({ }: Props) {
             capster_id: _id
         });
     };
+    const onSelectionChangeStatus = (value: string) => {
+        setForm({
+            ...form,
+            status: value
+        });
+    };
+
+    const dataTipe = [
+        { key: 'Menunggu', label: 'Menunggu', value: 'Menunggu' },
+        { key: 'DI Jadwalkan Ulang', label: 'DI Jadwalkan Ulang', value: 'DI Jadwalkan Ulang' },
+        { key: 'Selesai', label: 'Selesai', value: 'Selesai' }
+    ];
     console.log('caoster', capsters);
     console.log('form', form);
     console.log('data', data);
@@ -162,13 +174,48 @@ function page({ }: Props) {
             </Table>
 
             <ModalDefault isOpen={isOpen} onClose={onClose}>
-                <h1>EDIT</h1>
+                <h1 className='font font-medium' >EDIT LIST BOOKING</h1>
 
-                <Autocomplete className="max-w-xs" onSelectionChange={(e: any) => onSelectionChange(e)} value={form.capster_id} selectedKey={form.capster_id}>
-                    {capsters.map((item: any) => (
-                        <AutocompleteItem key={item._id}>{item.username}</AutocompleteItem>
-                    ))}
-                </Autocomplete>
+                <div className="">
+                    <h1>Status</h1>
+                    <Autocomplete
+                        className="w-full"
+                        variant='bordered'
+                        onSelectionChange={(e: any) => onSelectionChangeStatus(e)}
+                        value={form.status}
+                    >
+                        {dataTipe.map((item: any) => (
+                            <AutocompleteItem key={item.key}>{item.label}</AutocompleteItem>
+                        ))}
+                    </Autocomplete>
+                </div>
+
+                <div className="">
+                    <h1>Capster</h1>
+                    <Autocomplete className="w-full"
+                        variant='bordered'
+                        onSelectionChange={(e: any) => onSelectionChange(e)} value={form.capster_id} selectedKey={form.capster_id}>
+                        {capsters.map((item: any) => (
+                            <AutocompleteItem key={item._id}>{item.username}</AutocompleteItem>
+                        ))}
+                    </Autocomplete>
+                </div>
+
+
+                <div className="flex justify-end gap-2 mt-4">
+                    <button
+                        type='submit'
+                        className="bg-blue-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-blue-700 transition"
+                    >
+                        Save
+                    </button>
+                    <button
+                        className="bg-red-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-red-700 transition"
+                        onClick={onClose}
+                    >
+                        Close
+                    </button>
+                </div>
             </ModalDefault>
         </DefaultLayout>
     )
