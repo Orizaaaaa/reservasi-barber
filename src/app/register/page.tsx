@@ -2,8 +2,10 @@
 import { registerUser } from '@/api/auth'
 import ButtonPrimary from '@/elements/buttonPrimary'
 import InputForm from '@/elements/input/InputForm'
+import { logo3 } from '@/image'
 import { Autocomplete, Spinner } from '@heroui/react'
 import { a } from 'framer-motion/client'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
@@ -140,7 +142,11 @@ const page = (props: Props) => {
     }
     return (
         <div className="flex justify-center items-center min-h-screen w-full bg-gray-100">
+
             <form className="p-6 bg-[#e9e9e9] rounded-lg m-3 w-[350px] sm:w-[400px] md:w-[450px] lg:w-[500px]" onSubmit={handleRegister}>
+                <div className="logo flex justify-center my-5">
+                    <Image src={logo3} alt="logo" width={180} height={130} />
+                </div>
                 <InputForm className="bg-slate-300" errorMsg={errorMsg.username} placeholder="Masukkan Nama" type="text" htmlFor="username" value={form.username} onChange={handleChange} />
 
                 <div className="flex gap-4">

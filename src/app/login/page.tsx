@@ -13,6 +13,7 @@ import { loginService } from '@/api/auth';
 import { Spinner } from '@heroui/react';
 import InputForm from '@/elements/input/InputForm';
 import ButtonPrimary from '@/elements/buttonPrimary';
+import { logo3 } from '@/image';
 
 const Login = () => {
     const router = useRouter();
@@ -118,10 +119,9 @@ const Login = () => {
             </div>
             <div className="container bg-primary mx-auto flex flex-col justify-center items-center  h-[99vh] ">
                 <form className='p-6 bg-[#e9e9e9] w-full md:w-96 rounded-lg m-3 lg:m-0' onSubmit={handleLogin}>
-                    {/* <div className="logo flex justify-center my-5">
-            <Image src={realLogo} alt="logo" width={180} height={130} />
-          </div> */}
-
+                    <div className="logo flex justify-center my-5">
+                        <Image src={logo3} alt="logo" width={180} height={130} />
+                    </div>
                     <InputForm className='bg-slate-100' errorMsg={errorMsg.email} placeholder='Masukkan Email' type='email' htmlFor={'email'} value={form.email} onChange={handleChange} />
                     <div className="relative">
                         <button onClick={togglePassword} type='button' className={`icon-password h-full bg-transparent flex absolute right-0 justify-center items-center pe-4 ${errorMsg.password ? 'pb-7' : ''}`}>
