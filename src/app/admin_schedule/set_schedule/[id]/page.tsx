@@ -155,7 +155,7 @@ const Page = (props: Props) => {
                                     </TableCell>
                                     <TableCell>
                                         <div>
-                                            <ButtonPrimary className='py-2 w-full rounded-lg' >Generate</ButtonPrimary>
+                                            <ButtonPrimary className='py-2 w-full rounded-lg' >Simpan</ButtonPrimary>
                                         </div>
                                     </TableCell>
                                 </TableRow>
