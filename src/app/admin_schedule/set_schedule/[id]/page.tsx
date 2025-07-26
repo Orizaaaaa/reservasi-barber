@@ -1,38 +1,61 @@
 'use client'
-import { getCapsterById } from '@/api/method'
+import { getCapsterById, updateCapster } from '@/api/method'
 import ButtonPrimary from '@/elements/buttonPrimary'
 import DefaultLayout from '@/fragments/layout/adminLayout/DefaultLayout'
+import ModalDefault from '@/fragments/modal/modal'
+import { hours } from '@/utils/helper'
 import {
-    getKeyValue,
-    Pagination,
     Table,
     TableBody,
     TableCell,
     TableColumn,
     TableHeader,
     TableRow,
+    useDisclosure,
 } from '@heroui/react'
 import { useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
-import { FaPenSquare, FaTrashAlt } from 'react-icons/fa'
-import { IoMdCheckboxOutline } from 'react-icons/io'
-import { MdCheckBoxOutlineBlank } from 'react-icons/md'
 
-type Props = {}
+const Page = () => {
+    const { onOpen, onClose, isOpen } = useDisclosure()
+    const { id }: any = useParams()
 
-const Page = (props: Props) => {
     const [data, setData] = useState<any>(null)
     const [items, setItems] = useState<any[]>([])
-    const { id }: any = useParams()
+    const [selectedDay, setSelectedDay] = useState<string | null>(null)
+    const [selectedField, setSelectedField] = useState<'jam_kerja' | 'jam_istirahat' | null>(null)
+    const [selectedPart, setSelectedPart] = useState<'start' | 'end' | null>(null)
+
+    const [form, setForm] = useState<any>({
+        username: '',
+        phone: '',
+        spesialis: '',
+        description: '',
+        avatar: '',
+        rating: 0,
+        schedule: {
+            senin: { is_active: false, jam_kerja: '', jam_istirahat: '' },
+            selasa: { is_active: false, jam_kerja: '', jam_istirahat: '' },
+            rabu: { is_active: false, jam_kerja: '', jam_istirahat: '' },
+            kamis: { is_active: false, jam_kerja: '', jam_istirahat: '' },
+            jumat: { is_active: false, jam_kerja: '', jam_istirahat: '' },
+            sabtu: { is_active: false, jam_kerja: '', jam_istirahat: '' },
+            minggu: { is_active: false, jam_kerja: '', jam_istirahat: '' },
+        },
+        email: '',
+        address: '',
+    })
 
     useEffect(() => {
         if (!id) return
-
         getCapsterById(id, (res: any) => {
             const result = res.data
             setData(result)
-
-            const scheduleData = result.schedule || {}
+            setForm((prev: any) => ({
+                ...prev,
+                ...result,
+                schedule: result.schedule || prev.schedule,
+            }))
 
             const days = [
                 { key: 'senin', label: 'Senin' },
@@ -45,28 +68,91 @@ const Page = (props: Props) => {
             ]
 
             const formattedItems = days.map((day) => {
-                const sched = scheduleData[day.key] || {}
+                const sched = result.schedule?.[day.key] || {}
                 return {
                     _id: day.key,
                     name: day.label,
                     is_active: sched.is_active,
-                    jam_kerja: sched.is_active ? sched.jam_kerja : '-',
-                    jam_istirahat: sched.is_active ? sched.jam_istirahat : '-',
+                    jam_kerja: sched.jam_kerja || '',
+                    jam_istirahat: sched.jam_istirahat || '',
                 }
             })
             setItems(formattedItems)
         })
     }, [id])
 
-    const handleToggle = (id: string) => {
-        setItems((prevItems) =>
-            prevItems.map((item) =>
-                item._id === id ? { ...item, is_active: !item.is_active } : item
+    const handleToggle = (dayKey: string) => {
+        setItems((prev) =>
+            prev.map((item) =>
+                item._id === dayKey ? { ...item, is_active: !item.is_active } : item
             )
-        );
-    };
+        )
 
-    console.log('data', data);
+        setForm((prevForm: any) => ({
+            ...prevForm,
+            schedule: {
+                ...prevForm.schedule,
+                [dayKey]: {
+                    ...prevForm.schedule[dayKey],
+                    is_active: !prevForm.schedule[dayKey]?.is_active,
+                },
+            },
+        }))
+    }
+
+    const openTimeModal = (
+        dayKey: string,
+        field: 'jam_kerja' | 'jam_istirahat',
+        part: 'start' | 'end'
+    ) => {
+        setSelectedDay(dayKey)
+        setSelectedField(field)
+        setSelectedPart(part)
+        onOpen()
+    }
+
+    const handleSelectTime = (time: string) => {
+        if (!selectedDay || !selectedField || !selectedPart) return
+
+        setItems((prev) =>
+            prev.map((item) => {
+                if (item._id === selectedDay) {
+                    const [start = '', end = ''] = item[selectedField]?.split(' - ') || ['', '']
+                    const newTime =
+                        selectedPart === 'start' ? `${time} - ${end}` : `${start} - ${time}`
+                    return { ...item, [selectedField]: newTime }
+                }
+                return item
+            })
+        )
+
+        setForm((prevForm: any) => {
+            const current = prevForm.schedule[selectedDay]?.[selectedField] || ''
+            const [start = '', end = ''] = current.split(' - ')
+            const newTime =
+                selectedPart === 'start' ? `${time} - ${end}` : `${start} - ${time}`
+
+            return {
+                ...prevForm,
+                schedule: {
+                    ...prevForm.schedule,
+                    [selectedDay]: {
+                        ...prevForm.schedule[selectedDay],
+                        [selectedField]: newTime,
+                    },
+                },
+            }
+        })
+
+        onClose()
+    }
+
+    const handleSave = async () => {
+        await updateCapster(id, form, (res: any) => {
+            console.log('Update berhasil', res)
+            // toast.success("Berhasil update")
+        })
+    }
 
     return (
         <DefaultLayout>
@@ -80,7 +166,6 @@ const Page = (props: Props) => {
                                 alt={data.username}
                             />
                         </div>
-
                         <div>
                             <h1 className="text-xl font-bold">{data.username}</h1>
                             <h1 className="font-semibold mt-2">Hari Kerja: Senin - Sabtu</h1>
@@ -100,14 +185,7 @@ const Page = (props: Props) => {
                         </div>
                     </div>
 
-                    <Table
-                        aria-label="Tabel Jadwal"
-                        classNames={{
-                            th: 'bg-gray-100 text-black font-semibold',
-                            td: 'text-black',
-                            wrapper: 'bg-white text-black',
-                        }}
-                    >
+                    <Table aria-label="Tabel Jadwal">
                         <TableHeader>
                             <TableColumn key="name">HARI</TableColumn>
                             <TableColumn key="is_active">STATUS</TableColumn>
@@ -127,45 +205,32 @@ const Page = (props: Props) => {
                                                 checked={item.is_active}
                                                 onChange={() => handleToggle(item._id)}
                                             />
-                                            <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 
-            dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 
-            peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full 
-            peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] 
-            after:start-[2px] after:bg-white after:border-gray-300 after:border 
-            after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 
-            peer-checked:bg-blue-600 dark:peer-checked:bg-blue-600">
+                                            <div className="relative w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-600">
+                                                <div className="absolute top-[2px] left-[2px] w-5 h-5 bg-white rounded-full transition-transform peer-checked:translate-x-5" />
                                             </div>
                                         </label>
                                     </TableCell>
 
-                                    {/* Jam Kerja */}
                                     <TableCell>
                                         {item.is_active ? (
                                             <div className="flex">
-                                                <h1 className='py-1 px-3 border-black border rounded-md'>
-                                                    {item.jam_kerja?.split(" - ")[0] || '--:--'}
-                                                </h1>
-                                                <h1 className="mx-2">-</h1>
-                                                <h1 className='py-1 px-3 border-black border rounded-md'>
-                                                    {item.jam_kerja?.split(" - ")[1] || '--:--'}
-                                                </h1>
-                                            </div>
-                                        ) : (
-                                            <div className="text-center text-gray-400">--:--</div>
-                                        )}
-                                    </TableCell>
-
-                                    {/* Jam Istirahat */}
-                                    <TableCell>
-                                        {item.is_active ? (
-                                            <div className="flex">
-                                                <h1 className='py-1 px-3 border-black border rounded-md'>
-                                                    {item.jam_istirahat?.split(" - ")[0] || '--:--'}
-                                                </h1>
-                                                <h1 className="mx-2">-</h1>
-                                                <h1 className='py-1 px-3 border-black border rounded-md'>
-                                                    {item.jam_istirahat?.split(" - ")[1] || '--:--'}
-                                                </h1>
+                                                <button
+                                                    onClick={() =>
+                                                        openTimeModal(item._id, 'jam_kerja', 'start')
+                                                    }
+                                                    className="py-1 px-3 border border-black rounded-md hover:bg-gray-100"
+                                                >
+                                                    {item.jam_kerja?.split(' - ')[0] || '--:--'}
+                                                </button>
+                                                <span className="mx-2">-</span>
+                                                <button
+                                                    onClick={() =>
+                                                        openTimeModal(item._id, 'jam_kerja', 'end')
+                                                    }
+                                                    className="py-1 px-3 border border-black rounded-md hover:bg-gray-100"
+                                                >
+                                                    {item.jam_kerja?.split(' - ')[1] || '--:--'}
+                                                </button>
                                             </div>
                                         ) : (
                                             <div className="text-center text-gray-400">--:--</div>
@@ -173,16 +238,72 @@ const Page = (props: Props) => {
                                     </TableCell>
 
                                     <TableCell>
-                                        <ButtonPrimary className='py-2 w-full rounded-lg'>Simpan</ButtonPrimary>
+                                        {item.is_active ? (
+                                            <div className="flex">
+                                                <button
+                                                    onClick={() =>
+                                                        openTimeModal(item._id, 'jam_istirahat', 'start')
+                                                    }
+                                                    className="py-1 px-3 border border-black rounded-md hover:bg-gray-100"
+                                                >
+                                                    {item.jam_istirahat?.split(' - ')[0] || '--:--'}
+                                                </button>
+                                                <span className="mx-2">-</span>
+                                                <button
+                                                    onClick={() =>
+                                                        openTimeModal(item._id, 'jam_istirahat', 'end')
+                                                    }
+                                                    className="py-1 px-3 border border-black rounded-md hover:bg-gray-100"
+                                                >
+                                                    {item.jam_istirahat?.split(' - ')[1] || '--:--'}
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <div className="text-center text-gray-400">--:--</div>
+                                        )}
+                                    </TableCell>
+
+                                    <TableCell>
+                                        <ButtonPrimary
+                                            onClick={handleSave}
+                                            className="py-2 w-full rounded-lg"
+                                        >
+                                            Simpan
+                                        </ButtonPrimary>
                                     </TableCell>
                                 </TableRow>
                             )}
                         </TableBody>
-
-
                     </Table>
                 </>
             )}
+
+            <ModalDefault isOpen={isOpen} onClose={onClose}>
+                <h1 className="text-black text-xl font-semibold mb-4">Pilih Jam</h1>
+                <div className="bg-gray-100 rounded-md shadow text-center w-full">
+                    <h2 className="text-gray-600 font-semibold text-lg mb-4 uppercase">
+                        Waktu tersedia
+                    </h2>
+                    <div className="grid grid-cols-3 gap-4">
+                        {Object.entries(hours).map(([label, times]) => (
+                            <div key={label}>
+                                <h3 className="font-bold mb-2">{label}</h3>
+                                <div className="flex flex-col items-center gap-3">
+                                    {times.map((time) => (
+                                        <button
+                                            key={time}
+                                            className="bg-yellow-300 px-3 py-1 rounded hover:bg-yellow-400 transition"
+                                            onClick={() => handleSelectTime(time)}
+                                        >
+                                            {time}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </ModalDefault>
         </DefaultLayout>
     )
 }
