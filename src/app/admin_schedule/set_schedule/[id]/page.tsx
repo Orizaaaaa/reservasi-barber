@@ -205,10 +205,16 @@ const Page = () => {
                                                 checked={item.is_active}
                                                 onChange={() => handleToggle(item._id)}
                                             />
-                                            <div className="relative w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-600">
-                                                <div className="absolute top-[2px] left-[2px] w-5 h-5 bg-white rounded-full transition-transform peer-checked:translate-x-5" />
+                                            <div className="relative w-11 h-6 bg-gray-300 rounded-full peer-checked:bg-blue-600 transition-colors">
+                                                <div
+                                                    className={`
+                                                    absolute top-[2px] w-5 h-5 bg-white rounded-full transition-transform
+                                                    ${item.is_active ? 'translate-x-5 left-[2px]' : 'left-[2px]'}
+                                                `}
+                                                />
                                             </div>
                                         </label>
+
                                     </TableCell>
 
                                     <TableCell>
