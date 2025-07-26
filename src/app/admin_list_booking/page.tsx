@@ -4,7 +4,9 @@ import DefaultLayout from '@/fragments/layout/adminLayout/DefaultLayout';
 import ModalDefault from '@/fragments/modal/modal';
 import { Autocomplete, AutocompleteItem, getKeyValue, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from '@heroui/react'
 import React, { useEffect } from 'react'
-import { FaTrashAlt } from 'react-icons/fa';
+import { FaPenSquare, FaTrashAlt } from 'react-icons/fa';
+import { IoMdCheckboxOutline } from 'react-icons/io';
+import { MdCheckBoxOutlineBlank } from 'react-icons/md';
 import { RiEdit2Line } from 'react-icons/ri';
 
 type Props = {}
@@ -89,7 +91,7 @@ function page({ }: Props) {
     console.log('data', data);
     return (
         <DefaultLayout>
-            <h1 className="text-black text-xl font-semibold mb-4">TODAY RESERVATION</h1>
+            <h1 className="text-black text-xl font-semibold mb-4">LIST BOOKING</h1>
             <Table
                 aria-label="Tabel Booking"
                 bottomContent={
@@ -131,16 +133,22 @@ function page({ }: Props) {
                                     {columnKey === 'action' ? (
                                         <div className="flex gap-2">
                                             <button
-                                                onClick={openModalEdit.bind(null, item)}
-                                                className="bg-blue-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-blue-700 transition"
                                             >
-                                                <RiEdit2Line />
+                                                {item.status === 'Menunggu' ? (
+                                                    <MdCheckBoxOutlineBlank size={23} />
+                                                ) :
+                                                    <IoMdCheckboxOutline size={23} color='green' />
+                                                }
+                                            </button>
+                                            <button
+                                                onClick={openModalEdit.bind(null, item)}
+                                            >
+                                                <FaPenSquare color='#f9d41c' size={20} />
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(item)}
-                                                className="bg-red-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-red-700 transition"
                                             >
-                                                <FaTrashAlt />
+                                                <FaTrashAlt color='red' size={18} />
                                             </button>
                                         </div>
                                     ) : (
