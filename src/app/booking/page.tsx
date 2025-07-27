@@ -15,6 +15,7 @@ import { IoArrowBackCircleOutline } from 'react-icons/io5';
 import { MdOutlineAccessTime } from 'react-icons/md';
 import toast from 'react-hot-toast';
 import { createBooking, getAllCapster, getAllPayments, getAllService } from '@/api/method';
+import BottomNavigation from '@/fragments/nav/navigation';
 
 type Props = {}
 
@@ -149,9 +150,6 @@ function page({ }: Props) {
         }
     };
 
-
-
-
     console.log(capsters);
     console.log(services);
     console.log(payments);
@@ -164,7 +162,7 @@ function page({ }: Props) {
                 <IoArrowBackCircleOutline size={25} />
             </div>
             <h1 className='text-2xl font-semibold ' >Booking</h1>
-            <div className="form">
+            <div className="form mb-7">
                 <InputSecond
                     styleTitle="text-black"
                     bg="bg-none border border-gray-400 placeholder-gray-400"
@@ -288,6 +286,8 @@ function page({ }: Props) {
                     Booking
                 </ButtonPrimary>
             </div>
+
+            <BottomNavigation />
 
             <ModalDefault isOpen={isOpen} onClose={onClose}>
                 <h1 className="text-black text-xl font-semibold mb-4">JAM</h1>

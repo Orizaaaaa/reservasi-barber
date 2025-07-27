@@ -101,7 +101,7 @@ export default function HomeScreen() {
 
 
 
-                <div className=""> {/* padding untuk kasih ruang kiri-kanan */}
+                <div className="mb-5"> {/* padding untuk kasih ruang kiri-kanan */}
                     <Swiper
                         slidesPerView={'auto'}
                         spaceBetween={16}
@@ -133,7 +133,7 @@ export default function HomeScreen() {
                 </div>
 
 
-                {/* <BottomNavigation /> */}
+                <BottomNavigation />
 
             </div>
         </section>
