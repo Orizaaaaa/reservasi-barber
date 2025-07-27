@@ -29,7 +29,7 @@ function page({ }: Props) {
         hour: 0,
         capster_id: '',
         payment_id: '',
-        rating: 0,
+        rating: 5,
         image: '',
         haircut_type: '',
         service_id: '',

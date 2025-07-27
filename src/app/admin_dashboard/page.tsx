@@ -43,6 +43,7 @@ const Page = () => {
         status: '',
         capster_id: '',
     })
+
     // Fetch data
     useEffect(() => {
         const fetchData = async () => {
@@ -68,6 +69,46 @@ const Page = () => {
         fetchData()
     }, [])
 
+    // Get today's date in YYYY-MM-DD format
+    const today = new Date().toISOString().split('T')[0];
+
+    // Filter today's reservations
+    const todayReservations = data.filter(item => {
+        const reservationDate = new Date(item.date).toISOString().split('T')[0];
+        return reservationDate === today;
+    });
+
+    // Count total bookings today
+    const totalTodayBooking = todayReservations.length;
+
+    // Get active barbers today (those with assigned reservations)
+    const activeBarbers = todayReservations
+        .filter(item => item.capster_id !== null)
+        .map(item => item.capster_id);
+
+    // Remove duplicates
+    const uniqueActiveBarbers = [...new Map(activeBarbers.map(item => [item._id, item])).values()];
+
+    // Count active barbers
+    const totalActiveBarbers = uniqueActiveBarbers.length;
+
+    // Group reservations by barber
+    const reservationsByBarber = uniqueActiveBarbers.map(barber => {
+        const barberReservations = todayReservations.filter(item =>
+            item.capster_id && item.capster_id._id === barber._id
+        );
+
+        return {
+            barberName: barber.username,
+            count: barberReservations.length,
+            reservations: barberReservations.map(res => ({
+                name: res.name,
+                hour: res.hour,
+                email: res.email
+            }))
+        };
+    });
+
     // Pagination
     const pages = Math.ceil(data.length / rowsPerPage)
 
@@ -82,174 +123,85 @@ const Page = () => {
         onOpen()
         console.log('Edit:', item);
         setForm({
-            payment_id: item.payment_id._id,
+            payment_id: item.payment_id?._id || '',
             status: item.status,
-            capster_id: item.capster_id._id,
+            capster_id: item.capster_id?._id || '',
         })
-        // bisa navigasi ke halaman edit atau buka modal
     }
 
     const handleDelete = (item: any) => {
         console.log('Delete:', item._id)
-        // bisa buka konfirmasi hapus
     }
+
     const handleChange = (e: any) => {
         setForm({
             ...form,
             [e.target.name]: e.target.value
         })
     }
+
     const onSelectionChange = (_id: string) => {
         setForm({
             ...form,
             capster_id: _id
         });
     };
-    console.log('caoster', capsters);
-    console.log('form', form);
-    console.log('data', data);
-
 
     return (
         <DefaultLayout>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4" >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div className="text border border-gray-400 rounded-2xl p-3">
-                    <h1 className='text-black text-2xl font-semibold' >Jumlah Barberman Aktif</h1>
-                    <h2 className='text-black text-3xl font-extrabold ' >2</h2>
+                    <h1 className='text-black text-2xl font-semibold'>Jumlah Barberman Aktif</h1>
+                    <h2 className='text-black text-3xl font-extrabold'>{totalActiveBarbers}</h2>
                 </div>
                 <div className="text border border-gray-400 rounded-2xl p-3">
-                    <h1 className='text-black text-2xl  font-semibold' >Total Booking Hari Ini</h1>
-                    <h2 className='text-black text-3xl font-extrabold' >2</h2>
+                    <h1 className='text-black text-2xl font-semibold'>Total Booking Hari Ini</h1>
+                    <h2 className='text-black text-3xl font-extrabold'>{totalTodayBooking}</h2>
                 </div>
             </div>
 
-            <div className="border  border-gray-400 p-3 rounded-2xl">
-                <h1 className='text-xl font-semibold mb-3' >Jumlah Antrian</h1>
-                <div className="grid  grid-cols-1  lg:grid-cols-2 gap-10">
-                    <div className="content">
-                        <h1 className='text-lg mb-2'>Capster Yangyang</h1>
-                        <hr />
-                        <h1 className='text-black text-3xl font-extrabold my-5' >5</h1>
+            <div className="border border-gray-400 p-3 rounded-2xl">
+                <h1 className='text-xl font-semibold mb-3'>Jumlah Antrian</h1>
+                {reservationsByBarber.length > 0 ? (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                        {reservationsByBarber.map((barber, index) => (
+                            <div className="content" key={index}>
+                                <h1 className='text-lg mb-2'>Capster {barber.barberName}</h1>
+                                <hr />
+                                <h1 className='text-black text-3xl font-extrabold my-5'>{barber.count}</h1>
 
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200 rounded-md shadow-md">
-                                <thead className="">
-                                    <tr>
-                                        <th className="pr-6 py-3 text-left text-sm font-semibold">Nama Customer</th>
-                                        <th className="pr-6 py-3 text-left text-sm font-semibold">Jam</th>
-                                        <th className="pr-6 py-3 text-left text-sm font-semibold">Email</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                    {users.map((user) => (
-                                        <tr key={user.jam * 10} className="hover:bg-gray-50 transition">
-                                            <td className="pr-6 py-4 text-sm text-gray-900">{user.name}</td>
-                                            <td className="pr-6 py-4 text-sm text-gray-900">{user.jam + ':00'}</td>
-                                            <td className="pr-6 py-4 text-sm text-gray-900">{user.email}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-
+                                <div className="overflow-x-auto">
+                                    <table className="min-w-full divide-y divide-gray-200 rounded-md shadow-md">
+                                        <thead className="">
+                                            <tr>
+                                                <th className="pr-6 py-3 text-left text-sm font-semibold">Nama Customer</th>
+                                                <th className="pr-6 py-3 text-left text-sm font-semibold">Jam</th>
+                                                <th className="pr-6 py-3 text-left text-sm font-semibold">Email</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="bg-white divide-y divide-gray-200">
+                                            {barber.reservations.map((reservation, idx) => (
+                                                <tr key={idx} className="hover:bg-gray-50 transition">
+                                                    <td className="pr-6 py-4 text-sm text-gray-900">{reservation.name}</td>
+                                                    <td className="pr-6 py-4 text-sm text-gray-900">{reservation.hour}:00</td>
+                                                    <td className="pr-6 py-4 text-sm text-gray-900">{reservation.email}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        ))}
                     </div>
-
-                    <div className="content">
-                        <h1 className='text-lg mb-2'>Capster Yangyang</h1>
-                        <hr />
-                        <h1 className='text-black text-3xl font-extrabold my-5' >5</h1>
-
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200 rounded-md shadow-md">
-                                <thead className="">
-                                    <tr>
-                                        <th className="pr-6 py-3 text-left text-sm font-semibold">Nama Customer</th>
-                                        <th className="pr-6 py-3 text-left text-sm font-semibold">Jam</th>
-                                        <th className="pr-6 py-3 text-left text-sm font-semibold">Email</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                    {users.map((user) => (
-                                        <tr key={user.jam * 10} className="hover:bg-gray-50 transition">
-                                            <td className="pr-6 py-4 text-sm text-gray-900">{user.name}</td>
-                                            <td className="pr-6 py-4 text-sm text-gray-900">{user.jam + ':00'}</td>
-                                            <td className="pr-6 py-4 text-sm text-gray-900">{user.email}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-
+                ) : (
+                    <div className="text-center py-10">
+                        <p className="text-gray-500">Tidak ada antrian hari ini</p>
                     </div>
-                </div>
+                )}
             </div>
-            {/* <h1 className="text-black mb-4">TODAY RESERVATION</h1>
-            <Table
-                aria-label="Tabel Booking"
-                bottomContent={
-                    <div className="flex w-full justify-center">
-                        <Pagination
-                            isCompact
-                            showControls
-                            showShadow
-                            color="primary"
-                            page={page}
-                            total={pages}
-                            onChange={(p) => setPage(p)}
-                        />
-                    </div>
-                }
-                classNames={{
-                    th: 'text-white bg-black',
-                    wrapper: 'min-h-[222px] bg-[#16181a] text-white',
-                }}
-            >
-                <TableHeader>
-                    <TableColumn key="name">NAME</TableColumn>
-                    <TableColumn key="phone">PHONE</TableColumn>
-                    <TableColumn key="capster_name">CAPSTER</TableColumn>
-                    <TableColumn key="service_name">SERVICE</TableColumn>
-                    <TableColumn key="haircut_type">HAIRCUT</TableColumn>
-                    <TableColumn key="formatted_date">DATE</TableColumn>
-                    <TableColumn key="hour">HOUR</TableColumn>
-                    <TableColumn key="payment_name">PAYMENT</TableColumn>
-                    <TableColumn key="status">STATUS</TableColumn>
-                    <TableColumn key="action">ACTION</TableColumn>
-                </TableHeader>
-                <TableBody items={items} isLoading={loading}>
-                    {(item: any) => (
-                        <TableRow key={item._id}>
-                            {(columnKey: any) => (
-                                <TableCell>
-                                    {columnKey === 'action' ? (
-                                        <div className="flex gap-2">
-                                            <button
-                                                onClick={openModalEdit.bind(null, item)}
-                                                className="bg-blue-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-blue-700 transition"
-                                            >
-                                                Edit
-                                            </button>
-                                            <button
-                                                onClick={() => handleDelete(item)}
-                                                className="bg-red-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-red-700 transition"
-                                            >
-                                                Delete
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        getKeyValue(item, columnKey)
-                                    )}
-                                </TableCell>
-                            )}
-                        </TableRow>
-                    )}
-                </TableBody>
-            </Table> */}
 
             <ModalDefault isOpen={isOpen} onClose={onClose}>
                 <h1>EDIT</h1>
-
                 <Autocomplete className="max-w-xs" onSelectionChange={(e: any) => onSelectionChange(e)} value={form.capster_id} selectedKey={form.capster_id}>
                     {capsters.map((item: any) => (
                         <AutocompleteItem key={item._id}>{item.username}</AutocompleteItem>
