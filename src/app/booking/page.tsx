@@ -1,23 +1,28 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import ButtonPrimary from '@/elements/buttonPrimary';
 import DropdownCustom from '@/elements/dropdown/Dropdown';
 import InputForm from '@/elements/input/InputForm'
 import InputSecond from '@/elements/input/InputSecond';
 import DefaultLayout from '@/fragments/layout/adminLayout/DefaultLayout'
 import ModalDefault from '@/fragments/modal/modal';
-import { formatDate, hours } from '@/utils/helper';
-import { AutocompleteItem, Calendar, DatePicker, useDisclosure } from '@heroui/react';
+import { formatDate, formatDateStr, hours } from '@/utils/helper';
+import { Autocomplete, AutocompleteItem, Calendar, DatePicker, useDisclosure } from '@heroui/react';
 import { parseDate } from '@internationalized/date';
 import { useRouter } from 'next/navigation';
 import { IoArrowBackCircleOutline } from 'react-icons/io5';
 import { MdOutlineAccessTime } from 'react-icons/md';
+import toast from 'react-hot-toast';
+import { createBooking, getAllCapster, getAllPayments, getAllService } from '@/api/method';
 
 type Props = {}
 
 function page({ }: Props) {
     const router = useRouter();
+    const [capsters, setCapsters] = React.useState<any>([]);
+    const [services, setServices] = React.useState<any>([]);
+    const [payments, setPayments] = React.useState<any>([]);
     const { onOpen, onClose, isOpen } = useDisclosure();
     const dateNow = new Date();
     const [form, setForm] = React.useState({
@@ -28,7 +33,7 @@ function page({ }: Props) {
         hour: 0,
         capster_id: '',
         payment_id: '',
-        rating: 0,
+        rating: 5,
         image: '',
         haircut_type: '',
         service_id: '',
@@ -54,6 +59,104 @@ function page({ }: Props) {
         setForm(prev => ({ ...prev, hour: parseInt(hour) }));
     };
 
+    const onSelectionChange = (item: string | null, field: keyof typeof form) => {
+        if (!item) return;
+
+        setForm((prev) => ({
+            ...prev,
+            [field]: item,
+        }));
+    };
+
+
+    const dataTipe = [
+        { key: 'dipinjam', label: 'Dipinjam', value: 'dipinjam' },
+        { key: 'belum diambil', label: 'Belum diambil', value: 'belum diambil' },
+        { key: 'dikembalikan', label: 'Dikembalikan', value: 'dikembalikan' },
+        { key: 'terlambat', label: 'Terlambat', value: 'terlambat' },
+        { key: 'hilang', label: 'Hilang', value: 'hilang' },
+    ];
+
+    const fetchDataDropdown = async () => {
+        try {
+            const resServices: any = await getAllService();
+            const resPayments: any = await getAllPayments();
+            const resCapsters: any = await getAllCapster();
+            setCapsters(resCapsters.data);
+            setServices(resServices.data);
+            setPayments(resPayments.data);
+        } catch (error) {
+            console.error('Gagal fetch data:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchDataDropdown();
+    }, []);
+
+    const handleSubmit = async () => {
+        // Validasi: pastikan semua field (kecuali image) tidak kosong
+        const requiredFields = [
+            'name',
+            'email',
+            'phone',
+            'date',
+            'hour',
+            'capster_id',
+            'payment_id',
+            'rating',
+            'haircut_type',
+            'service_id',
+            'status',
+        ];
+
+        const isValid = requiredFields.every((field) => {
+            const value = form[field as keyof typeof form];
+            if (typeof value === 'number') {
+                return value !== 0;
+            }
+            return value !== '' && value !== null && value !== undefined;
+        });
+
+        if (!isValid) {
+            toast.error('Harap isi semua field terlebih dahulu!');
+            return;
+        }
+
+        // Tampilkan toast loading
+        const loadingToast = toast.loading('Membuat booking...');
+
+        // Format tanggal sebelum kirim
+        const formattedForm = {
+            ...form,
+            date: formatDateStr(form.date),
+        };
+
+        try {
+            await createBooking(formattedForm, (res: any) => {
+                toast.success('Booking berhasil!', {
+                    id: loadingToast,
+                });
+
+                console.log('Booking berhasil:', res);
+                // Reset form atau redirect jika perlu
+            });
+        } catch (err) {
+            console.error('Gagal membuat booking', err);
+            toast.error('Gagal membuat booking.', {
+                id: loadingToast,
+            });
+        }
+    };
+
+
+
+
+    console.log(capsters);
+    console.log(services);
+    console.log(payments);
+    console.log(formatDateStr(form.date));
+    console.log(form);
 
     return (
         <div className='container mx-auto px-3 py-4' >
@@ -61,7 +164,6 @@ function page({ }: Props) {
                 <IoArrowBackCircleOutline size={25} />
             </div>
             <h1 className='text-2xl font-semibold ' >Booking</h1>
-
             <div className="form">
                 <InputSecond
                     styleTitle="text-black"
@@ -121,71 +223,73 @@ function page({ }: Props) {
                 </div>
 
 
-                <InputSecond
-                    styleTitle="text-black"
-                    bg="bg-none border border-gray-400 placeholder-gray-400"
-                    className="w-full"
-                    htmlFor="capster_id"
-                    placeholder="Masukan ID Capster"
-                    title="ID Capster"
-                    type="text"
-                    onChange={handleChange}
-                    value={form.capster_id}
-                />
 
-                <InputSecond
-                    styleTitle="text-black"
-                    bg="bg-none border border-gray-400 placeholder-gray-400"
-                    className="w-full"
-                    htmlFor="payment_id"
-                    placeholder="Masukan ID Pembayaran"
-                    title="ID Pembayaran"
-                    type="text"
-                    onChange={handleChange}
-                    value={form.payment_id}
-                />
 
-                {/* <div className="w-full">
-                    <h1 className="text-lg font-medium text-black mb-2">Jenis Pembayaran</h1>
-                    <DropdownCustom
-                        clearButton={false}
-                        defaultItems={dataStatus}
-                        onSelect={(key: string) => handleDropdownChange(key, 'payment_id')}
-                    >
-                        {(item: any) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
-                    </DropdownCustom>
-                </div> */}
+                <div className="w-full">
+                    <h1 className=" font-medium text-black mb-1">Pilih Capster</h1>
 
-                <div className="flex flex-col">
-                    <div className="w-full mt-5">
-                        <h1 className="text-lg font-medium text-black mb-2">Jenis Layanan</h1>
-                        <DropdownCustom
-                            clearButton={false}
-                            defaultItems={dataStatus}
-                            onSelect={(key: string) => handleDropdownChange(key, 'payment_id')}
-                        >
-                            {(item: any) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
-                        </DropdownCustom>
-                    </div>
-
-                    <InputSecond
-                        styleTitle="text-black"
-                        bg="bg-none border border-gray-400 placeholder-gray-400"
+                    <Autocomplete
+                        placeholder="Pilih Capster"
                         className="w-full"
-                        htmlFor="haircut_type"
-                        placeholder="Masukan Jenis Potongan"
-                        title="Jenis Potongan"
-                        type="text"
-                        onChange={handleChange}
-                        value={form.haircut_type}
-                    />
+                        variant='bordered'
+                        onSelectionChange={(e: any) => onSelectionChange(e, 'capster_id')}
+                        value={form.capster_id}
+                    >
+                        {capsters.map((item: any) => (
+                            <AutocompleteItem key={item._id}>{item.username}</AutocompleteItem>
+                        ))}
+                    </Autocomplete>
                 </div>
 
-                <ButtonPrimary className='py-2 px-3 rounded-xl mt-4 w-full '>
+                <div className="w-full mt-5">
+                    <h1 className=" font-medium text-black mb-1">Jenis Layanan</h1>
+
+                    <Autocomplete
+                        variant='bordered'
+                        placeholder="Pilih Jenis Layanan"
+                        className="w-full"
+                        onSelectionChange={(e: any) => onSelectionChange(e, 'service_id')}
+                        value={form.service_id}
+                    >
+                        {services.map((item: any) => (
+                            <AutocompleteItem key={item._id}>{item.name}</AutocompleteItem>
+                        ))}
+                    </Autocomplete>
+                </div>
+
+                <InputSecond
+                    styleTitle="text-black"
+                    bg="bg-none border border-gray-400 placeholder-gray-400"
+                    className="w-full"
+                    htmlFor="haircut_type"
+                    placeholder="Masukan Jenis Cukuran"
+                    title="Jenis Cukuran"
+                    type="text"
+                    onChange={handleChange}
+                    value={form.haircut_type}
+                />
+
+
+                <div className="w-full mt-5">
+                    <h1 className=" font-medium text-black mb-1">Jenis Pembayaran</h1>
+
+                    <Autocomplete
+                        variant='bordered'
+                        placeholder="Pilih Jenis Pembayaran"
+                        className="w-full"
+                        onSelectionChange={(e: any) => onSelectionChange(e, 'payment_id')}
+                        value={form.payment_id}
+                    >
+                        {payments.map((item: any) => (
+                            <AutocompleteItem key={item._id}>{item.name}</AutocompleteItem>
+                        ))}
+                    </Autocomplete>
+                </div>
+
+
+                <ButtonPrimary onClick={handleSubmit} className='py-2 px-3 rounded-xl mt-4 '>
                     Booking
                 </ButtonPrimary>
-
-
             </div>
 
             <ModalDefault isOpen={isOpen} onClose={onClose}>

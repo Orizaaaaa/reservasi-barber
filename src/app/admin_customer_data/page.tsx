@@ -77,7 +77,7 @@ const Page = (props: Props) => {
                 ))}
             </Autocomplete>
 
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mt-5">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3 my-5">
                 <div className="col-span-1 md:col-span-2">
                     <DatePicker className="w-full border-2 border-black rounded-lg" />
                 </div>
@@ -107,6 +107,7 @@ const Page = (props: Props) => {
                     </div>
                 }
                 classNames={{
+                    base: 'border-1 border-black rounded-lg',
                     th: 'bg-gray-100 text-black font-semibold',
                     td: 'text-black',
                     wrapper: 'bg-white text-black',
