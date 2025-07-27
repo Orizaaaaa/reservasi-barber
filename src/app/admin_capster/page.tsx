@@ -1,110 +1,158 @@
 'use client'
-import { createCapster, getAllCapster } from '@/api/method';
+import { getAllCapster, updateCapster } from '@/api/method';
+
 import ButtonPrimary from '@/elements/buttonPrimary';
-import InputSecond from '@/elements/input/InputSecond';
 import CaraoselImage from '@/fragments/caraoselGalery/caraoselGalery';
 import DefaultLayout from '@/fragments/layout/adminLayout/DefaultLayout'
 import ModalDefault from '@/fragments/modal/modal';
-import { users } from '@/utils/helper';
-import { Autocomplete, AutocompleteItem, getKeyValue, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from '@heroui/react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import { SwiperSlide } from 'swiper/react';
-import { IoCameraOutline, IoCloseCircleOutline } from 'react-icons/io5';
+import { IoCloseCircleOutline } from 'react-icons/io5';
 import Image from 'next/image';
 import logo from '@/assets/logo.svg';
 import ButtonSecondary from '@/elements/buttonSecondary';
+import toast from 'react-hot-toast';
+import { useDisclosure } from '@heroui/react';
+import { postImagesArray } from '@/api/image_post';
+
 
 type Props = {}
 
-function page({ }: Props) {
-
+function Page({ }: Props) {
     const [formUpdate, setFormUpdate] = useState({
-        name: [] as (File | string)[],
+        album: [] as (File | string)[], // Can contain both File objects (new) and strings (existing URLs)
     });
     const [errorMsg, setErrorMsg] = useState({
-        image: '',
         imageUpdate: '',
     });
     const { onOpen, onClose, isOpen } = useDisclosure();
-    const [capters, setCapters] = useState([])
+    const [capters, setCapters] = useState<any[]>([]);
     const [selectedCapster, setSelectedCapster] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     const fetchData = async () => {
-        const capster = await getAllCapster()
-        setCapters(capster?.data || [])
-    }
+        try {
+            const capster = await getAllCapster();
+            setCapters(capster?.data || []);
+        } catch (error) {
+            console.error('Error fetching capsters:', error);
+            toast.error('Gagal memuat data capster');
+        }
+    };
 
     useEffect(() => {
-        fetchData()
-    }, [])
+        fetchData();
+    }, []);
 
-    const openModalCreate = (capsterId: string) => {
+    const openModalCreate = (capsterId: string, existingAlbum: string[] = []) => {
         setSelectedCapster(capsterId);
+        setFormUpdate({
+            album: [...existingAlbum], // Initialize with existing album images
+        });
         onOpen();
-    }
+    };
 
     const router = useRouter();
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, InputSelect: string) => {
-        const selectedImage = e.target.files?.[0];
 
-        if (!selectedImage) {
-            console.log('No file selected');
-            return;
-        }
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (!files || files.length === 0) return;
 
-        // Validasi tipe file
-        const allowedTypes = ['image/png', 'image/jpeg'];
-        if (!allowedTypes.includes(selectedImage.type)) {
-            setErrorMsg((prev) => ({
-                ...prev,
-                imageUpdate: '*Hanya file PNG dan JPG yang diperbolehkan',
-            }));
-            return;
-        }
+        const newImages: File[] = [];
+        let hasError = false;
 
-        // Validasi ukuran file (dalam byte, 5MB = 5 * 1024 * 1024)
-        const maxSize = 5 * 1024 * 1024;
-        if (selectedImage.size > maxSize) {
-            setErrorMsg((prev) => ({
-                ...prev,
-                imageUpdate: '*Ukuran file maksimal 5 MB',
-            }));
-            return;
-        }
+        // Validate each file
+        Array.from(files).forEach((file) => {
+            // Validate file type
+            const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+            if (!allowedTypes.includes(file.type)) {
+                setErrorMsg((prev) => ({
+                    ...prev,
+                    imageUpdate: '*Hanya file PNG dan JPG yang diperbolehkan',
+                }));
+                hasError = true;
+                return;
+            }
 
-        // Hapus pesan error jika file valid
+            // Validate file size (5MB max)
+            const maxSize = 5 * 1024 * 1024;
+            if (file.size > maxSize) {
+                setErrorMsg((prev) => ({
+                    ...prev,
+                    imageUpdate: '*Ukuran file maksimal 5 MB',
+                }));
+                hasError = true;
+                return;
+            }
+
+            newImages.push(file);
+        });
+
+        if (hasError) return;
+
+        // Clear error if validation passes
         setErrorMsg((prev) => ({
             ...prev,
             imageUpdate: '',
         }));
 
-        // Update state formUpdate dengan file yang valid
+        // Add new images to the form
         setFormUpdate((prevState) => ({
             ...prevState,
-            name: [...prevState.name, selectedImage],
+            album: [...prevState.album, ...newImages],
         }));
     };
 
     const deleteArrayImage = (index: number) => {
         setFormUpdate(prevState => ({
             ...prevState,
-            name: prevState.name.filter((_, i) => i !== index)
+            album: prevState.album.filter((_, i) => i !== index)
         }));
     };
 
     const handleUpdate = async () => {
-        try {
-            // Here you would typically upload the images to the server
-            // and associate them with the selectedCapster
-            console.log('Uploading images for capster:', selectedCapster);
-            console.log('Images to upload:', formUpdate.name);
+        if (!selectedCapster) return;
+        if (formUpdate.album.length === 0) {
+            toast.error('Harap tambahkan minimal satu foto');
+            return;
+        }
 
-            // Reset form after submission
-            setFormUpdate({ name: [] });
-            onClose();
+        setIsLoading(true);
+
+        try {
+            // Separate existing URLs and new Files
+            const existingUrls = formUpdate.album.filter(item => typeof item === 'string') as string[];
+            const newFiles = formUpdate.album.filter(item => item instanceof File) as File[];
+
+            // Upload new files to Cloudinary
+            let newImageUrls: string[] = [];
+            if (newFiles.length > 0) {
+                newImageUrls = await postImagesArray({ images: newFiles });
+                // Filter out any failed uploads (null values)
+                newImageUrls = newImageUrls.filter(url => url !== null);
+            }
+
+            // Combine existing URLs with new ones
+            const updatedAlbum = [...existingUrls, ...newImageUrls];
+
+            // Prepare data for API update
+            const updateData = {
+                album: updatedAlbum
+            };
+
+            // Call the update API
+            await updateCapster(selectedCapster, updateData, (result: any) => {
+                toast.success('Album foto berhasil diperbarui');
+                fetchData(); // Refresh data
+                onClose(); // Close modal
+            });
+
         } catch (error) {
-            console.error('Error uploading images:', error);
+            console.error('Error updating capster album:', error);
+            toast.error('Gagal memperbarui album foto');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -114,41 +162,49 @@ function page({ }: Props) {
                 <h1 className='text-black text-xl font-semibold'>ALL CAPSTERS</h1>
             </div>
 
-            {capters?.map((item: any, index: any) => (
-                <div key={index} className="content p-3 border border-gray-400 rounded-xl mb-5">
+            {capters?.map((item: any) => (
+                <div key={item._id} className="content p-3 border border-gray-400 rounded-xl mb-5">
                     <div className="flex flex-col items-center md:flex-row md:items-start md:gap-4 mx-auto">
-                        <div className="w-28 h-52 md:w-40 md:h-56  mb-4 md:mb-0">
+                        <div className="w-28 h-52 md:w-40 md:h-56 mb-4 md:mb-0">
                             <img
                                 className="rounded-lg mx-auto w-full h-full object-cover"
                                 src={item.avatar || 'https://infokalteng.co/foto_berita/135642-dbb76965-0732-4b1b-bbe2-cbea751844c6.jpeg'}
-                                alt="Yangyang"
+                                alt={item.username}
                             />
                         </div>
 
-                        <div className=" md:text-left px-2 md:px-4">
+                        <div className="md:text-left px-2 md:px-4">
                             <h1 className="text-lg font-bold text-center md:text-left">{item.username}</h1>
                             <h2 className="text-sm text-gray-600 mb-2 text-center md:text-left">{item.spesialis}</h2>
-                            <p className="text-sm text-gray-700">
-                                {item.description}
-                            </p>
+                            <p className="text-sm text-gray-700">{item.description}</p>
                         </div>
                     </div>
 
                     <div className="flex-row lg:flex justify-between mt-4">
                         <div className="grid grid-cols-4 md:grid-cols-5 gap-5">
-                            {/* Display existing images here */}
-                            <img className='w-20 h-20 object-cover rounded-lg' src="https://www.apetogentleman.com/wp-content/uploads/2021/05/bald-fade-buzz-cut.jpg" alt="" />
-                            <img className='w-20 h-20 object-cover rounded-lg' src="https://www.apetogentleman.com/wp-content/uploads/2021/05/bald-fade-buzz-cut.jpg" alt="" />
-                            <img className='w-20 h-20 object-cover rounded-lg' src="https://www.apetogentleman.com/wp-content/uploads/2021/05/bald-fade-buzz-cut.jpg" alt="" />
-                            <img className='w-20 h-20 object-cover rounded-lg' src="https://www.apetogentleman.com/wp-content/uploads/2021/05/bald-fade-buzz-cut.jpg" alt="" />
-                            <img className='w-20 h-20 object-cover rounded-lg' src="https://www.apetogentleman.com/wp-content/uploads/2021/05/bald-fade-buzz-cut.jpg" alt="" />
+                            {item.album?.length > 0 ? (
+                                item.album.map((imageUrl: string, index: number) => (
+                                    <img
+                                        key={index}
+                                        className='w-20 h-20 object-cover rounded-lg'
+                                        src={imageUrl}
+                                        alt={`album-${index}`}
+                                    />
+                                ))
+                            ) : (
+                                Array(5).fill(0).map((_, index) => (
+                                    <div key={index} className="w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center">
+                                        <span className="text-gray-400 text-xs">No Image</span>
+                                    </div>
+                                ))
+                            )}
                         </div>
 
-                        <div className="flex items-end mt-4 lg:mt0">
+                        <div className="flex items-end mt-4 lg:mt-0">
                             <div className="flex gap-3">
                                 <ButtonPrimary
                                     className='py-2 px-3 rounded-xl'
-                                    onClick={() => openModalCreate(item._id)}
+                                    onClick={() => openModalCreate(item._id, item.album || [])}
                                 >
                                     + Tambah Foto
                                 </ButtonPrimary>
@@ -172,23 +228,23 @@ function page({ }: Props) {
             </ButtonPrimary>
 
             <ModalDefault isOpen={isOpen} onClose={onClose}>
-                <h1 className='text-black text-xl font-semibold mb-4'>TAMBAH FOTO UNTUK CAPSTER</h1>
+                <h1 className='text-black text-xl font-semibold mb-4'>TAMBAH FOTO ALBUM</h1>
                 <div>
                     <CaraoselImage>
-                        {formUpdate.name.length > 0 ? (
-                            formUpdate.name.map((image: any, index: number) => (
+                        {formUpdate.album.length > 0 ? (
+                            formUpdate.album.map((image, index) => (
                                 <SwiperSlide key={index}>
                                     <div className="relative">
-                                        <div className="flex justify-center items-center" style={{ pointerEvents: 'none' }}>
+                                        <div className="flex justify-center items-center h-[200px]">
                                             <img
                                                 src={typeof image === 'string' ? image : URL.createObjectURL(image)}
                                                 alt={`preview-${index}`}
-                                                className="w-auto h-[200px] object-contain"
+                                                className="max-w-full max-h-full object-contain"
                                             />
                                         </div>
                                         <button
                                             onClick={() => deleteArrayImage(index)}
-                                            className="absolute top-2 right-2 z-10 bg-white rounded-full"
+                                            className="absolute top-2 right-2 z-10 bg-white rounded-full p-1"
                                         >
                                             <IoCloseCircleOutline color="red" size={24} />
                                         </button>
@@ -196,8 +252,12 @@ function page({ }: Props) {
                                 </SwiperSlide>
                             ))
                         ) : (
-                            <div className="flex justify-center items-center h-[200px] border-1 border-slate-200">
-                                <IoCameraOutline size={50} />
+                            <div className="flex justify-center items-center h-[200px]">
+                                <Image
+                                    className="w-auto h-full"
+                                    src={logo}
+                                    alt="placeholder"
+                                />
                             </div>
                         )}
                     </CaraoselImage>
@@ -208,14 +268,14 @@ function page({ }: Props) {
                             <input
                                 type="file"
                                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                onChange={(e) => handleImageChange(e, 'update')}
-                                accept="image/png, image/jpeg"
+                                onChange={handleImageChange}
+                                accept="image/png, image/jpeg, image/jpg"
                                 multiple
                             />
                         </ButtonPrimary>
                         <ButtonSecondary
                             className='rounded-md py-2 px-1'
-                            onClick={() => setFormUpdate({ name: [] })}
+                            onClick={() => setFormUpdate({ album: [] })}
                         >
                             Hapus Semua
                         </ButtonSecondary>
@@ -229,9 +289,9 @@ function page({ }: Props) {
                         <ButtonPrimary
                             className='w-full py-2 rounded-md'
                             onClick={handleUpdate}
-                            disabled={formUpdate.name.length === 0}
+                            disabled={formUpdate.album.length === 0 || isLoading}
                         >
-                            Simpan Foto
+                            {isLoading ? 'Menyimpan...' : 'Simpan Foto'}
                         </ButtonPrimary>
                     </div>
                 </div>
@@ -240,4 +300,4 @@ function page({ }: Props) {
     )
 }
 
-export default page
+export default Page
