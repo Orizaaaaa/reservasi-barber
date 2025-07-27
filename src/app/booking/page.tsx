@@ -214,18 +214,7 @@ function page({ }: Props) {
                 </div>
 
 
-                <div className='my-6' >
-                    <h1 className='text-black mb-2 font-medium' >Jam</h1>
-                    <div className='border border-gray-400 flex justify-between py-1 px-3 rounded-lg items-center cursor-pointer' onClick={onOpen}>
-                        <p>{form.hour}.00</p>
-                        <MdOutlineAccessTime size={20} color='gray' />
-                    </div>
-                </div>
-
-
-
-
-                <div className="w-full">
+                <div className="w-full mt-6">
                     <h1 className=" font-medium text-black mb-1">Pilih Capster</h1>
 
                     <Autocomplete
@@ -239,6 +228,14 @@ function page({ }: Props) {
                             <AutocompleteItem key={item._id}>{item.username}</AutocompleteItem>
                         ))}
                     </Autocomplete>
+                </div>
+
+                <div className='my-6' >
+                    <h1 className='text-black mb-2 font-medium' >Jam</h1>
+                    <div className='border border-gray-400 flex justify-between py-1 px-3 rounded-lg items-center cursor-pointer' onClick={onOpen}>
+                        <p>{form.hour}.00</p>
+                        <MdOutlineAccessTime size={20} color='gray' />
+                    </div>
                 </div>
 
                 <div className="w-full mt-5">
@@ -287,7 +284,7 @@ function page({ }: Props) {
                 </div>
 
 
-                <ButtonPrimary onClick={handleSubmit} className='py-2 px-3 rounded-xl mt-4 '>
+                <ButtonPrimary onClick={handleSubmit} className='py-2 px-3 rounded-xl mt-4 w-full '>
                     Booking
                 </ButtonPrimary>
             </div>

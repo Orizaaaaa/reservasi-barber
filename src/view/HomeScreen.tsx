@@ -15,6 +15,7 @@ import React, { useEffect } from "react";
 import { formatRupiah } from "@/utils/helper";
 
 export default function HomeScreen() {
+    const today = new Date();
     const [booking, setBooking] = React.useState<any>([]);
     const [services, setServices] = React.useState<any>([]);
     const [payments, setPayments] = React.useState<any>([]);
@@ -32,14 +33,20 @@ export default function HomeScreen() {
     }, []);
     console.log('booking', booking);
     console.log('tolol', services);
+    const formatDate = (date: Date) => {
+        const hari = date.toLocaleDateString('id-ID', { weekday: 'long' }).toUpperCase(); // KAMIS
+        const bulan = date.toLocaleDateString('id-ID', { month: 'long' }).toUpperCase();  // AGUSTUS
+        const tanggal = date.getDate(); // 25
 
+        return `${hari} ${bulan} ${tanggal}`;
+    };
 
     return (
         <section className="bg-white" >
             <div className=" container mx-auto px-2  h-screen">
                 <div className="flex justify-between items-center">
                     <IoIosNotifications size={25} color="#656565" />
-                    <h1 className="text font-bold text-grayCustom" >KAMIS AGUSTUS 25</h1>
+                    <h1 className="text font-bold text-grayCustom" >{formatDate(today)}</h1>
                     <IoIosSettings size={25} color="#656565" />
                 </div>
 
