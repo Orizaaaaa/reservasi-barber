@@ -13,7 +13,7 @@ const BottomNavigation = () => {
     const navItems = [
         { href: '/home', icon: <AiOutlineHome className="text-2xl" />, name: 'Home' },
         { href: '/booking', icon: <BsCalendar className="text-2xl" />, name: 'Booking' },
-        { href: '/history', icon: <AiOutlineClockCircle className="text-2xl" />, name: 'History' },
+        { href: '/history_booking', icon: <AiOutlineClockCircle className="text-2xl" />, name: 'History' },
     ];
 
     return (

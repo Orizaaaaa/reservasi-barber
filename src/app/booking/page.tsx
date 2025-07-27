@@ -96,7 +96,6 @@ function page({ }: Props) {
     }, []);
 
     const handleSubmit = async () => {
-        // Validasi: pastikan semua field (kecuali image) tidak kosong
         const requiredFields = [
             'name',
             'email',
@@ -124,16 +123,17 @@ function page({ }: Props) {
             return;
         }
 
-        // Tampilkan toast loading
         const loadingToast = toast.loading('Membuat booking...');
 
-        // Format tanggal sebelum kirim
         const formattedForm = {
             ...form,
             date: formatDateStr(form.date),
         };
 
         try {
+            // Simpan nomor telepon ke localStorage
+            localStorage.setItem('userPhone', form.phone);
+
             await createBooking(formattedForm, (res: any) => {
                 toast.success('Booking berhasil!', {
                     id: loadingToast,
@@ -149,6 +149,7 @@ function page({ }: Props) {
             });
         }
     };
+
 
     console.log(capsters);
     console.log(services);

@@ -2,6 +2,7 @@
 import { getCapsterById } from '@/api/method'
 import ButtonBack from '@/elements/buttonBack'
 import MobileLayout from '@/fragments/layout/mobileLayout/mobileLayout'
+import BottomNavigation from '@/fragments/nav/navigation'
 import { haircut, regular_cut, yangyang2 } from '@/image'
 import { Button } from '@heroui/react'
 import Image from 'next/image'
