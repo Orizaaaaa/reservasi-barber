@@ -10,9 +10,30 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
 import { useRouter } from "next/navigation";
 import BottomNavigation from "@/fragments/nav/navigation";
+import { getAllCapster, getAllPayments, getAllReservation, getAllService } from "@/api/method";
+import React, { useEffect } from "react";
+import { formatRupiah } from "@/utils/helper";
 
 export default function HomeScreen() {
+    const [booking, setBooking] = React.useState<any>([]);
+    const [services, setServices] = React.useState<any>([]);
+    const [payments, setPayments] = React.useState<any>([]);
     const router = useRouter();
+
+    const fetchData = async () => {
+        const booking = await getAllReservation()
+        const data = await getAllService()
+        setServices(data?.data || [])
+        setBooking(booking?.data || [])
+
+    }
+    useEffect(() => {
+        fetchData();
+    }, []);
+    console.log('booking', booking);
+    console.log('tolol', services);
+
+
     return (
         <section className="bg-white" >
             <div className=" container mx-auto px-2  h-screen">
@@ -43,43 +64,26 @@ export default function HomeScreen() {
                         modules={[Pagination]}
                         className="mySwiper"
                     >
+
+                        {booking?.map((item: any, index: number) => (
+                            <SwiperSlide className="!w-[90%]" key={index}>
+                                <div className="flex gap-4 border border-grayCustom bg-secondBlack p-2 rounded-xl">
+                                    <div className="h-12 w-12">
+                                        <Image className="w-full h-full object-cover rounded-lg" src={mukti} alt="logo" />
+                                    </div>
+                                    <div className="text-grayCustom">
+                                        <h1 className="text-white">{item.name}</h1>
+                                        <div className="flex items-center gap-2">
+                                            <IoStar color="#f9d41c" />
+                                            <h1 className="text-white">{item.rating}</h1>
+                                            <GoDotFill size={5} />
+                                            <h1 className="text-sm text-white">114 review</h1>
+                                        </div>
+                                    </div>
+                                </div>
+                            </SwiperSlide>
+                        ))}
                         {/* Contoh slide pertama */}
-                        <SwiperSlide className="!w-[90%]">
-                            <div className="flex gap-4 border border-grayCustom bg-secondBlack p-2 rounded-xl">
-                                <div className="h-12 w-12">
-                                    <Image className="w-full h-full object-cover rounded-lg" src={mukti} alt="logo" />
-                                </div>
-                                <div className="text-grayCustom">
-                                    <h1 className="text-white">GABRIEL YONATHAN</h1>
-                                    <div className="flex items-center gap-2">
-                                        <IoStar color="#f9d41c" />
-                                        <h1 className="text-white">4.9</h1>
-                                        <GoDotFill size={5} />
-                                        <h1 className="text-sm text-white">114 review</h1>
-                                    </div>
-                                </div>
-                            </div>
-                        </SwiperSlide>
-
-                        <SwiperSlide className="!w-[90%]">
-                            <div className="flex gap-4 border border-grayCustom bg-secondBlack p-2 rounded-xl">
-                                <div className="h-12 w-12">
-                                    <Image className="w-full h-full object-cover rounded-lg" src={mukti} alt="logo" />
-                                </div>
-                                <div className="text-grayCustom">
-                                    <h1 className="text-white">GABRIEL YONATHAN</h1>
-                                    <div className="flex items-center gap-2">
-                                        <IoStar color="#f9d41c" />
-                                        <h1 className="text-white">4.9</h1>
-                                        <GoDotFill size={5} />
-                                        <h1 className="text-sm text-white">114 review</h1>
-                                    </div>
-                                </div>
-                            </div>
-                        </SwiperSlide>
-
-
-
 
                     </Swiper>
                 </div>
@@ -98,41 +102,26 @@ export default function HomeScreen() {
                         modules={[Pagination]}
                         className="mySwiper"
                     >
-                        <SwiperSlide className="!w-[80%]"> {/* penting: kasih width tetap */}
-                            <div className="border border-grayCustom bg-secondBlack p-2 rounded-xl">
-                                <div className="h-56">
-                                    <Image className="w-full h-full object-cover rounded-lg" src={regular_cut} alt="logo" />
-                                </div>
-                                <div className="flex justify-between items-start w-full mt-2">
-                                    <div className="text">
-                                        <h1 className="text-yellowCustom text-small">OPEN NOW</h1>
-                                        <h1 className="text-white">REGULAR CUT</h1>
-                                        <h1 className="text-white">50K</h1>
-                                    </div>
-                                    <Button onClick={() => router.push('/booking')} className="bg-yellowCustom font-bold rounded-md px-4 py-2 text-black text-sm whitespace-nowrap">
-                                        BOOK NOW
-                                    </Button>
-                                </div>
-                            </div>
-                        </SwiperSlide>
 
-                        <SwiperSlide className="!w-[80%]">
-                            <div className="border border-grayCustom bg-secondBlack p-2 rounded-xl">
-                                <div className="h-56">
-                                    <Image className="w-full h-full object-cover rounded-lg" src={regular_cut} alt="logo" />
-                                </div>
-                                <div className="flex justify-between items-start w-full mt-2">
-                                    <div className="text">
-                                        <h1 className="text-yellowCustom text-small">OPEN NOW</h1>
-                                        <h1 className="text-white">REGULAR CUT</h1>
-                                        <h1 className="text-white">50K</h1>
+                        {services.map((item: any, index: number) => (
+                            <SwiperSlide key={index} className="!w-[80%]"> {/* penting: kasih width tetap */}
+                                <div className="border border-grayCustom bg-secondBlack p-2 rounded-xl">
+                                    <div className="h-56">
+                                        <img className="w-full h-full object-cover rounded-lg" src={item.image} alt="logo" />
                                     </div>
-                                    <Button onClick={() => router.push('/booking')} className="bg-yellowCustom font-bold rounded-md px-4 py-2 text-black text-sm whitespace-nowrap">
-                                        BOOK NOW
-                                    </Button>
+                                    <div className="flex justify-between items-start w-full mt-2">
+                                        <div className="text">
+                                            <h1 className="text-yellowCustom text-small">OPEN NOW</h1>
+                                            <h1 className="text-white">{item.description}</h1>
+                                            <h1 className="text-white">{formatRupiah(item.price)}</h1>
+                                        </div>
+                                        <Button onClick={() => router.push('/booking')} className="bg-yellowCustom font-bold rounded-md px-4 py-2 text-black text-sm whitespace-nowrap">
+                                            BOOK NOW
+                                        </Button>
+                                    </div>
                                 </div>
-                            </div>
-                        </SwiperSlide>
+                            </SwiperSlide>
+                        ))}
                     </Swiper>
                 </div>
 
