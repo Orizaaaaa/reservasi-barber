@@ -31,13 +31,10 @@ const users: User[] = [
 ];
 
 const Page = () => {
-    const { onOpen, onClose, isOpen } = useDisclosure();
-    const { isOpen: isWarningOpen, onOpen: onWarningOpen, onClose: onWarningClose } = useDisclosure();
-    const [loading, setLoading] = React.useState(false)
+
     const [capsters, setCapster] = React.useState<any[]>([])
     const [data, setData] = React.useState<any[]>([])
-    const [page, setPage] = React.useState(1)
-    const rowsPerPage = 4
+    const [totalActiveBarbers, setTotalActiveBarbers] = React.useState(0)
     const [form, setForm] = React.useState({
         payment_id: '',
         status: '',
@@ -47,7 +44,6 @@ const Page = () => {
     // Fetch data
     useEffect(() => {
         const fetchData = async () => {
-            setLoading(true)
             const result = await getAllReservation()
             const capster = await getAllCapster()
             const formatted = result?.data?.map((item: any) => ({
@@ -63,7 +59,13 @@ const Page = () => {
             }))
             setData(formatted || [])
             setCapster(capster?.data || [])
-            setLoading(false)
+
+            // Hitung jumlah barberman aktif hari ini
+            const dayName = new Date().toLocaleDateString('id-ID', { weekday: 'long' }).toLowerCase()
+            const activeBarberCount = (capster?.data || []).filter((cap: any) => cap.schedule?.[dayName]?.is_active).length
+            setTotalActiveBarbers(activeBarberCount)
+
+
         }
 
         fetchData()
@@ -89,9 +91,6 @@ const Page = () => {
     // Remove duplicates
     const uniqueActiveBarbers = [...new Map(activeBarbers.map(item => [item._id, item])).values()];
 
-    // Count active barbers
-    const totalActiveBarbers = uniqueActiveBarbers.length;
-
     // Group reservations by barber
     const reservationsByBarber = uniqueActiveBarbers.map(barber => {
         const barberReservations = todayReservations.filter(item =>
@@ -109,36 +108,8 @@ const Page = () => {
         };
     });
 
-    // Pagination
-    const pages = Math.ceil(data.length / rowsPerPage)
-
-    const items = React.useMemo(() => {
-        const start = (page - 1) * rowsPerPage
-        const end = start + rowsPerPage
-        return data.slice(start, end)
-    }, [page, data])
-
     // Aksi Edit dan Delete
-    const openModalEdit = (item: any) => {
-        onOpen()
-        console.log('Edit:', item);
-        setForm({
-            payment_id: item.payment_id?._id || '',
-            status: item.status,
-            capster_id: item.capster_id?._id || '',
-        })
-    }
 
-    const handleDelete = (item: any) => {
-        console.log('Delete:', item._id)
-    }
-
-    const handleChange = (e: any) => {
-        setForm({
-            ...form,
-            [e.target.name]: e.target.value
-        })
-    }
 
     const onSelectionChange = (_id: string) => {
         setForm({
@@ -199,15 +170,6 @@ const Page = () => {
                     </div>
                 )}
             </div>
-
-            <ModalDefault isOpen={isOpen} onClose={onClose}>
-                <h1>EDIT</h1>
-                <Autocomplete className="max-w-xs" onSelectionChange={(e: any) => onSelectionChange(e)} value={form.capster_id} selectedKey={form.capster_id}>
-                    {capsters.map((item: any) => (
-                        <AutocompleteItem key={item._id}>{item.username}</AutocompleteItem>
-                    ))}
-                </Autocomplete>
-            </ModalDefault>
         </DefaultLayout>
     )
 }
