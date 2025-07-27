@@ -18,21 +18,24 @@ export default function HomeScreen() {
     const today = new Date();
     const [booking, setBooking] = React.useState<any>([]);
     const [services, setServices] = React.useState<any>([]);
-    const [payments, setPayments] = React.useState<any>([]);
+    const [capsters, setCapsters] = React.useState<any>([]);
     const router = useRouter();
 
     const fetchData = async () => {
         const booking = await getAllReservation()
+        const capsters = await getAllCapster()
         const data = await getAllService()
         setServices(data?.data || [])
         setBooking(booking?.data || [])
-
+        setCapsters(capsters?.data || [])
     }
     useEffect(() => {
         fetchData();
     }, []);
     console.log('booking', booking);
     console.log('tolol', services);
+    console.log('cpasters', capsters);
+
     const formatDate = (date: Date) => {
         const hari = date.toLocaleDateString('id-ID', { weekday: 'long' }).toUpperCase(); // KAMIS
         const bulan = date.toLocaleDateString('id-ID', { month: 'long' }).toUpperCase();  // AGUSTUS
@@ -131,6 +134,42 @@ export default function HomeScreen() {
                         ))}
                     </Swiper>
                 </div>
+
+                <div className="mb-5"> {/* padding untuk kasih ruang kiri-kanan */}
+                    <Swiper
+                        slidesPerView={'auto'}
+                        spaceBetween={16}
+                        pagination={{ clickable: true }}
+                        modules={[Pagination]}
+                        className="mySwiper"
+                    >
+                        {capsters.map((item: any, index: number) => (
+                            <SwiperSlide key={index} className="!w-[93%]"> {/* penting: kasih width tetap */}
+                                <div className="capster bg-secondBlack rounded-xl" onClick={() => router.push(`/about_capster/${item._id}`)}>
+                                    <div className="flex ">
+                                        <div className="w-32 h-48">
+                                            <img className="w-full h-full object-cover rounded-xl" src={item.avatar} alt="" />
+                                        </div>
+                                        <div className="p-3">
+                                            <h1 className="text-yellowCustom font-medium text-sm" >CAPSTER</h1>
+                                            <h1 className="text-white text-sm capitalize" >{item.username}</h1>
+                                            <div className="border border-slate-300 rounded-full p-1 mt-2">
+                                                <h1 className="text-white text-sm text-center text-[10px] capitalize" >{item.spesialis}</h1>
+                                            </div>
+                                            <p className="text-white text-xs mt-4" >{item.description} </p>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </SwiperSlide>
+                        ))}
+
+
+
+
+                    </Swiper>
+                </div>
+
 
 
                 <BottomNavigation />
