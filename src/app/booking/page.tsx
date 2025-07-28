@@ -5,7 +5,7 @@ import ButtonPrimary from '@/elements/buttonPrimary';
 import InputSecond from '@/elements/input/InputSecond';
 import ModalDefault from '@/fragments/modal/modal';
 import { formatDate, formatDateStr, hours } from '@/utils/helper';
-import { Autocomplete, AutocompleteItem, Calendar, DatePicker, useDisclosure } from '@heroui/react';
+import { Autocomplete, AutocompleteItem, Calendar, DatePicker, Spinner, useDisclosure } from '@heroui/react';
 import { parseDate } from '@internationalized/date';
 import { useRouter } from 'next/navigation';
 import { IoArrowBackCircleOutline } from 'react-icons/io5';
@@ -18,6 +18,7 @@ type Props = {}
 
 function page({ }: Props) {
     const router = useRouter();
+    const [loading, setLoading] = React.useState(false);
     const [capsterHours, setCapsterHours] = React.useState<any>([]);
     const [capsters, setCapsters] = React.useState<any>([]);
     const [services, setServices] = React.useState<any>([]);
@@ -217,53 +218,6 @@ function page({ }: Props) {
                     value={form.phone}
                 />
 
-                <div >
-                    <h1 className='text-black mb-2 font-medium'>Tanggal</h1>
-                    <DatePicker
-                        aria-label='date'
-                        name='date'
-                        variant='bordered'
-                        value={form.date}
-                        showMonthAndYearPickers
-                        onChange={(e: any) => setForm({ ...form, date: e })}
-                    />
-                </div>
-
-                <div className="w-full mt-5">
-                    <h1 className=" font-medium text-black mb-1">Jenis Pembayaran</h1>
-
-                    <Autocomplete
-                        variant='bordered'
-                        placeholder="Pilih Jenis Pembayaran"
-                        className="w-full"
-                        onSelectionChange={(e: any) => onSelectionChangePayment(e)}
-                        value={form.payment_id}
-                    >
-                        {payments.map((item: any) => (
-                            <AutocompleteItem key={item._id}>{item.name}</AutocompleteItem>
-                        ))}
-                    </Autocomplete>
-                </div>
-
-                <div className="w-full mt-5">
-                    <h1 className=" font-medium text-black mb-1">Jenis Layanan</h1>
-
-                    <Autocomplete
-                        variant='bordered'
-                        placeholder="Pilih Jenis Layanan"
-                        className="w-full"
-                        onSelectionChange={(e: any) => onSelectionChangeService(e)}
-                        value={form.service_id}
-                    >
-                        {services.map((item: any) => (
-                            <AutocompleteItem key={item._id}>{item.name}</AutocompleteItem>
-                        ))}
-                    </Autocomplete>
-                </div>
-
-
-
-
                 <div className="w-full mt-6">
                     <h1 className=" font-medium text-black mb-1">Pilih Capster</h1>
 
@@ -280,25 +234,81 @@ function page({ }: Props) {
                     </Autocomplete>
                 </div>
 
-                <InputSecond
-                    styleTitle="text-black"
-                    bg="bg-none border border-gray-400 placeholder-gray-400"
-                    className="w-full"
-                    htmlFor="haircut_type"
-                    placeholder="Masukan Jenis Cukuran"
-                    title="Jenis Cukuran"
-                    type="text"
-                    onChange={handleChange}
-                    value={form.haircut_type}
-                />
+                {form.capster_id ? (
+                    <>
+                        <div className='mt-5' >
+                            <h1 className='text-black mb-2 font-medium'>Tanggal</h1>
+                            <DatePicker
+                                aria-label='date'
+                                name='date'
+                                variant='bordered'
+                                value={form.date}
+                                showMonthAndYearPickers
+                                onChange={(e: any) => setForm({ ...form, date: e })}
+                            />
+                        </div>
 
-                <div className='my-6' >
-                    <h1 className='text-black mb-2 font-medium' >Jam</h1>
-                    <div className='border border-gray-400 flex justify-between py-1 px-3 rounded-lg items-center cursor-pointer' onClick={onOpen}>
-                        <p>{form.hour}.00</p>
-                        <MdOutlineAccessTime size={20} color='gray' />
-                    </div>
-                </div>
+                        <div className="w-full mt-5">
+                            <h1 className=" font-medium text-black mb-1">Jenis Pembayaran</h1>
+
+                            <Autocomplete
+                                variant='bordered'
+                                placeholder="Pilih Jenis Pembayaran"
+                                className="w-full"
+                                onSelectionChange={(e: any) => onSelectionChangePayment(e)}
+                                value={form.payment_id}
+                            >
+                                {payments.map((item: any) => (
+                                    <AutocompleteItem key={item._id}>{item.name}</AutocompleteItem>
+                                ))}
+                            </Autocomplete>
+                        </div>
+
+                        <div className="w-full mt-5">
+                            <h1 className=" font-medium text-black mb-1">Jenis Layanan</h1>
+
+                            <Autocomplete
+                                variant='bordered'
+                                placeholder="Pilih Jenis Layanan"
+                                className="w-full"
+                                onSelectionChange={(e: any) => onSelectionChangeService(e)}
+                                value={form.service_id}
+                            >
+                                {services.map((item: any) => (
+                                    <AutocompleteItem key={item._id}>{item.name}</AutocompleteItem>
+                                ))}
+                            </Autocomplete>
+                        </div>
+
+
+
+                        <InputSecond
+                            styleTitle="text-black"
+                            bg="bg-none border border-gray-400 placeholder-gray-400"
+                            className="w-full"
+                            htmlFor="haircut_type"
+                            placeholder="Masukan Jenis Cukuran"
+                            title="Jenis Cukuran"
+                            type="text"
+                            onChange={handleChange}
+                            value={form.haircut_type}
+                        />
+
+                        <div className='my-6' >
+                            <h1 className='text-black mb-2 font-medium' >Jam</h1>
+                            <div className='border border-gray-400 flex justify-between py-1 px-3 rounded-lg items-center cursor-pointer' onClick={onOpen}>
+                                <p>{form.hour}.00</p>
+                                <MdOutlineAccessTime size={20} color='gray' />
+                            </div>
+                        </div>
+                    </>
+                ) : (
+                    null
+                )
+
+                }
+
+
 
 
                 <ButtonPrimary onClick={handleSubmit} className='py-2 px-3 rounded-xl mt-4 w-full '>
