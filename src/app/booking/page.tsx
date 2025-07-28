@@ -212,6 +212,22 @@ function page({ }: Props) {
                     />
                 </div>
 
+                <div className="w-full mt-5">
+                    <h1 className=" font-medium text-black mb-1">Jenis Pembayaran</h1>
+
+                    <Autocomplete
+                        variant='bordered'
+                        placeholder="Pilih Jenis Pembayaran"
+                        className="w-full"
+                        onSelectionChange={(e: any) => onSelectionChange(e, 'payment_id')}
+                        value={form.payment_id}
+                    >
+                        {payments.map((item: any) => (
+                            <AutocompleteItem key={item._id}>{item.name}</AutocompleteItem>
+                        ))}
+                    </Autocomplete>
+                </div>
+
 
                 <div className="w-full mt-6">
                     <h1 className=" font-medium text-black mb-1">Pilih Capster</h1>
@@ -266,21 +282,7 @@ function page({ }: Props) {
                 />
 
 
-                <div className="w-full mt-5">
-                    <h1 className=" font-medium text-black mb-1">Jenis Pembayaran</h1>
 
-                    <Autocomplete
-                        variant='bordered'
-                        placeholder="Pilih Jenis Pembayaran"
-                        className="w-full"
-                        onSelectionChange={(e: any) => onSelectionChange(e, 'payment_id')}
-                        value={form.payment_id}
-                    >
-                        {payments.map((item: any) => (
-                            <AutocompleteItem key={item._id}>{item.name}</AutocompleteItem>
-                        ))}
-                    </Autocomplete>
-                </div>
 
 
                 <ButtonPrimary onClick={handleSubmit} className='py-2 px-3 rounded-xl mt-4 w-full '>
