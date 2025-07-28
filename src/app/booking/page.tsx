@@ -181,50 +181,55 @@ function page({ }: Props) {
                 <IoArrowBackCircleOutline size={25} />
             </div>
             <h1 className='text-2xl font-semibold ' >Booking</h1>
-            <div className="form ">
-                <InputSecond
-                    styleTitle="text-black"
-                    bg="bg-none border border-gray-400 placeholder-gray-400"
-                    className="w-full"
-                    htmlFor="name"
-                    placeholder="Masukan Nama Customer"
-                    title="Nama Customer"
-                    type="text"
-                    onChange={handleChange}
-                    value={form.name}
-                />
+            <div className="form">
+                <div className="my-4">
+                    <InputSecond
+                        styleTitle="text-black"
+                        bg="bg-none border border-gray-400 placeholder-gray-400"
+                        className="w-full"
+                        htmlFor="name"
+                        placeholder="Masukan Nama Customer"
+                        title="Nama Customer"
+                        type="text"
+                        onChange={handleChange}
+                        value={form.name}
+                    />
+                </div>
 
-                <InputSecond
-                    styleTitle="text-black"
-                    bg="bg-none border border-gray-400 placeholder-gray-400"
-                    className="w-full"
-                    htmlFor="email"
-                    placeholder="Masukan Email Customer"
-                    title="Email Customer"
-                    type="email"
-                    onChange={handleChange}
-                    value={form.email}
-                />
+                <div className="my-4">
+                    <InputSecond
+                        styleTitle="text-black"
+                        bg="bg-none border border-gray-400 placeholder-gray-400"
+                        className="w-full"
+                        htmlFor="email"
+                        placeholder="Masukan Email Customer"
+                        title="Email Customer"
+                        type="email"
+                        onChange={handleChange}
+                        value={form.email}
+                    />
+                </div>
 
-                <InputSecond
-                    styleTitle="text-black"
-                    bg="bg-none border border-gray-400 placeholder-gray-400"
-                    className="w-full"
-                    htmlFor="phone"
-                    placeholder="Masukan Nomor Telepon"
-                    title="Nomor Telepon"
-                    type="tel"
-                    onChange={handleChange}
-                    value={form.phone}
-                />
+                <div className="my-4">
+                    <InputSecond
+                        styleTitle="text-black"
+                        bg="bg-none border border-gray-400 placeholder-gray-400"
+                        className="w-full"
+                        htmlFor="phone"
+                        placeholder="Masukan Nomor Telepon"
+                        title="Nomor Telepon"
+                        type="tel"
+                        onChange={handleChange}
+                        value={form.phone}
+                    />
+                </div>
 
-                <div className="w-full mt-6">
-                    <h1 className=" font-medium text-black mb-1">Pilih Capster</h1>
-
+                <div className="w-full my-4">
+                    <h1 className="font-medium text-black mb-1">Pilih Capster</h1>
                     <Autocomplete
                         placeholder="Pilih Capster"
                         className="w-full"
-                        variant='bordered'
+                        variant="bordered"
                         onSelectionChange={(e: any) => onSelectionChangeCapster(e)}
                         value={form.capster_id}
                     >
@@ -234,25 +239,24 @@ function page({ }: Props) {
                     </Autocomplete>
                 </div>
 
-                {form.capster_id ? (
+                {form.capster_id && (
                     <>
-                        <div className='mt-5' >
-                            <h1 className='text-black mb-2 font-medium'>Tanggal</h1>
+                        <div className="my-4">
+                            <h1 className="text-black mb-2 font-medium">Tanggal</h1>
                             <DatePicker
-                                aria-label='date'
-                                name='date'
-                                variant='bordered'
+                                aria-label="date"
+                                name="date"
+                                variant="bordered"
                                 value={form.date}
                                 showMonthAndYearPickers
                                 onChange={(e: any) => setForm({ ...form, date: e })}
                             />
                         </div>
 
-                        <div className="w-full mt-5">
-                            <h1 className=" font-medium text-black mb-1">Jenis Pembayaran</h1>
-
+                        <div className="w-full my-4">
+                            <h1 className="font-medium text-black mb-1">Jenis Pembayaran</h1>
                             <Autocomplete
-                                variant='bordered'
+                                variant="bordered"
                                 placeholder="Pilih Jenis Pembayaran"
                                 className="w-full"
                                 onSelectionChange={(e: any) => onSelectionChangePayment(e)}
@@ -264,11 +268,10 @@ function page({ }: Props) {
                             </Autocomplete>
                         </div>
 
-                        <div className="w-full mt-5">
-                            <h1 className=" font-medium text-black mb-1">Jenis Layanan</h1>
-
+                        <div className="w-full my-4">
+                            <h1 className="font-medium text-black mb-1">Jenis Layanan</h1>
                             <Autocomplete
-                                variant='bordered'
+                                variant="bordered"
                                 placeholder="Pilih Jenis Layanan"
                                 className="w-full"
                                 onSelectionChange={(e: any) => onSelectionChangeService(e)}
@@ -280,41 +283,38 @@ function page({ }: Props) {
                             </Autocomplete>
                         </div>
 
+                        <div className="my-4">
+                            <InputSecond
+                                styleTitle="text-black"
+                                bg="bg-none border border-gray-400 placeholder-gray-400"
+                                className="w-full"
+                                htmlFor="haircut_type"
+                                placeholder="Masukan Jenis Cukuran"
+                                title="Jenis Cukuran"
+                                type="text"
+                                onChange={handleChange}
+                                value={form.haircut_type}
+                            />
+                        </div>
 
-
-                        <InputSecond
-                            styleTitle="text-black"
-                            bg="bg-none border border-gray-400 placeholder-gray-400"
-                            className="w-full"
-                            htmlFor="haircut_type"
-                            placeholder="Masukan Jenis Cukuran"
-                            title="Jenis Cukuran"
-                            type="text"
-                            onChange={handleChange}
-                            value={form.haircut_type}
-                        />
-
-                        <div className='my-6' >
-                            <h1 className='text-black mb-2 font-medium' >Jam</h1>
-                            <div className='border border-gray-400 flex justify-between py-1 px-3 rounded-lg items-center cursor-pointer' onClick={onOpen}>
+                        <div className="my-4">
+                            <h1 className="text-black mb-2 font-medium">Jam</h1>
+                            <div
+                                className="border border-gray-400 flex justify-between py-1 px-3 rounded-lg items-center cursor-pointer"
+                                onClick={onOpen}
+                            >
                                 <p>{form.hour}.00</p>
-                                <MdOutlineAccessTime size={20} color='gray' />
+                                <MdOutlineAccessTime size={20} color="gray" />
                             </div>
                         </div>
                     </>
-                ) : (
-                    null
-                )
+                )}
 
-                }
-
-
-
-
-                <ButtonPrimary onClick={handleSubmit} className='py-2 px-3 rounded-xl mt-4 w-full '>
+                <ButtonPrimary onClick={handleSubmit} className="py-2 px-3 rounded-xl mt-4 w-full">
                     Booking
                 </ButtonPrimary>
             </div>
+
 
             <BottomNavigation />
 
