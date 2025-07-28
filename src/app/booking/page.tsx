@@ -155,7 +155,7 @@ function page({ }: Props) {
                 toast.success('Booking berhasil!', {
                     id: loadingToast,
                 });
-                router.push('/history');
+                router.push('/history_booking');
                 console.log('Booking berhasil:', res);
             });
         } catch (err) {

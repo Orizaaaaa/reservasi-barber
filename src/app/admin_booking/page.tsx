@@ -1,21 +1,25 @@
 'use client'
-import { createBooking, getAllCapster, getAllPayments, getAllService } from '@/api/method';
+
+import React, { useEffect } from 'react'
 import ButtonPrimary from '@/elements/buttonPrimary';
-import DropdownCustom from '@/elements/dropdown/Dropdown';
-import InputForm from '@/elements/input/InputForm'
 import InputSecond from '@/elements/input/InputSecond';
-import DefaultLayout from '@/fragments/layout/adminLayout/DefaultLayout'
 import ModalDefault from '@/fragments/modal/modal';
 import { formatDate, formatDateStr, hours } from '@/utils/helper';
-import { Autocomplete, AutocompleteItem, Calendar, DatePicker, useDisclosure } from '@heroui/react';
-import { parseDate } from '@internationalized/date';
-import React, { useEffect } from 'react'
-import toast from 'react-hot-toast';
+import { Autocomplete, AutocompleteItem, Calendar, DatePicker, Spinner, useDisclosure } from '@heroui/react';
+import { getLocalTimeZone, parseDate, today } from '@internationalized/date';
+import { useRouter } from 'next/navigation';
+import { IoArrowBackCircleOutline } from 'react-icons/io5';
 import { MdOutlineAccessTime } from 'react-icons/md';
+import toast from 'react-hot-toast';
+import { createBooking, getAllCapster, getAllPayments, getAllService, getCapsterHours } from '@/api/method';
+import BottomNavigation from '@/fragments/nav/navigation';
+import DefaultLayout from '@/fragments/layout/adminLayout/DefaultLayout';
 
 type Props = {}
 
 function page({ }: Props) {
+    const router = useRouter();
+    const [capsterHours, setCapsterHours] = React.useState<any>([]);
     const [capsters, setCapsters] = React.useState<any>([]);
     const [services, setServices] = React.useState<any>([]);
     const [payments, setPayments] = React.useState<any>([]);
@@ -41,37 +45,46 @@ function page({ }: Props) {
 
     };
 
-    const handleDropdownChange = (key: string, field: any) => {
-        setForm(prev => ({ ...prev, [field]: key }));
-    };
-
-    const dataStatus = [
-        { label: "Laki-laki", value: "Laki-laki" },
-        { label: "Perempuan", value: "Perempuan" },
-    ];
-
     const handleSelectTime = (time: string) => {
         const [hour] = time.split(':');
         setForm(prev => ({ ...prev, hour: parseInt(hour) }));
     };
 
-    const onSelectionChange = (item: string | null, field: keyof typeof form) => {
-        if (!item) return;
+    useEffect(() => {
+        if (form.capster_id) {
+            getCapsterHours(form.capster_id, (data: any) => {
+                setCapsterHours(data.data);
+            });
+        }
+    }, [form.date]);
 
-        setForm((prev) => ({
-            ...prev,
-            [field]: item,
-        }));
+
+    const onSelectionChangeCapster = (_id: string) => {
+        setForm({
+            ...form,
+            capster_id: _id
+        });
+
+        // Fetch capster hours when ID changes
+        getCapsterHours(_id, (data: any) => {
+            console.log("Fetched Capster Hours:", data);
+            setCapsterHours(data.data);
+            // You can handle the data here if needed
+        });
+    };
+    const onSelectionChangePayment = (id: string) => {
+        setForm({
+            ...form,
+            payment_id: id
+        });
     };
 
-
-    const dataTipe = [
-        { key: 'dipinjam', label: 'Dipinjam', value: 'dipinjam' },
-        { key: 'belum diambil', label: 'Belum diambil', value: 'belum diambil' },
-        { key: 'dikembalikan', label: 'Dikembalikan', value: 'dikembalikan' },
-        { key: 'terlambat', label: 'Terlambat', value: 'terlambat' },
-        { key: 'hilang', label: 'Hilang', value: 'hilang' },
-    ];
+    const onSelectionChangeService = (id: string) => {
+        setForm({
+            ...form,
+            service_id: id
+        });
+    };
 
     const fetchDataDropdown = async () => {
         try {
@@ -91,7 +104,6 @@ function page({ }: Props) {
     }, []);
 
     const handleSubmit = async () => {
-        // Validasi: pastikan semua field (kecuali image) tidak kosong
         const requiredFields = [
             'name',
             'email',
@@ -119,23 +131,33 @@ function page({ }: Props) {
             return;
         }
 
-        // Tampilkan toast loading
+        // ✅ Validasi: Tidak boleh lebih dari 7 hari dari hari ini
+        const today = new Date();
+        const selectedDate = new Date(formatDate(form.date)); // pastikan hasil formatDate adalah string "YYYY-MM-DD"
+        const maxDate = new Date();
+        maxDate.setDate(today.getDate() + 7);
+
+        if (selectedDate > maxDate) {
+            toast.error('Booking tidak boleh lebih dari 7 hari ke depan.');
+            return;
+        }
+
         const loadingToast = toast.loading('Membuat booking...');
 
-        // Format tanggal sebelum kirim
         const formattedForm = {
             ...form,
             date: formatDateStr(form.date),
         };
 
         try {
+            localStorage.setItem('userPhone', form.phone);
+
             await createBooking(formattedForm, (res: any) => {
                 toast.success('Booking berhasil!', {
                     id: loadingToast,
                 });
-
+                router.push('/admin_list_booking');
                 console.log('Booking berhasil:', res);
-                // Reset form atau redirect jika perlu
             });
         } catch (err) {
             console.error('Gagal membuat booking', err);
@@ -145,177 +167,210 @@ function page({ }: Props) {
         }
     };
 
+    const isHourBooked = (hour: number): boolean => {
+        const selectedDate = formatDate(form.date); // hasil: "2025-07-28"
+        return capsterHours.some((item: any) => {
+            const itemDate = formatDate(item.date); // Convert juga ke format "2025-07-28"
+            return itemDate === selectedDate && parseInt(item.hour) === hour;
+        });
+    };
 
+    function addDaysToToday(days: number, timeZone: string) {
+        const today = new Date();
+        const result = new Date(today);
+        result.setDate(result.getDate() + days);
+        return parseDate(result.toISOString().split('T')[0]);
+    }
 
-
+    console.log(capsterHours);
     console.log(capsters);
     console.log(services);
     console.log(payments);
     console.log(formatDateStr(form.date));
     console.log(form);
 
-
     return (
         <DefaultLayout>
-            <h1 className='text-2xl font-semibold ' >Booking</h1>
-            <div className="form">
-                <InputSecond
-                    styleTitle="text-black"
-                    bg="bg-none border border-gray-400 placeholder-gray-400"
-                    className="w-full"
-                    htmlFor="name"
-                    placeholder="Masukan Nama Customer"
-                    title="Nama Customer"
-                    type="text"
-                    onChange={handleChange}
-                    value={form.name}
-                />
-
-                <InputSecond
-                    styleTitle="text-black"
-                    bg="bg-none border border-gray-400 placeholder-gray-400"
-                    className="w-full"
-                    htmlFor="email"
-                    placeholder="Masukan Email Customer"
-                    title="Email Customer"
-                    type="email"
-                    onChange={handleChange}
-                    value={form.email}
-                />
-
-                <InputSecond
-                    styleTitle="text-black"
-                    bg="bg-none border border-gray-400 placeholder-gray-400"
-                    className="w-full"
-                    htmlFor="phone"
-                    placeholder="Masukan Nomor Telepon"
-                    title="Nomor Telepon"
-                    type="tel"
-                    onChange={handleChange}
-                    value={form.phone}
-                />
-
-                <div >
-                    <h1 className='text-black mb-2 font-medium'>Tanggal</h1>
-                    <DatePicker
-                        aria-label='date'
-                        name='date'
-                        variant='bordered'
-                        value={form.date}
-                        showMonthAndYearPickers
-                        onChange={(e: any) => setForm({ ...form, date: e })}
-                    />
+            <div className='container mx-auto px-3 py-4 mb-20' >
+                <div className="rounded-full my-4 cursor-pointer" onClick={() => router.back()}>
+                    <IoArrowBackCircleOutline size={25} />
                 </div>
-
-
-                <div className='my-6' >
-                    <h1 className='text-black mb-2 font-medium' >Jam</h1>
-                    <div className='border border-gray-400 flex justify-between py-1 px-3 rounded-lg items-center cursor-pointer' onClick={onOpen}>
-                        <p>{form.hour}.00</p>
-                        <MdOutlineAccessTime size={20} color='gray' />
+                <div className="form">
+                    <div className="my-4">
+                        <InputSecond
+                            styleTitle="text-black"
+                            bg="bg-none border border-gray-400 placeholder-gray-400"
+                            className="w-full"
+                            htmlFor="name"
+                            placeholder="Masukan Nama Customer"
+                            title="Nama Customer"
+                            type="text"
+                            onChange={handleChange}
+                            value={form.name}
+                        />
                     </div>
-                </div>
 
+                    <div className="my-4">
+                        <InputSecond
+                            styleTitle="text-black"
+                            bg="bg-none border border-gray-400 placeholder-gray-400"
+                            className="w-full"
+                            htmlFor="email"
+                            placeholder="Masukan Email Customer"
+                            title="Email Customer"
+                            type="email"
+                            onChange={handleChange}
+                            value={form.email}
+                        />
+                    </div>
 
+                    <div className="my-4">
+                        <InputSecond
+                            styleTitle="text-black"
+                            bg="bg-none border border-gray-400 placeholder-gray-400"
+                            className="w-full"
+                            htmlFor="phone"
+                            placeholder="Masukan Nomor Telepon"
+                            title="Nomor Telepon"
+                            type="tel"
+                            onChange={handleChange}
+                            value={form.phone}
+                        />
+                    </div>
 
+                    <div className="w-full my-4">
+                        <h1 className="font-medium text-black mb-1">Pilih Capster</h1>
+                        <Autocomplete
+                            placeholder="Pilih Capster"
+                            className="w-full"
+                            variant="bordered"
+                            onSelectionChange={(e: any) => onSelectionChangeCapster(e)}
+                            value={form.capster_id}
+                        >
+                            {capsters.map((item: any) => (
+                                <AutocompleteItem key={item._id}>{item.username}</AutocompleteItem>
+                            ))}
+                        </Autocomplete>
+                    </div>
 
-                <div className="w-full">
-                    <h1 className=" font-medium text-black mb-1">Pilih Capster</h1>
+                    {form.capster_id && (
+                        <>
+                            <div className="my-4">
+                                <h1 className="text-black mb-2 font-medium">Tanggal</h1>
+                                <DatePicker
+                                    minValue={today(getLocalTimeZone())}
+                                    maxValue={addDaysToToday(7, getLocalTimeZone())}
+                                    aria-label="date"
+                                    name="date"
+                                    variant="bordered"
+                                    value={form.date}
+                                    showMonthAndYearPickers
+                                    onChange={(e: any) => setForm({ ...form, date: e })}
+                                />
+                            </div>
 
-                    <Autocomplete
-                        placeholder="Pilih Capster"
-                        className="w-full"
-                        variant='bordered'
-                        onSelectionChange={(e: any) => onSelectionChange(e, 'capster_id')}
-                        value={form.capster_id}
-                    >
-                        {capsters.map((item: any) => (
-                            <AutocompleteItem key={item._id}>{item.username}</AutocompleteItem>
-                        ))}
-                    </Autocomplete>
-                </div>
-
-                <div className="w-full mt-5">
-                    <h1 className=" font-medium text-black mb-1">Jenis Layanan</h1>
-
-                    <Autocomplete
-                        variant='bordered'
-                        placeholder="Pilih Jenis Layanan"
-                        className="w-full"
-                        onSelectionChange={(e: any) => onSelectionChange(e, 'service_id')}
-                        value={form.service_id}
-                    >
-                        {services.map((item: any) => (
-                            <AutocompleteItem key={item._id}>{item.name}</AutocompleteItem>
-                        ))}
-                    </Autocomplete>
-                </div>
-
-                <InputSecond
-                    styleTitle="text-black"
-                    bg="bg-none border border-gray-400 placeholder-gray-400"
-                    className="w-full"
-                    htmlFor="haircut_type"
-                    placeholder="Masukan Jenis Cukuran"
-                    title="Jenis Cukuran"
-                    type="text"
-                    onChange={handleChange}
-                    value={form.haircut_type}
-                />
-
-
-                <div className="w-full mt-5">
-                    <h1 className=" font-medium text-black mb-1">Jenis Pembayaran</h1>
-
-                    <Autocomplete
-                        variant='bordered'
-                        placeholder="Pilih Jenis Pembayaran"
-                        className="w-full"
-                        onSelectionChange={(e: any) => onSelectionChange(e, 'payment_id')}
-                        value={form.payment_id}
-                    >
-                        {payments.map((item: any) => (
-                            <AutocompleteItem key={item._id}>{item.name}</AutocompleteItem>
-                        ))}
-                    </Autocomplete>
-                </div>
-
-
-                <ButtonPrimary onClick={handleSubmit} className='py-2 px-3 rounded-xl mt-4 '>
-                    Booking
-                </ButtonPrimary>
-            </div>
-
-            <ModalDefault isOpen={isOpen} onClose={onClose}>
-                <h1 className="text-black text-xl font-semibold mb-4">JAM</h1>
-                <div className="bg-gray-100  rounded-md shadow text-center  w-full">
-                    <h2 className="text-gray-600 font-semibold text-lg mb-4 tracking-wide uppercase">
-                        Waktu tersedia
-                    </h2>
-                    <div className="grid grid-cols-3 gap-4">
-                        {Object.entries(hours).map(([label, times]) => (
-                            <div key={label}>
-                                <h3 className="font-bold mb-2">{label}</h3>
-                                <div className="flex flex-col items-center gap-3">
-                                    {times.map((time) => (
-                                        <button
-                                            key={time}
-                                            className="bg-yellow-300 px-3 py-1 rounded hover:bg-yellow-400 transition"
-                                            onClick={() => handleSelectTime(time)}
-                                        >
-                                            {time}
-                                        </button>
+                            <div className="w-full my-4">
+                                <h1 className="font-medium text-black mb-1">Jenis Pembayaran</h1>
+                                <Autocomplete
+                                    variant="bordered"
+                                    placeholder="Pilih Jenis Pembayaran"
+                                    className="w-full"
+                                    onSelectionChange={(e: any) => onSelectionChangePayment(e)}
+                                    value={form.payment_id}
+                                >
+                                    {payments.map((item: any) => (
+                                        <AutocompleteItem key={item._id}>{item.name}</AutocompleteItem>
                                     ))}
+                                </Autocomplete>
+                            </div>
+
+                            <div className="w-full my-4">
+                                <h1 className="font-medium text-black mb-1">Jenis Layanan</h1>
+                                <Autocomplete
+                                    variant="bordered"
+                                    placeholder="Pilih Jenis Layanan"
+                                    className="w-full"
+                                    onSelectionChange={(e: any) => onSelectionChangeService(e)}
+                                    value={form.service_id}
+                                >
+                                    {services.map((item: any) => (
+                                        <AutocompleteItem key={item._id}>{item.name}</AutocompleteItem>
+                                    ))}
+                                </Autocomplete>
+                            </div>
+
+                            <div className="my-4">
+                                <InputSecond
+                                    styleTitle="text-black"
+                                    bg="bg-none border border-gray-400 placeholder-gray-400"
+                                    className="w-full"
+                                    htmlFor="haircut_type"
+                                    placeholder="Masukan Jenis Cukuran"
+                                    title="Jenis Cukuran"
+                                    type="text"
+                                    onChange={handleChange}
+                                    value={form.haircut_type}
+                                />
+                            </div>
+
+                            <div className="my-4">
+                                <h1 className="text-black mb-2 font-medium">Jam</h1>
+                                <div
+                                    className="border border-gray-400 flex justify-between py-1 px-3 rounded-lg items-center cursor-pointer"
+                                    onClick={onOpen}
+                                >
+                                    <p>{form.hour}.00</p>
+                                    <MdOutlineAccessTime size={20} color="gray" />
                                 </div>
                             </div>
-                        ))}
-                    </div>
+                        </>
+                    )}
 
-                    <p className="mt-6 text-sm text-gray-500">
-                        Waktu dipilih: <strong>{form.hour ? `${form.hour}:00` : 'Belum dipilih'}</strong>
-                    </p>
+                    <ButtonPrimary onClick={handleSubmit} className="py-2 px-3 rounded-xl mt-4 w-full">
+                        Booking
+                    </ButtonPrimary>
                 </div>
-            </ModalDefault>
+
+
+                <ModalDefault isOpen={isOpen} onClose={onClose}>
+                    <h1 className="text-black text-xl font-semibold mb-4">JAM</h1>
+                    <div className="bg-gray-100  rounded-md shadow text-center  w-full">
+                        <h2 className="text-gray-600 font-semibold text-lg mb-4 tracking-wide uppercase">
+                            Waktu tersedia
+                        </h2>
+                        <div className="grid grid-cols-3 gap-4">
+                            {Object.entries(hours).map(([label, times]) => (
+                                <div key={label}>
+                                    <h3 className="font-bold mb-2">{label}</h3>
+                                    <div className="flex flex-col items-center gap-3">
+                                        {times.map((time) => {
+                                            const disabled = isHourBooked(time);
+                                            return (
+                                                <button
+                                                    key={time}
+                                                    disabled={disabled}
+                                                    className={`px-3 py-1 rounded transition ${disabled
+                                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                                        : 'bg-yellow-300 hover:bg-yellow-400'
+                                                        }`}
+                                                    onClick={() => !disabled && handleSelectTime(`${time}:00`)}
+                                                >
+                                                    {time}:00
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            ))}
+
+                        </div>
+
+                        <p className="mt-3 text-sm text-gray-500">
+                            Waktu dipilih: <strong>{form.hour ? `${form.hour}:00` : 'Belum dipilih'}</strong>
+                        </p>
+                    </div>
+                </ModalDefault>
+            </div>
         </DefaultLayout>
     )
 }
