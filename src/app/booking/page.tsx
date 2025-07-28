@@ -143,7 +143,7 @@ function page({ }: Props) {
 
         // ✅ Validasi: Tidak boleh lebih dari 7 hari dari hari ini
         const today = new Date();
-        const selectedDate = new Date(formatDate(form.date)); // pastikan hasil formatDate adalah string "YYYY-MM-DD"
+        const selectedDate = new Date(formatDate(form.date)); // formatDate return "YYYY-MM-DD"
         const maxDate = new Date();
         maxDate.setDate(today.getDate() + 7);
 
@@ -176,6 +176,7 @@ function page({ }: Props) {
             });
         }
     };
+
 
     const isHourBooked = (hour: number): boolean => {
         const selectedDate = formatDate(form.date); // hasil: "2025-07-28"

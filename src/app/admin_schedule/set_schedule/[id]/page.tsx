@@ -15,6 +15,7 @@ import {
 } from '@heroui/react'
 import { useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
+import toast from 'react-hot-toast'
 
 const Page = () => {
     const { onOpen, onClose, isOpen } = useDisclosure()
@@ -148,11 +149,16 @@ const Page = () => {
     }
 
     const handleSave = async () => {
-        await updateCapster(id, form, (res: any) => {
-            console.log('Update berhasil', res)
-            // toast.success("Berhasil update")
-        })
-    }
+        try {
+            await updateCapster(id, form, (res: any) => {
+                console.log('Update berhasil', res);
+                toast.success('Data berhasil diperbarui!');
+            });
+        } catch (error) {
+            console.error('Gagal update', error);
+            toast.error('Gagal memperbarui data');
+        }
+    };
 
     return (
         <DefaultLayout>
