@@ -72,12 +72,12 @@ const Page = () => {
     }, [])
 
     // Get today's date in YYYY-MM-DD format
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toLocaleDateString('sv-SE'); // "2025-07-28"
 
     // Filter today's reservations
     const todayReservations = data.filter(item => {
         const reservationDate = new Date(item.date).toISOString().split('T')[0];
-        return reservationDate === today;
+        return reservationDate === today && item.status === "Menunggu"
     });
 
     // Count total bookings today
@@ -94,7 +94,7 @@ const Page = () => {
     // Group reservations by barber
     const reservationsByBarber = uniqueActiveBarbers.map(barber => {
         const barberReservations = todayReservations.filter(item =>
-            item.capster_id && item.capster_id._id === barber._id
+            item.capster_id && item.capster_id._id === barber._id && item.status === 'Menunggu'
         );
 
         return {
@@ -111,12 +111,9 @@ const Page = () => {
     // Aksi Edit dan Delete
 
 
-    const onSelectionChange = (_id: string) => {
-        setForm({
-            ...form,
-            capster_id: _id
-        });
-    };
+    console.log('capsters:', capsters);
+    console.log('reservations:', data);
+
 
     return (
         <DefaultLayout>
