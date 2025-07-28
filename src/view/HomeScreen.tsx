@@ -46,7 +46,7 @@ export default function HomeScreen() {
 
     return (
         <section className="bg-white" >
-            <div className=" container mx-auto px-2  h-screen">
+            <div className=" container mx-auto px-2 ">
                 <div className="flex justify-between items-center">
                     <IoIosNotifications size={25} color="#656565" />
                     <h1 className="text font-bold text-grayCustom" >{formatDate(today)}</h1>
@@ -78,11 +78,13 @@ export default function HomeScreen() {
                         {booking?.map((item: any, index: number) => (
                             <SwiperSlide className="!w-[90%]" key={index}>
                                 <div className="flex gap-4 border border-grayCustom bg-secondBlack p-2 rounded-xl">
-                                    <div className="h-12 w-12">
-                                        <Image className="w-full h-full object-cover rounded-lg" src={mukti} alt="logo" />
+                                    <div className="h-full w-auto max-w-[80px] flex-shrink-0">
+                                        <Image className="h-full w-full object-cover rounded-lg" src={mukti} alt="logo" />
                                     </div>
+
                                     <div className="text-grayCustom">
                                         <h1 className="text-white">{item.name}</h1>
+                                        <h1 className="text-sm text-yellowCustom capitalize" >CAPSTER BY {item?.capster_id?.username}</h1>
                                         <div className="flex items-center gap-2">
                                             <IoStar color="#f9d41c" />
                                             <h1 className="text-white">{item.rating}</h1>
@@ -135,7 +137,8 @@ export default function HomeScreen() {
                     </Swiper>
                 </div>
 
-                <div className="mb-5"> {/* padding untuk kasih ruang kiri-kanan */}
+                <h1 className="text text-sm text-grayCustom mt-6 mb-3" >CAPSTER</h1>
+                <div className="mb-16">
                     <Swiper
                         slidesPerView={'auto'}
                         spaceBetween={16}
