@@ -204,6 +204,22 @@ function page({ }: Props) {
                 </div>
 
                 <div className="w-full mt-5">
+                    <h1 className=" font-medium text-black mb-1">Jenis Layanan</h1>
+
+                    <Autocomplete
+                        variant='bordered'
+                        placeholder="Pilih Jenis Layanan"
+                        className="w-full"
+                        onSelectionChange={(e: any) => onSelectionChangeService(e)}
+                        value={form.service_id}
+                    >
+                        {services.map((item: any) => (
+                            <AutocompleteItem key={item._id}>{item.name}</AutocompleteItem>
+                        ))}
+                    </Autocomplete>
+                </div>
+
+                <div className="w-full mt-5">
                     <h1 className=" font-medium text-black mb-1">Jenis Pembayaran</h1>
 
                     <Autocomplete
@@ -242,22 +258,6 @@ function page({ }: Props) {
                         <p>{form.hour}.00</p>
                         <MdOutlineAccessTime size={20} color='gray' />
                     </div>
-                </div>
-
-                <div className="w-full mt-5">
-                    <h1 className=" font-medium text-black mb-1">Jenis Layanan</h1>
-
-                    <Autocomplete
-                        variant='bordered'
-                        placeholder="Pilih Jenis Layanan"
-                        className="w-full"
-                        onSelectionChange={(e: any) => onSelectionChangeService(e)}
-                        value={form.service_id}
-                    >
-                        {services.map((item: any) => (
-                            <AutocompleteItem key={item._id}>{item.name}</AutocompleteItem>
-                        ))}
-                    </Autocomplete>
                 </div>
 
                 <InputSecond
