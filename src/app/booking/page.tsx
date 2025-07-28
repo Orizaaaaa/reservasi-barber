@@ -46,37 +46,31 @@ function page({ }: Props) {
 
     };
 
-    const handleDropdownChange = (key: string, field: any) => {
-        setForm(prev => ({ ...prev, [field]: key }));
-    };
-
-    const dataStatus = [
-        { label: "Laki-laki", value: "Laki-laki" },
-        { label: "Perempuan", value: "Perempuan" },
-    ];
-
     const handleSelectTime = (time: string) => {
         const [hour] = time.split(':');
         setForm(prev => ({ ...prev, hour: parseInt(hour) }));
     };
 
-    const onSelectionChange = (item: string | null, field: keyof typeof form) => {
-        if (!item) return;
 
-        setForm((prev) => ({
-            ...prev,
-            [field]: item,
-        }));
+    const onSelectionChangeCapster = (_id: string) => {
+        setForm({
+            ...form,
+            capster_id: _id
+        });
+    };
+    const onSelectionChangePayment = (id: string) => {
+        setForm({
+            ...form,
+            payment_id: id
+        });
     };
 
-
-    const dataTipe = [
-        { key: 'dipinjam', label: 'Dipinjam', value: 'dipinjam' },
-        { key: 'belum diambil', label: 'Belum diambil', value: 'belum diambil' },
-        { key: 'dikembalikan', label: 'Dikembalikan', value: 'dikembalikan' },
-        { key: 'terlambat', label: 'Terlambat', value: 'terlambat' },
-        { key: 'hilang', label: 'Hilang', value: 'hilang' },
-    ];
+    const onSelectionChangeService = (id: string) => {
+        setForm({
+            ...form,
+            service_id: id
+        });
+    };
 
     const fetchDataDropdown = async () => {
         try {
@@ -219,7 +213,7 @@ function page({ }: Props) {
                         variant='bordered'
                         placeholder="Pilih Jenis Pembayaran"
                         className="w-full"
-                        onSelectionChange={(e: any) => onSelectionChange(e, 'payment_id')}
+                        onSelectionChange={(e: any) => onSelectionChangePayment(e)}
                         value={form.payment_id}
                     >
                         {payments.map((item: any) => (
@@ -236,7 +230,7 @@ function page({ }: Props) {
                         placeholder="Pilih Capster"
                         className="w-full"
                         variant='bordered'
-                        onSelectionChange={(e: any) => onSelectionChange(e, 'capster_id')}
+                        onSelectionChange={(e: any) => onSelectionChangeCapster(e)}
                         value={form.capster_id}
                     >
                         {capsters.map((item: any) => (
@@ -260,7 +254,7 @@ function page({ }: Props) {
                         variant='bordered'
                         placeholder="Pilih Jenis Layanan"
                         className="w-full"
-                        onSelectionChange={(e: any) => onSelectionChange(e, 'service_id')}
+                        onSelectionChange={(e: any) => onSelectionChangeService(e)}
                         value={form.service_id}
                     >
                         {services.map((item: any) => (

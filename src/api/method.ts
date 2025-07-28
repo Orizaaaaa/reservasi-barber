@@ -91,6 +91,14 @@ export const deleteCategory = (id: any, callback: any) => {
         });
 }
 
+export const getCapsterHours = (id: string, callback: any) => {
+    axiosInterceptor(`/booking/time/${id}`)
+        .then((result) => {
+            callback(result.data)
+        }).catch((err) => {
+            console.log(err);
+        });
+}
 
 // PAYMENTS
 export const createPayment = async (form: any, callback: any) => {
