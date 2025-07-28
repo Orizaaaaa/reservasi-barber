@@ -64,9 +64,16 @@ const page = () => {
                 {/* Status and Button Section */}
                 <div className="mt-8 text-center">
                     <p className="text-white text-sm sm:text-base mb-3">{data.status}</p>
-                    <button className="bg-yellowCustom hover:bg-yellowCustom text-white font-bold py-3 px-6 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-                        Hubungi Admin
-                    </button>
+                    <a
+                        href="https://wa.me/6281223304859?text=Halo%20Admin%2C%20saya%20ada%20kendala."
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <button className="bg-yellowCustom hover:bg-yellowCustom text-white font-bold py-3 px-6 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                            Hubungi Admin
+                        </button>
+                    </a>
+
                 </div>
             </div>
         </div>
