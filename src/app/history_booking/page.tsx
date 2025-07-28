@@ -49,7 +49,7 @@ const page = (props: Props) => {
 
     return (
         <section className='container mx-auto p-3'>
-            <div className="w-full max-w-md bg-black rounded-3xl shadow-xl p-6 sm:p-8">
+            <div className="w-full bg-black rounded-3xl shadow-xl p-6 sm:p-8 flex flex-col justify-center">
                 {booking?.map((item: any, index: number) => (
                     <div key={index} onClick={() => router.push(`/booking_bils/${item._id}`)} className="flex justify-between items-center py-3 border-b border-gray-200 cursor-pointer">
                         <h1 className='text-yellowCustom'>{formatTanggalIndonesia(item.date)}</h1>

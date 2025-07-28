@@ -18,7 +18,6 @@ type Props = {}
 
 function page({ }: Props) {
     const router = useRouter();
-    const [loading, setLoading] = React.useState(false);
     const [capsterHours, setCapsterHours] = React.useState<any>([]);
     const [capsters, setCapsters] = React.useState<any>([]);
     const [services, setServices] = React.useState<any>([]);
@@ -146,7 +145,7 @@ function page({ }: Props) {
                 toast.success('Booking berhasil!', {
                     id: loadingToast,
                 });
-
+                router.push('/history');
                 console.log('Booking berhasil:', res);
                 // Reset form atau redirect jika perlu
             });
