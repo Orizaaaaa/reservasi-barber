@@ -11,14 +11,16 @@ import { Pagination } from "swiper/modules";
 import { useRouter } from "next/navigation";
 import BottomNavigation from "@/fragments/nav/navigation";
 import { getAllCapster, getAllPayments, getAllReservation, getAllService } from "@/api/method";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { formatRupiah } from "@/utils/helper";
 
 export default function HomeScreen() {
     const today = new Date();
     const [booking, setBooking] = React.useState<any>([]);
+    const [filteredBooking, setFilteredBooking] = React.useState<any>([]);
     const [services, setServices] = React.useState<any>([]);
     const [capsters, setCapsters] = React.useState<any>([]);
+    const [searchQuery, setSearchQuery] = useState('');
     const router = useRouter();
 
     const fetchData = async () => {
@@ -27,14 +29,24 @@ export default function HomeScreen() {
         const data = await getAllService()
         setServices(data?.data || [])
         setBooking(booking?.data || [])
+        setFilteredBooking(booking?.data || [])
         setCapsters(capsters?.data || [])
     }
+
     useEffect(() => {
         fetchData();
     }, []);
-    console.log('booking', booking);
-    console.log('tolol', services);
-    console.log('cpasters', capsters);
+
+    useEffect(() => {
+        if (searchQuery.trim() === '') {
+            setFilteredBooking(booking);
+        } else {
+            const filtered = booking.filter((item: any) =>
+                item.name.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+            setFilteredBooking(filtered);
+        }
+    }, [searchQuery, booking]);
 
     const formatDate = (date: Date) => {
         const hari = date.toLocaleDateString('id-ID', { weekday: 'long' }).toUpperCase(); // KAMIS
@@ -60,7 +72,13 @@ export default function HomeScreen() {
 
                 <div className="flex w-full px-3 py-2 items-center gap-3 rounded-lg shadow-lg shadow-black/30 mt-4 border-2 border-grayCustom" >
                     <IoSearch color="#f9d41c" size={20} />
-                    <input placeholder="SEARCH" className=" border-none w-full placeholder-gray-500" type="text" />
+                    <input
+                        placeholder="SEARCH"
+                        className=" border-none w-full placeholder-gray-500"
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
                 </div>
 
 
@@ -75,7 +93,7 @@ export default function HomeScreen() {
                         className="mySwiper"
                     >
 
-                        {booking?.map((item: any, index: number) => (
+                        {filteredBooking?.map((item: any, index: number) => (
                             <SwiperSlide className="!w-[90%]" key={index}>
                                 <div className="flex gap-4 border border-grayCustom bg-secondBlack p-2 rounded-xl">
                                     <div className="h-full w-auto max-w-[80px] flex-shrink-0">
@@ -84,7 +102,7 @@ export default function HomeScreen() {
 
                                     <div className="text-grayCustom">
                                         <h1 className="text-white">{item.name}</h1>
-                                        <h1 className="text-sm text-yellowCustom capitalize" >CAPSTER BY {item?.capster_id?.username}</h1>
+                                        <h1 className="text-sm text-yellowCustom uppercase" >CAPSTER BY {item?.capster_id?.username}</h1>
                                         <div className="flex items-center gap-2">
                                             <IoStar color="#f9d41c" />
                                             <h1 className="text-white">{item.rating}</h1>
@@ -95,18 +113,20 @@ export default function HomeScreen() {
                                 </div>
                             </SwiperSlide>
                         ))}
-                        {/* Contoh slide pertama */}
-
+                        {filteredBooking.length === 0 && (
+                            <SwiperSlide className="!w-[90%]">
+                                <div className="flex gap-4 border border-grayCustom bg-secondBlack p-2 rounded-xl justify-center items-center">
+                                    <h1 className="text-white">No bookings found</h1>
+                                </div>
+                            </SwiperSlide>
+                        )}
                     </Swiper>
                 </div>
 
 
                 <h1 className="text text-sm text-grayCustom mt-6 mb-3" >PRICE LIST KABARBERSHOP</h1>
 
-
-
-
-                <div className="mb-5"> {/* padding untuk kasih ruang kiri-kanan */}
+                <div className="mb-5">
                     <Swiper
                         slidesPerView={'auto'}
                         spaceBetween={16}
@@ -116,7 +136,7 @@ export default function HomeScreen() {
                     >
 
                         {services.map((item: any, index: number) => (
-                            <SwiperSlide key={index} className="!w-[80%]"> {/* penting: kasih width tetap */}
+                            <SwiperSlide key={index} className="!w-[80%]">
                                 <div className="border border-grayCustom bg-secondBlack p-2 rounded-xl">
                                     <div className="h-56">
                                         <img className="w-full h-full object-cover rounded-lg" src={item.image} alt="logo" />
@@ -147,7 +167,7 @@ export default function HomeScreen() {
                         className="mySwiper"
                     >
                         {capsters.map((item: any, index: number) => (
-                            <SwiperSlide key={index} className="!w-[93%]"> {/* penting: kasih width tetap */}
+                            <SwiperSlide key={index} className="!w-[93%]">
                                 <div className="capster bg-secondBlack rounded-xl" onClick={() => router.push(`/about_capster/${item._id}`)}>
                                     <div className="flex ">
                                         <div className="w-32 h-48">
@@ -166,17 +186,10 @@ export default function HomeScreen() {
                                 </div>
                             </SwiperSlide>
                         ))}
-
-
-
-
                     </Swiper>
                 </div>
 
-
-
                 <BottomNavigation />
-
             </div>
         </section>
     );
