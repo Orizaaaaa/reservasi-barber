@@ -32,6 +32,15 @@ export const updateBooking = async (id: any, form: any, callback: any) => {
         });
 }
 
+export const getBookingById = (id: string, callback: any) => {
+    axiosInterceptor(`/booking/${id}`)
+        .then((result) => {
+            callback(result.data)
+        }).catch((err) => {
+            console.log(err);
+        });
+}
+
 // CAPSTER
 export const getAllCapster = async () => {
     try {
