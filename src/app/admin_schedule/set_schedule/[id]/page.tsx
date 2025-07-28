@@ -3,7 +3,7 @@ import { getCapsterById, updateCapster } from '@/api/method'
 import ButtonPrimary from '@/elements/buttonPrimary'
 import DefaultLayout from '@/fragments/layout/adminLayout/DefaultLayout'
 import ModalDefault from '@/fragments/modal/modal'
-import { hours } from '@/utils/helper'
+import { hourSchedule } from '@/utils/helper'
 import {
     Table,
     TableBody,
@@ -291,7 +291,7 @@ const Page = () => {
                         Waktu tersedia
                     </h2>
                     <div className="grid grid-cols-3 gap-4">
-                        {Object.entries(hours).map(([label, times]) => (
+                        {Object.entries(hourSchedule).map(([label, times]) => (
                             <div key={label}>
                                 <h3 className="font-bold mb-2">{label}</h3>
                                 <div className="flex flex-col items-center gap-3">
