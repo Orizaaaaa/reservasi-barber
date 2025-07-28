@@ -158,12 +158,12 @@ function page({ }: Props) {
     console.log(form);
 
     return (
-        <div className='container mx-auto px-3 py-4' >
+        <div className='container mx-auto px-3 py-4 mb-20' >
             <div className="rounded-full my-4 cursor-pointer" onClick={() => router.back()}>
                 <IoArrowBackCircleOutline size={25} />
             </div>
             <h1 className='text-2xl font-semibold ' >Booking</h1>
-            <div className="form mb-7">
+            <div className="form ">
                 <InputSecond
                     styleTitle="text-black"
                     bg="bg-none border border-gray-400 placeholder-gray-400"
