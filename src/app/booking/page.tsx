@@ -11,13 +11,14 @@ import { useRouter } from 'next/navigation';
 import { IoArrowBackCircleOutline } from 'react-icons/io5';
 import { MdOutlineAccessTime } from 'react-icons/md';
 import toast from 'react-hot-toast';
-import { createBooking, getAllCapster, getAllPayments, getAllService } from '@/api/method';
+import { createBooking, getAllCapster, getAllPayments, getAllService, getCapsterHours } from '@/api/method';
 import BottomNavigation from '@/fragments/nav/navigation';
 
 type Props = {}
 
 function page({ }: Props) {
     const router = useRouter();
+    const [capsterHours, setCapsterHours] = React.useState<any>([]);
     const [capsters, setCapsters] = React.useState<any>([]);
     const [services, setServices] = React.useState<any>([]);
     const [payments, setPayments] = React.useState<any>([]);
@@ -48,11 +49,26 @@ function page({ }: Props) {
         setForm(prev => ({ ...prev, hour: parseInt(hour) }));
     };
 
+    useEffect(() => {
+        if (form.capster_id) {
+            getCapsterHours(form.capster_id, (data: any) => {
+                setCapsterHours(data.data);
+            });
+        }
+    }, [form.date]);
+
 
     const onSelectionChangeCapster = (_id: string) => {
         setForm({
             ...form,
             capster_id: _id
+        });
+
+        // Fetch capster hours when ID changes
+        getCapsterHours(_id, (data: any) => {
+            console.log("Fetched Capster Hours:", data);
+            setCapsterHours(data.data);
+            // You can handle the data here if needed
         });
     };
     const onSelectionChangePayment = (id: string) => {
@@ -141,7 +157,17 @@ function page({ }: Props) {
         }
     };
 
+    const isHourBooked = (hour: number): boolean => {
+        const selectedDate = formatDate(form.date); // hasil: "2025-07-28"
+        return capsterHours.some((item: any) => {
+            const itemDate = formatDate(item.date); // Convert juga ke format "2025-07-28"
+            return itemDate === selectedDate && parseInt(item.hour) === hour;
+        });
+    };
 
+
+
+    console.log(capsterHours);
     console.log(capsters);
     console.log(services);
     console.log(payments);
@@ -293,18 +319,26 @@ function page({ }: Props) {
                             <div key={label}>
                                 <h3 className="font-bold mb-2">{label}</h3>
                                 <div className="flex flex-col items-center gap-3">
-                                    {times.map((time) => (
-                                        <button
-                                            key={time}
-                                            className="bg-yellow-300 px-3 py-1 rounded hover:bg-yellow-400 transition"
-                                            onClick={() => handleSelectTime(time)}
-                                        >
-                                            {time}
-                                        </button>
-                                    ))}
+                                    {times.map((time) => {
+                                        const disabled = isHourBooked(time);
+                                        return (
+                                            <button
+                                                key={time}
+                                                disabled={disabled}
+                                                className={`px-3 py-1 rounded transition ${disabled
+                                                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                                    : 'bg-yellow-300 hover:bg-yellow-400'
+                                                    }`}
+                                                onClick={() => !disabled && handleSelectTime(`${time}:00`)}
+                                            >
+                                                {time}:00
+                                            </button>
+                                        );
+                                    })}
                                 </div>
                             </div>
                         ))}
+
                     </div>
 
                     <p className="mt-3 text-sm text-gray-500">
