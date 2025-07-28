@@ -91,14 +91,24 @@ function page({ }: Props) {
             const resServices: any = await getAllService();
             const resPayments: any = await getAllPayments();
             const resCapsters: any = await getAllCapster();
-            setCapsters(resCapsters.data);
+
+            // Get current day in Indonesian (lowercase)
+            const days = ['minggu', 'senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'];
+            const today = new Date().getDay(); // 0 (Sunday) to 6 (Saturday)
+            const todayInIndonesian = days[today];
+
+            // Filter capsters who are active today
+            const activeCapstersToday = resCapsters.data.filter((capster: any) =>
+                capster.schedule[todayInIndonesian]?.is_active === true
+            );
+
+            setCapsters(activeCapstersToday);
             setServices(resServices.data);
             setPayments(resPayments.data);
         } catch (error) {
             console.error('Gagal fetch data:', error);
         }
     };
-
     useEffect(() => {
         fetchDataDropdown();
     }, []);
