@@ -164,7 +164,7 @@ function page({ }: Props) {
     const handleUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Validasi: semua field harus diisi (name, description, price, image)
+        // Validasi: semua field harus diisi (name, description, price)
         const requiredFields = ['name', 'description', 'price'];
         const isEmpty = requiredFields.some((key) => {
             const value = formUpdate[key as keyof typeof formUpdate];
@@ -179,13 +179,19 @@ function page({ }: Props) {
         try {
             let imageUrl = '';
 
+            // Cek apakah image diupdate
             if (formUpdate.image) {
                 if (typeof formUpdate.image === 'string' && formUpdate.image.startsWith('https')) {
+                    // Jika sudah berupa URL
                     imageUrl = formUpdate.image;
                 } else {
-                    const uploadToast = toast.loading('Mengunggah gambar...');
+                    // Jika file baru diunggah
+                    const uploadToast = toast.loading('📤 Mengunggah gambar...');
                     try {
-                        imageUrl = await postImage({ image: formUpdate.image as File });
+                        const uploadedImageUrl = await postImage({ image: formUpdate.image as File });
+                        if (!uploadedImageUrl) throw new Error('URL gambar tidak tersedia');
+
+                        imageUrl = uploadedImageUrl;
                         toast.success('✅ Gambar berhasil diunggah', { id: uploadToast });
                     } catch (error) {
                         toast.error('❌ Gagal mengunggah gambar', { id: uploadToast });
@@ -194,8 +200,9 @@ function page({ }: Props) {
                 }
             }
 
-            const updateToast = toast.loading('Menyimpan perubahan...');
+            const updateToast = toast.loading('⏳ Menyimpan perubahan...');
 
+            // Lakukan update dengan imageUrl yang sudah diperbarui
             await updateService(id, {
                 ...formUpdate,
                 image: imageUrl,
@@ -211,6 +218,7 @@ function page({ }: Props) {
             toast.error('❌ Terjadi kesalahan saat memperbarui data.');
         }
     };
+
 
 
 
