@@ -22,6 +22,7 @@ interface ProfileForm {
     avatar: any;
     email: string;
     address: string;
+    album: any
 }
 
 const page = (props: Props) => {
@@ -34,7 +35,8 @@ const page = (props: Props) => {
         avatar: null as File | null,
         email: '',
         address: '',
-        spesialis: ''
+        spesialis: '',
+        album: []
     });
 
 
@@ -52,7 +54,8 @@ const page = (props: Props) => {
                 avatar: data.avatar, // Avatar as File tidak bisa di-isi langsung dari URL
                 email: data.email || '',
                 address: data.address || '',
-                spesialis: data.spesialis, // Isi ini kalau memang tersedia di API
+                spesialis: data.spesialis || '',  // Isi ini kalau memang tersedia di API
+                album: data.album
             });
         });
     }, []);
@@ -159,7 +162,7 @@ const page = (props: Props) => {
                     />
                     <div className='flex justify-center items-center gap-2 mt-5'>
                         <ButtonPrimary className='border-2 border-black px-3 py-2 rounded-lg'
-                            onClick={() => handleFileManager('add')}>Ubah Foto </ButtonPrimary>
+                            onClick={() => handleFileManager('add')}>Tambah Foto </ButtonPrimary>
                         <ButtonSecondary onClick={() => setForm({ ...form, avatar: null })} className=' px-3 py-2 rounded-lg' >Hapus Foto</ButtonSecondary>
                     </div>
                 </div>
