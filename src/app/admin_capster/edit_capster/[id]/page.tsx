@@ -246,7 +246,7 @@ const page = (props: Props) => {
 
 
                 <ButtonPrimary typeButon={'submit'} className='py-2 px-3 rounded-xl mt-4 '>
-                    Tambah Capster
+                    Simpan Capster
                 </ButtonPrimary>
             </form>
         </DefaultLayout >
