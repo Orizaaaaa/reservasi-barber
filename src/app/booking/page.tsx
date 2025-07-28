@@ -6,7 +6,7 @@ import InputSecond from '@/elements/input/InputSecond';
 import ModalDefault from '@/fragments/modal/modal';
 import { formatDate, formatDateStr, hours } from '@/utils/helper';
 import { Autocomplete, AutocompleteItem, Calendar, DatePicker, Spinner, useDisclosure } from '@heroui/react';
-import { parseDate } from '@internationalized/date';
+import { getLocalTimeZone, parseDate, today } from '@internationalized/date';
 import { useRouter } from 'next/navigation';
 import { IoArrowBackCircleOutline } from 'react-icons/io5';
 import { MdOutlineAccessTime } from 'react-icons/md';
@@ -130,6 +130,17 @@ function page({ }: Props) {
             return;
         }
 
+        // ✅ Validasi: Tidak boleh lebih dari 7 hari dari hari ini
+        const today = new Date();
+        const selectedDate = new Date(formatDate(form.date)); // pastikan hasil formatDate adalah string "YYYY-MM-DD"
+        const maxDate = new Date();
+        maxDate.setDate(today.getDate() + 7);
+
+        if (selectedDate > maxDate) {
+            toast.error('Booking tidak boleh lebih dari 7 hari ke depan.');
+            return;
+        }
+
         const loadingToast = toast.loading('Membuat booking...');
 
         const formattedForm = {
@@ -138,7 +149,6 @@ function page({ }: Props) {
         };
 
         try {
-            // Simpan nomor telepon ke localStorage
             localStorage.setItem('userPhone', form.phone);
 
             await createBooking(formattedForm, (res: any) => {
@@ -147,7 +157,6 @@ function page({ }: Props) {
                 });
                 router.push('/history');
                 console.log('Booking berhasil:', res);
-                // Reset form atau redirect jika perlu
             });
         } catch (err) {
             console.error('Gagal membuat booking', err);
@@ -165,7 +174,12 @@ function page({ }: Props) {
         });
     };
 
-
+    function addDaysToToday(days: number, timeZone: string) {
+        const today = new Date();
+        const result = new Date(today);
+        result.setDate(result.getDate() + days);
+        return parseDate(result.toISOString().split('T')[0]);
+    }
 
     console.log(capsterHours);
     console.log(capsters);
@@ -243,6 +257,8 @@ function page({ }: Props) {
                         <div className="my-4">
                             <h1 className="text-black mb-2 font-medium">Tanggal</h1>
                             <DatePicker
+                                minValue={today(getLocalTimeZone())}
+                                maxValue={addDaysToToday(7, getLocalTimeZone())}
                                 aria-label="date"
                                 name="date"
                                 variant="bordered"
