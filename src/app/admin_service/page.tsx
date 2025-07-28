@@ -1,6 +1,6 @@
 'use client'
 import { postImage } from '@/api/image_post';
-import { createService, deleteService, getAllService } from '@/api/method';
+import { createService, deleteService, getAllService, updateService } from '@/api/method';
 import ButtonPrimary from '@/elements/buttonPrimary';
 import ButtonSecondary from '@/elements/buttonSecondary';
 import InputSecond from '@/elements/input/InputSecond';
@@ -18,6 +18,7 @@ import { RiEdit2Fill } from 'react-icons/ri';
 type Props = {}
 
 function page({ }: Props) {
+    const { isOpen: isOpenUpdate, onOpen: onOpenUpdate, onClose: onCloseUpdate } = useDisclosure();
     const { isOpen: isOpenDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure();
     const { onOpen, onClose, isOpen } = useDisclosure();
     const [services, setServices] = React.useState([])
@@ -28,6 +29,7 @@ function page({ }: Props) {
         price: 0,
         image: null as File | null,
     });
+
 
     const [formUpdate, setFormUpdate]: any = React.useState({
         name: "",
@@ -53,6 +55,10 @@ function page({ }: Props) {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setForm((prev: { name: string }) => ({ ...prev, [name]: value }));
+    };
+    const handleChangeUpdate = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        setFormUpdate((prev: { name: string }) => ({ ...prev, [name]: value }));
     };
 
     const handleCreate = async (e: React.FormEvent) => {
@@ -126,7 +132,8 @@ function page({ }: Props) {
             const fileInput = document.getElementById("image-input-add") as HTMLInputElement | null;
             fileInput ? fileInput.click() : null;
         } else {
-            console.log('error');
+            const fileInput = document.getElementById("image-input-update") as HTMLInputElement | null;
+            fileInput ? fileInput.click() : null;
 
         }
     };
@@ -135,8 +142,8 @@ function page({ }: Props) {
             const selectedImage = e.target.files?.[0];
             setForm({ ...form, image: selectedImage || null });
         } else {
-            console.log('error');
-
+            const selectedImage = e.target.files?.[0];
+            setFormUpdate({ ...formUpdate, image: selectedImage || null });
         }
     };
 
@@ -147,6 +154,67 @@ function page({ }: Props) {
         onOpenDelete()
     }
 
+
+    const handleOpenModalUpdate = (item: any) => {
+        onOpenUpdate()
+        setId(item._id)
+        setFormUpdate(item)
+    }
+
+    const handleUpdate = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        // Validasi: semua field harus diisi (name, description, price, image)
+        const requiredFields = ['name', 'description', 'price'];
+        const isEmpty = requiredFields.some((key) => {
+            const value = formUpdate[key as keyof typeof formUpdate];
+            return value === null || value === '' || (typeof value === 'number' && isNaN(value));
+        });
+
+        if (isEmpty) {
+            toast.error('⚠️ Semua data di form harus diisi!');
+            return;
+        }
+
+        try {
+            let imageUrl = '';
+
+            if (formUpdate.image) {
+                if (typeof formUpdate.image === 'string' && formUpdate.image.startsWith('https')) {
+                    imageUrl = formUpdate.image;
+                } else {
+                    const uploadToast = toast.loading('Mengunggah gambar...');
+                    try {
+                        imageUrl = await postImage({ image: formUpdate.image as File });
+                        toast.success('✅ Gambar berhasil diunggah', { id: uploadToast });
+                    } catch (error) {
+                        toast.error('❌ Gagal mengunggah gambar', { id: uploadToast });
+                        return;
+                    }
+                }
+            }
+
+            const updateToast = toast.loading('Menyimpan perubahan...');
+
+            await updateService(id, {
+                ...formUpdate,
+                image: imageUrl,
+            }, (res: any) => {
+                toast.success('📝 Data berhasil diperbarui!', { id: updateToast });
+                fetchData();
+                onCloseUpdate();
+                console.log(res);
+            });
+
+        } catch (error) {
+            console.error('Gagal memperbarui produk:', error);
+            toast.error('❌ Terjadi kesalahan saat memperbarui data.');
+        }
+    };
+
+
+
+    console.log(formUpdate);
     console.log(services);
 
     return (
@@ -194,7 +262,7 @@ function page({ }: Props) {
                                     {columnKey === 'actions' ? (
                                         <div className="flex gap-2">
                                             <button
-
+                                                onClick={() => handleOpenModalUpdate(item)}
                                                 className="px-2 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
                                             >
                                                 <RiEdit2Fill color='white' />
@@ -224,6 +292,81 @@ function page({ }: Props) {
                 </TableBody>
             </Table>
 
+            <ModalDefault isOpen={isOpenUpdate} onClose={onCloseUpdate} className='w-full max-w-2xl ' closeButton={false} >
+                <h1 className='text-black' >UPDATE SERVICE</h1>
+                <form className="" onSubmit={handleUpdate}>
+                    <div>
+                        {formUpdate.image && formUpdate.image instanceof Blob ? (
+                            <img
+                                className="h-[150px] w-[150px] mx-auto object-cover border border-gray-400 rounded-lg"
+                                src={URL.createObjectURL(formUpdate.image)}
+                                alt="Preview"
+                            />
+                        ) : (
+                            <img
+                                className="h-[150px] w-[150px] mx-auto object-cover border border-gray-400 rounded-lg"
+                                src={formUpdate.image}
+                                alt="Preview"
+                            />
+                        )}
+
+                        <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            id="image-input-update"
+                            onChange={(e) => handleImageChange(e, 'update')}
+                        />
+                        <div className='flex justify-center items-center gap-2 mt-5'>
+                            <ButtonPrimary className='border-2 border-black px-3 py-2 rounded-lg'
+                                onClick={() => handleFileManager('update')}>Ubah Foto </ButtonPrimary>
+                            <ButtonSecondary onClick={() => setFormUpdate({ ...formUpdate, image: null })} className=' px-3 py-2 rounded-lg' >Hapus Foto</ButtonSecondary>
+                        </div>
+                    </div>
+                    <InputSecond
+                        marginY='my-2'
+                        title="Name"
+                        htmlFor="name"
+                        type="text"
+                        className="w-full"
+                        value={formUpdate.name}
+                        onChange={handleChangeUpdate}
+                    />
+                    <InputSecond
+                        marginY='my-2'
+                        title="Description"
+                        htmlFor="description"
+                        type="text"
+                        className="w-full"
+                        value={formUpdate.description}
+                        onChange={handleChangeUpdate}
+                    />
+                    <InputSecond
+                        marginY='my-2'
+                        title="Price"
+                        htmlFor="price"
+                        type="number"
+                        className="w-full"
+                        value={formUpdate.price}
+                        onChange={handleChangeUpdate}
+                    />
+                    <div className="flex justify-end gap-2 mt-4">
+                        <button
+                            type='submit'
+                            className="bg-blue-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-blue-700 transition"
+                        >
+                            Save
+                        </button>
+                        <button
+                            className="bg-red-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-red-700 transition"
+                            onClick={onClose}
+                        >
+                            Close
+                        </button>
+                    </div>
+                </form>
+
+            </ModalDefault>
             <ModalDefault isOpen={isOpen} onClose={onClose} className='w-full max-w-2xl ' closeButton={false} >
                 <h1 className='text-black' >CREATE SERVICE</h1>
                 <form className="" onSubmit={handleCreate}>

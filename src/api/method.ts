@@ -170,3 +170,12 @@ export const deleteService = async (id: any) => {
         throw err;
     }
 }
+
+export const updateService = async (id: any, form: any, callback: any) => {
+    await axiosInterceptor.put(`/service/${id}`, form)
+        .then((result) => {
+            callback(result.data)
+        }).catch((err) => {
+            console.log(err);
+        });
+}
