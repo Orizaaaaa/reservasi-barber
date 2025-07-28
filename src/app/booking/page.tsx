@@ -204,6 +204,22 @@ function page({ }: Props) {
                 </div>
 
                 <div className="w-full mt-5">
+                    <h1 className=" font-medium text-black mb-1">Jenis Pembayaran</h1>
+
+                    <Autocomplete
+                        variant='bordered'
+                        placeholder="Pilih Jenis Pembayaran"
+                        className="w-full"
+                        onSelectionChange={(e: any) => onSelectionChangePayment(e)}
+                        value={form.payment_id}
+                    >
+                        {payments.map((item: any) => (
+                            <AutocompleteItem key={item._id}>{item.name}</AutocompleteItem>
+                        ))}
+                    </Autocomplete>
+                </div>
+
+                <div className="w-full mt-5">
                     <h1 className=" font-medium text-black mb-1">Jenis Layanan</h1>
 
                     <Autocomplete
@@ -219,21 +235,7 @@ function page({ }: Props) {
                     </Autocomplete>
                 </div>
 
-                <div className="w-full mt-5">
-                    <h1 className=" font-medium text-black mb-1">Jenis Pembayaran</h1>
 
-                    <Autocomplete
-                        variant='bordered'
-                        placeholder="Pilih Jenis Pembayaran"
-                        className="w-full"
-                        onSelectionChange={(e: any) => onSelectionChangePayment(e)}
-                        value={form.payment_id}
-                    >
-                        {payments.map((item: any) => (
-                            <AutocompleteItem key={item._id}>{item.name}</AutocompleteItem>
-                        ))}
-                    </Autocomplete>
-                </div>
 
 
                 <div className="w-full mt-6">
@@ -252,14 +254,6 @@ function page({ }: Props) {
                     </Autocomplete>
                 </div>
 
-                <div className='my-6' >
-                    <h1 className='text-black mb-2 font-medium' >Jam</h1>
-                    <div className='border border-gray-400 flex justify-between py-1 px-3 rounded-lg items-center cursor-pointer' onClick={onOpen}>
-                        <p>{form.hour}.00</p>
-                        <MdOutlineAccessTime size={20} color='gray' />
-                    </div>
-                </div>
-
                 <InputSecond
                     styleTitle="text-black"
                     bg="bg-none border border-gray-400 placeholder-gray-400"
@@ -272,8 +266,13 @@ function page({ }: Props) {
                     value={form.haircut_type}
                 />
 
-
-
+                <div className='my-6' >
+                    <h1 className='text-black mb-2 font-medium' >Jam</h1>
+                    <div className='border border-gray-400 flex justify-between py-1 px-3 rounded-lg items-center cursor-pointer' onClick={onOpen}>
+                        <p>{form.hour}.00</p>
+                        <MdOutlineAccessTime size={20} color='gray' />
+                    </div>
+                </div>
 
 
                 <ButtonPrimary onClick={handleSubmit} className='py-2 px-3 rounded-xl mt-4 w-full '>
