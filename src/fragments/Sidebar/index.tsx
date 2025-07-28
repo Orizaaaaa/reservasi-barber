@@ -9,7 +9,8 @@ import { FaMoneyBillTransfer } from "react-icons/fa6";
 import { MdCalendarMonth, MdDashboard } from "react-icons/md";
 import ButtonSecondary from "@/elements/buttonSecondary";
 import { logo } from "@/image";
-import { FaFolder } from "react-icons/fa";
+import { FaFolder, FaListAlt } from "react-icons/fa";
+import { IoMdHome } from "react-icons/io";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -114,9 +115,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
           <div>
             <ul className="mb-6 flex flex-col gap-1.5">
               {/* <!-- Menu Item Dashboard --> */}
-              <NavigationList icon={<MdDashboard size={24} />} title="Home" pathname="/admin_dashboard" />
-              <NavigationList icon={<MdCalendarMonth size={24} />} title="Tambah Booking" pathname="/admin_booking" />
-              <NavigationList icon={<MdCalendarMonth size={24} />} title="List Booking" pathname="/admin_list_booking" />
+              <NavigationList icon={<IoMdHome size={24} />} title="Dashboard" pathname="/admin_dashboard" />
+              <NavigationList icon={<MdCalendarMonth size={24} />} title="Booking" pathname="/admin_booking" />
+              <NavigationList icon={<FaListAlt size={22} />} title="List Booking" pathname="/admin_list_booking" />
               <NavigationList icon={<IoPeopleSharp size={24} />} title="Capsters" pathname="/admin_capster" />
               <NavigationList icon={<IoPricetags size={24} />} title="Payments" pathname="/admin_payment" />
               <NavigationList icon={<FaMoneyBillTransfer size={24} />} title="Service" pathname="/admin_service" />
