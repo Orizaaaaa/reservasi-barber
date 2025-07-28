@@ -99,7 +99,6 @@ function page({ }: Props) {
 
     const dataTipe = [
         { key: 'Menunggu', label: 'Menunggu', value: 'Menunggu' },
-        { key: 'DI Jadwalkan Ulang', label: 'DI Jadwalkan Ulang', value: 'DI Jadwalkan Ulang' },
         { key: 'Selesai', label: 'Selesai', value: 'Selesai' }
     ];
     console.log('caoster', capsters);
