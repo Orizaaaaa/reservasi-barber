@@ -331,7 +331,7 @@ function Page({ }: Props) {
             </ModalDefault>
 
             <ModalAlert isOpen={isWarningOpen} onClose={onWarningClose} >
-                apakah anda yakin akan menghapus list booking ini ?
+                apakah anda yakin akan menghapus capster ini ?
                 <div className="flex justify-end gap-3">
                     <button className='bg-red-900  rounded-lg p-1 cursor-pointer py-2 px-3 text-white' onClick={onWarningClose}>Tidak</button>
                     <button className='bg-blue-500  rounded-lg p-1 cursor-pointer py-2 px-3 text-white' onClick={handleDelete} >Ya</button>

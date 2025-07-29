@@ -133,6 +133,7 @@ function page({ }: Props) {
     const handleStatusFinished = async (item: any) => {
         // Validasi apakah payment_id dan capster_id ada
         if (!item || !item.payment_id || !item.capster_id) {
+            toast.error("Data tidak lengkap. Mohon periksa kembali.");
             console.error("Data tidak lengkap", item);
             return;
         }
@@ -143,15 +144,21 @@ function page({ }: Props) {
             capster_id: item.capster_id._id,
         };
 
-        console.log('form bosss', updatedForm);
-
         setId(item._id);
         setForm(updatedForm);
 
-        await updateBooking(item._id, updatedForm, () => {
-            fetchData();
-            onClose();
-        });
+        const toastId = toast.loading("Memproses status booking...");
+
+        try {
+            await updateBooking(item._id, updatedForm, () => {
+                fetchData();
+                onClose();
+            });
+            toast.success("Status booking berhasil diubah!", { id: toastId });
+        } catch (error) {
+            console.error("Gagal memperbarui status", error);
+            toast.error("Gagal memperbarui status booking", { id: toastId });
+        }
     };
     console.log(id);
 
