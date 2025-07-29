@@ -1,5 +1,5 @@
 'use client'
-import { getAllCapster, updateCapster } from '@/api/method';
+import { deleteCapster, getAllCapster, updateCapster } from '@/api/method';
 
 import ButtonPrimary from '@/elements/buttonPrimary';
 import CaraoselImage from '@/fragments/caraoselGalery/caraoselGalery';
@@ -15,11 +15,14 @@ import ButtonSecondary from '@/elements/buttonSecondary';
 import toast from 'react-hot-toast';
 import { useDisclosure } from '@heroui/react';
 import { postImagesArray } from '@/api/image_post';
+import ModalAlert from '@/fragments/modal/modalAlert';
 
 
 type Props = {}
 
 function Page({ }: Props) {
+    const { isOpen: isWarningOpen, onOpen: onWarningOpen, onClose: onWarningClose } = useDisclosure();
+    const [id, setId] = useState('')
     const [formUpdate, setFormUpdate] = useState({
         album: [] as (File | string)[], // Can contain both File objects (new) and strings (existing URLs)
     });
@@ -156,6 +159,29 @@ function Page({ }: Props) {
         }
     };
 
+    const openModalDelete = (item: any) => {
+        setId(item._id)
+        onWarningOpen()
+    }
+
+    const handleDelete = async () => {
+        const toastId = toast.loading('Menghapus Capster...');
+        try {
+            const result = await deleteCapster(id); // id dari state atau props
+            toast.success('Capster berhasil dihapus!', { id: toastId });
+            console.log('result', result);
+
+            // Refresh data dan tutup modal jika perlu
+            fetchData(); // contoh fungsi ambil ulang data
+            onWarningClose(); // jika kamu pakai modal
+        } catch (error) {
+            toast.error('Terjadi kesalahan saat menghapus Capster.', { id: toastId });
+        }
+    };
+
+    console.log('capters', id);
+
+
     return (
         <DefaultLayout>
             <div className="flex justify-between items-center mb-3">
@@ -201,19 +227,26 @@ function Page({ }: Props) {
                         </div>
 
                         <div className="flex items-end mt-4 lg:mt-0">
+
                             <div className="flex gap-3">
+                                <button
+                                    className='py-2 px-3 rounded-xl bg-red-700 text-white'
+                                    onClick={() => openModalDelete(item)}
+                                >
+                                    Hapus Capster
+                                </button>
                                 <ButtonPrimary
                                     className='py-2 px-3 rounded-xl'
                                     onClick={() => openModalCreate(item._id, item.album || [])}
                                 >
                                     + Tambah Foto
                                 </ButtonPrimary>
-                                <ButtonPrimary
-                                    className='py-2 px-3 rounded-xl'
+                                <button
+                                    className='py-2 px-3 rounded-xl bg-yellowCustom text-white'
                                     onClick={() => router.push(`/admin_capster/edit_capster/${item._id}`)}
                                 >
                                     Edit Capster
-                                </ButtonPrimary>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -296,6 +329,14 @@ function Page({ }: Props) {
                     </div>
                 </div>
             </ModalDefault>
+
+            <ModalAlert isOpen={isWarningOpen} onClose={onWarningClose} >
+                apakah anda yakin akan menghapus list booking ini ?
+                <div className="flex justify-end gap-3">
+                    <button className='bg-red-900  rounded-lg p-1 cursor-pointer py-2 px-3 text-white' onClick={onWarningClose}>Tidak</button>
+                    <button className='bg-blue-500  rounded-lg p-1 cursor-pointer py-2 px-3 text-white' onClick={handleDelete} >Ya</button>
+                </div>
+            </ModalAlert>
         </DefaultLayout>
     )
 }

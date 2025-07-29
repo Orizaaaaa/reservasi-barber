@@ -93,6 +93,17 @@ export const updateCapster = async (id: any, form: any, callback: any) => {
         });
 }
 
+export const deleteCapster = async (id: any) => {
+    try {
+        const result = await axiosInterceptor.delete(`/capster/${id}`)
+        return result.data; // ✅ return data langsung
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
+}
+
+
 
 export const deleteCategory = (id: any, callback: any) => {
     axiosInterceptor.delete(`/category/${id}`)
