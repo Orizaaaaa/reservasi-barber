@@ -41,6 +41,18 @@ export const getBookingById = (id: string, callback: any) => {
         });
 }
 
+
+export const deleteBooking = async (id: any) => {
+    try {
+        const response = await axiosInterceptor.delete(`/booking/${id}`);
+        return response.data;
+    } catch (err) {
+        console.error('Gagal menghapus booking:', err);
+        throw err; // agar bisa ditangani di pemanggilnya
+    }
+};
+
+
 // CAPSTER
 export const getAllCapster = async () => {
     try {

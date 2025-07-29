@@ -1,9 +1,11 @@
 'use client'
-import { getAllCapster, getAllReservation, updateBooking } from '@/api/method';
+import { deleteBooking, getAllCapster, getAllReservation, updateBooking } from '@/api/method';
 import DefaultLayout from '@/fragments/layout/adminLayout/DefaultLayout';
 import ModalDefault from '@/fragments/modal/modal';
+import ModalAlert from '@/fragments/modal/modalAlert';
 import { Autocomplete, AutocompleteItem, getKeyValue, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from '@heroui/react'
 import React, { useEffect } from 'react'
+import toast from 'react-hot-toast';
 import { FaPenSquare, FaTrashAlt } from 'react-icons/fa';
 import { IoMdCheckboxOutline } from 'react-icons/io';
 import { MdCheckBoxOutlineBlank } from 'react-icons/md';
@@ -12,7 +14,6 @@ import { RiEdit2Line } from 'react-icons/ri';
 type Props = {}
 
 function page({ }: Props) {
-
     const [id, setId] = React.useState('')
     const { onOpen, onClose, isOpen } = useDisclosure();
     const { isOpen: isWarningOpen, onOpen: onWarningOpen, onClose: onWarningClose } = useDisclosure();
@@ -74,10 +75,27 @@ function page({ }: Props) {
         // bisa navigasi ke halaman edit atau buka modal
     }
 
-    const handleDelete = (item: any) => {
-        console.log('Delete:', item._id)
-        // bisa buka konfirmasi hapus
+    const openModalDelete = (item: any) => {
+        setId(item._id)
+        onWarningOpen()
     }
+
+
+
+    const handleDelete = async () => {
+        const toastId = toast.loading('Menghapus booking...');
+        try {
+            const result = await deleteBooking(id); // id dari state atau props
+            toast.success('Booking berhasil dihapus!', { id: toastId });
+            console.log('result', result);
+
+            // Refresh data dan tutup modal jika perlu
+            fetchData(); // contoh fungsi ambil ulang data
+            onWarningClose(); // jika kamu pakai modal
+        } catch (error) {
+            toast.error('Terjadi kesalahan saat menghapus booking.', { id: toastId });
+        }
+    };
     const handleChange = (e: any) => {
         setForm({
             ...form,
@@ -135,6 +153,7 @@ function page({ }: Props) {
             onClose();
         });
     };
+    console.log(id);
 
     return (
         <DefaultLayout>
@@ -194,7 +213,7 @@ function page({ }: Props) {
                                                 <FaPenSquare color='#f9d41c' size={20} />
                                             </button>
                                             <button
-                                                onClick={() => handleDelete(item)}
+                                                onClick={() => openModalDelete(item)}
                                             >
                                                 <FaTrashAlt color='red' size={18} />
                                             </button>
@@ -253,6 +272,14 @@ function page({ }: Props) {
                     </button>
                 </div>
             </ModalDefault>
+
+            <ModalAlert isOpen={isWarningOpen} onClose={onWarningClose} >
+                apakah anda yakin akan menghapus list booking ini ?
+                <div className="flex justify-end gap-3">
+                    <button className='bg-red-900  rounded-lg p-1 cursor-pointer py-2 px-3 text-white' onClick={onWarningClose}>Tidak</button>
+                    <button className='bg-blue-500  rounded-lg p-1 cursor-pointer py-2 px-3 text-white' onClick={handleDelete} >Ya</button>
+                </div>
+            </ModalAlert>
         </DefaultLayout>
     )
 }
