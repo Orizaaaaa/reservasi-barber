@@ -6,6 +6,7 @@ import ModalAlert from '@/fragments/modal/modalAlert';
 import { Autocomplete, AutocompleteItem, getKeyValue, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from '@heroui/react'
 import React, { useEffect } from 'react'
 import toast from 'react-hot-toast';
+import { BsWhatsapp } from 'react-icons/bs';
 import { FaPenSquare, FaTrashAlt } from 'react-icons/fa';
 import { IoMdCheckboxOutline } from 'react-icons/io';
 import { MdCheckBoxOutlineBlank } from 'react-icons/md';
@@ -123,6 +124,16 @@ function page({ }: Props) {
     console.log('form', form);
     console.log('data', data);
 
+    const handleWhatsApp = (item: any) => {
+        if (!item || !item.phone) {
+            console.error("Nomor telepon tidak ditemukan");
+            return;
+        }
+        const phoneNumber = item.phone.replace(/\D/g, ''); // hapus karakter selain angka
+        const waUrl = `https://wa.me/${phoneNumber}`;
+        window.open(waUrl, '_blank'); // buka di tab baru
+    };
+
     const handleUpdate = async (e: any) => {
         e.preventDefault()
         await updateBooking(id, form, () => {
@@ -130,6 +141,7 @@ function page({ }: Props) {
             onClose()
         })
     }
+
     const handleStatusFinished = async (item: any) => {
         // Validasi apakah payment_id dan capster_id ada
         if (!item || !item.payment_id || !item.capster_id) {
@@ -219,10 +231,11 @@ function page({ }: Props) {
                                             >
                                                 <FaPenSquare color='#f9d41c' size={20} />
                                             </button>
+                                            <BsWhatsapp className='cursor-pointer' onClick={() => handleWhatsApp(item)} color='green' size={18} />
                                             <button
                                                 onClick={() => openModalDelete(item)}
                                             >
-                                                <FaTrashAlt color='red' size={18} />
+                                                <FaTrashAlt color='red' size={16} />
                                             </button>
                                         </div>
                                     ) : (
