@@ -382,7 +382,7 @@ function Page({ }: Props) {
                 <ModalContent>
                     <>
                         <ModalBody className={`overflow-x-hidden`}>
-                            <div className="grid md:grid-cols-12 gap-4">
+                            <div className="grid grid-cols-8 md:grid-cols-12 gap-4">
                                 {album.map((imageUrl, index) => (
                                     <div className="h-20">
                                         <img
