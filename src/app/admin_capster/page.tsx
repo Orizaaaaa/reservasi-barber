@@ -219,16 +219,38 @@ function Page({ }: Props) {
                     <div className="flex-row lg:flex justify-between mt-4">
                         <div className="grid grid-cols-4 md:grid-cols-5 gap-5">
                             {item.album?.length > 0 ? (
-                                item.album.map((imageUrl: string, index: number) => (
-                                    <img
-                                        onClick={() => openModalGalery(item)}
-                                        key={index}
-                                        className='w-20 h-20 object-cover rounded-lg cursor-pointer'
-                                        src={imageUrl}
-                                        alt={`album-${index}`}
-                                    />
+                                item.album.slice(0, 3).map((imageUrl: string, index: number) => {
+                                    // Jika index ke-2 (gambar ketiga) dan masih ada sisa gambar, tampilkan kotak +X
+                                    if (index === 2 && item.album.length > 3) {
+                                        const remainingCount = item.album.length - 3;
+                                        return (
+                                            <div
+                                                key={index}
+                                                onClick={() => openModalGalery(item)}
+                                                className="w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center cursor-pointer relative"
+                                            >
+                                                <img
+                                                    src={imageUrl}
+                                                    alt={`album-${index}`}
+                                                    className="w-full h-full object-cover rounded-lg opacity-30"
+                                                />
+                                                <span className="absolute text-white font-semibold text-sm">
+                                                    +{remainingCount}
+                                                </span>
+                                            </div>
+                                        );
+                                    }
 
-                                ))
+                                    return (
+                                        <img
+                                            onClick={() => openModalGalery(item)}
+                                            key={index}
+                                            className="w-20 h-20 object-cover rounded-lg cursor-pointer"
+                                            src={imageUrl}
+                                            alt={`album-${index}`}
+                                        />
+                                    );
+                                })
                             ) : (
                                 Array(3).fill(0).map((_, index) => (
                                     <div key={index} className="w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center">
