@@ -13,23 +13,26 @@ import Image from 'next/image';
 import logo from '@/assets/logo.svg';
 import ButtonSecondary from '@/elements/buttonSecondary';
 import toast from 'react-hot-toast';
-import { useDisclosure } from '@heroui/react';
+import { Modal, ModalBody, ModalContent, useDisclosure } from '@heroui/react';
 import { postImagesArray } from '@/api/image_post';
 import ModalAlert from '@/fragments/modal/modalAlert';
+import { it } from 'node:test';
 
 
 type Props = {}
 
 function Page({ }: Props) {
+    const { onOpen, onClose, isOpen } = useDisclosure();
+    const { isOpen: isGaleryOpen, onOpen: onGaleryOpen, onClose: onCloseGalery } = useDisclosure();
     const { isOpen: isWarningOpen, onOpen: onWarningOpen, onClose: onWarningClose } = useDisclosure();
     const [id, setId] = useState('')
+    const [album, setAlbum] = useState<string[]>([])
     const [formUpdate, setFormUpdate] = useState({
         album: [] as (File | string)[], // Can contain both File objects (new) and strings (existing URLs)
     });
     const [errorMsg, setErrorMsg] = useState({
         imageUpdate: '',
     });
-    const { onOpen, onClose, isOpen } = useDisclosure();
     const [capters, setCapters] = useState<any[]>([]);
     const [selectedCapster, setSelectedCapster] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -164,6 +167,12 @@ function Page({ }: Props) {
         onWarningOpen()
     }
 
+    const openModalGalery = (item: any) => {
+        console.log('galery', item);
+        setAlbum(item.album)
+        onGaleryOpen()
+    }
+
     const handleDelete = async () => {
         const toastId = toast.loading('Menghapus Capster...');
         try {
@@ -180,6 +189,7 @@ function Page({ }: Props) {
     };
 
     console.log('capters', id);
+    console.log('album', album);
 
 
     return (
@@ -211,14 +221,16 @@ function Page({ }: Props) {
                             {item.album?.length > 0 ? (
                                 item.album.map((imageUrl: string, index: number) => (
                                     <img
+                                        onClick={() => openModalGalery(item)}
                                         key={index}
-                                        className='w-20 h-20 object-cover rounded-lg'
+                                        className='w-20 h-20 object-cover rounded-lg cursor-pointer'
                                         src={imageUrl}
                                         alt={`album-${index}`}
                                     />
+
                                 ))
                             ) : (
-                                Array(5).fill(0).map((_, index) => (
+                                Array(3).fill(0).map((_, index) => (
                                     <div key={index} className="w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center">
                                         <span className="text-gray-400 text-xs">No Image</span>
                                     </div>
@@ -337,6 +349,33 @@ function Page({ }: Props) {
                     <button className='bg-blue-500  rounded-lg p-1 cursor-pointer py-2 px-3 text-white' onClick={handleDelete} >Ya</button>
                 </div>
             </ModalAlert>
+
+            <Modal
+                size={'5xl'}
+                isOpen={isGaleryOpen}
+                onClose={onCloseGalery}
+                placement='center'
+                isDismissable={false} isKeyboardDismissDisabled={true}
+            >
+                <ModalContent>
+                    <>
+                        <ModalBody className={`overflow-x-hidden`}>
+                            <div className="grid md:grid-cols-12 gap-4">
+                                {album.map((imageUrl, index) => (
+                                    <div className="h-20">
+                                        <img
+                                            key={index}
+                                            className='w-full h-full object-cover rounded-lg cursor-pointer'
+                                            src={imageUrl}
+                                            alt={`album-${index}`}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        </ModalBody>
+                    </>
+                </ModalContent>
+            </Modal>
         </DefaultLayout>
     )
 }
