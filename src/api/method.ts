@@ -202,3 +202,16 @@ export const updateService = async (id: any, form: any, callback: any) => {
             console.log(err);
         });
 }
+
+
+export const downloadDataCustomer = (start_date: string, end_date: string, callback: any) => {
+    axiosInterceptor.get(`/booking/export`, {
+        params: { start_date, end_date },
+        responseType: 'blob'  // Mengharapkan response sebagai Blob (file)
+    })
+        .then((result) => {
+            callback(result.data)
+        }).catch((err) => {
+            callback(err);
+        });
+}
