@@ -23,6 +23,7 @@ interface ProfileForm {
     email: string;
     address: string;
     album: any
+    schedule: any
 }
 
 const page = (props: Props) => {
@@ -36,6 +37,7 @@ const page = (props: Props) => {
         email: '',
         address: '',
         spesialis: '',
+        schedule: {},
         album: []
     });
 
@@ -55,7 +57,8 @@ const page = (props: Props) => {
                 email: data.email || '',
                 address: data.address || '',
                 spesialis: data.spesialis || '',  // Isi ini kalau memang tersedia di API
-                album: data.album
+                album: data.album,
+                schedule: data.schedule
             });
         });
     }, []);
