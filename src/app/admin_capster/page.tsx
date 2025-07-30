@@ -28,6 +28,7 @@ function Page({ }: Props) {
     const [id, setId] = useState('')
     const [album, setAlbum] = useState<string[]>([])
     const [formUpdate, setFormUpdate] = useState({
+        schedule: {},
         album: [] as (File | string)[], // Can contain both File objects (new) and strings (existing URLs)
     });
     const [errorMsg, setErrorMsg] = useState({
@@ -51,10 +52,11 @@ function Page({ }: Props) {
         fetchData();
     }, []);
 
-    const openModalCreate = (capsterId: string, existingAlbum: string[] = []) => {
+    const openModalCreate = (capsterId: string, item: any) => {
         setSelectedCapster(capsterId);
         setFormUpdate({
-            album: [...existingAlbum], // Initialize with existing album images
+            album: [...item?.album],
+            schedule: item?.schedule, // Initialize with existing album images
         });
         onOpen();
     };
@@ -107,6 +109,7 @@ function Page({ }: Props) {
         setFormUpdate((prevState) => ({
             ...prevState,
             album: [...prevState.album, ...newImages],
+            schedule: formUpdate.schedule,
         }));
     };
 
@@ -144,11 +147,14 @@ function Page({ }: Props) {
 
             // Prepare data for API update
             const updateData = {
-                album: updatedAlbum
+                album: updatedAlbum,
+                schedule: formUpdate.schedule,
             };
 
             // Call the update API
             await updateCapster(selectedCapster, updateData, (result: any) => {
+                console.log('Album foto berhasil diperbarui:', result);
+                console.log('updateData', updateData);
                 toast.success('Album foto berhasil diperbarui');
                 fetchData(); // Refresh data
                 onClose(); // Close modal
@@ -190,6 +196,9 @@ function Page({ }: Props) {
 
     console.log('capters', id);
     console.log('album', album);
+    console.log('formUpdate', formUpdate);
+    console.log(selectedCapster);
+
 
 
     return (
@@ -271,7 +280,7 @@ function Page({ }: Props) {
                                 </button>
                                 <ButtonPrimary
                                     className='py-2 px-3 rounded-xl'
-                                    onClick={() => openModalCreate(item._id, item.album || [])}
+                                    onClick={() => openModalCreate(item._id, item || [])}
                                 >
                                     + Tambah Foto
                                 </ButtonPrimary>
@@ -342,7 +351,7 @@ function Page({ }: Props) {
                         </ButtonPrimary>
                         <ButtonSecondary
                             className='rounded-md py-2 px-1'
-                            onClick={() => setFormUpdate({ album: [] })}
+                            onClick={() => setFormUpdate({ ...formUpdate, album: [] })}
                         >
                             Hapus Semua
                         </ButtonSecondary>
