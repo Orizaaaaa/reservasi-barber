@@ -4,7 +4,7 @@ import React, { useEffect } from 'react'
 import ButtonPrimary from '@/elements/buttonPrimary';
 import InputSecond from '@/elements/input/InputSecond';
 import ModalDefault from '@/fragments/modal/modal';
-import { formatDate, formatDateStr, hours } from '@/utils/helper';
+import { formatDate, formatDateStr, formatRupiah, hours } from '@/utils/helper';
 import { Autocomplete, AutocompleteItem, Calendar, DatePicker, Spinner, useDisclosure } from '@heroui/react';
 import { getLocalTimeZone, parseDate, today } from '@internationalized/date';
 import { useRouter } from 'next/navigation';
@@ -348,7 +348,7 @@ function page({ }: Props) {
                                     value={form.service_id}
                                 >
                                     {services.map((item: any) => (
-                                        <AutocompleteItem key={item._id}>{item.name}</AutocompleteItem>
+                                        <AutocompleteItem key={item._id}>{item.name} <span className='text-green-800' >{formatRupiah(item.price)}</span>  </AutocompleteItem>
                                     ))}
                                 </Autocomplete>
                             </div>
