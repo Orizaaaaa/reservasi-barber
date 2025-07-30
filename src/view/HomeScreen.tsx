@@ -60,15 +60,11 @@ export default function HomeScreen() {
         <section className="bg-white" >
             <div className=" container mx-auto px-2 ">
                 <div className="flex justify-between items-center">
-                    <IoIosNotifications size={25} color="#656565" />
+                    <p>{''}</p>
                     <h1 className="text font-bold text-grayCustom" >{formatDate(today)}</h1>
-                    <IoIosSettings size={25} color="#656565" />
+                    <p>{''}</p>
                 </div>
 
-                <div className="flex justify-between font-medium text-xl text-black mt-2">
-                    <h1 className="text-black">HEY,</h1>
-                    <h1 className="text-black">MICHAEL</h1>
-                </div>
 
                 <div className="flex w-full px-3 py-2 items-center gap-3 rounded-lg shadow-lg shadow-black/30 mt-4 border-2 border-grayCustom" >
                     <IoSearch color="#f9d41c" size={20} />
