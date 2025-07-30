@@ -161,7 +161,7 @@ function page({ }: Props) {
         setFormUpdate(item)
     }
 
-    const handleUpdate = async (e: React.FormEvent) => {
+    const handleUpdate = async (e: any) => {
         e.preventDefault();
 
         // Validasi: semua field harus diisi (name, description, price)
@@ -302,7 +302,7 @@ function page({ }: Props) {
 
             <ModalDefault isOpen={isOpenUpdate} onClose={onCloseUpdate} className='w-full max-w-2xl ' closeButton={false} >
                 <h1 className='text-black' >UPDATE SERVICE</h1>
-                <form className="" onSubmit={handleUpdate}>
+                <div>
                     <div>
                         {formUpdate.image && formUpdate.image instanceof Blob ? (
                             <img
@@ -360,19 +360,20 @@ function page({ }: Props) {
                     />
                     <div className="flex justify-end gap-2 mt-4">
                         <button
-                            type='submit'
+                            onClick={handleUpdate}
                             className="bg-blue-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-blue-700 transition"
                         >
                             Save
                         </button>
+
                         <button
                             className="bg-red-800 text-white cursor-pointer px-3 py-1 rounded text-sm hover:bg-red-700 transition"
-                            onClick={onClose}
+                            onClick={onCloseUpdate}
                         >
                             Close
                         </button>
                     </div>
-                </form>
+                </div>
 
             </ModalDefault>
             <ModalDefault isOpen={isOpen} onClose={onClose} className='w-full max-w-2xl ' closeButton={false} >
