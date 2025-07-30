@@ -48,6 +48,7 @@ function page({ }: Props) {
     const handleSelectTime = (time: string) => {
         const [hour] = time.split(':');
         setForm(prev => ({ ...prev, hour: parseInt(hour) }));
+        onClose();
     };
 
     useEffect(() => {
@@ -186,12 +187,54 @@ function page({ }: Props) {
         });
     };
 
+
     function addDaysToToday(days: number, timeZone: string) {
         const today = new Date();
         const result = new Date(today);
         result.setDate(result.getDate() + days);
         return parseDate(result.toISOString().split('T')[0]);
     }
+
+    const isHourAvailable = (hour: number, selectedDate: string, schedule: any) => {
+        if (!schedule) return false;
+
+        const date = new Date(selectedDate);
+        const days = ['minggu', 'senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'];
+        const dayName = days[date.getDay()];
+        const daySchedule = schedule[dayName];
+
+        if (!daySchedule || !daySchedule.is_active) return false;
+
+        // Parse jam kerja (contoh: "10:00 - 21:00")
+        const [workStartStr, workEndStr] = daySchedule.jam_kerja.split(' - ');
+        const workStart = parseInt(workStartStr.split(':')[0]);
+        const workEnd = parseInt(workEndStr.split(':')[0]);
+
+        // Parse jam istirahat (contoh: "12:00 - 14:00")
+        const [breakStartStr, breakEndStr] = daySchedule.jam_istirahat.split(' - ');
+        const breakStart = parseInt(breakStartStr.split(':')[0]);
+        const breakEnd = parseInt(breakEndStr.split(':')[0]);
+
+        // Cek apakah jam termasuk dalam jam kerja (inklusif)
+        const isInWorkHours = hour >= workStart && hour <= workEnd;
+
+        // Cek apakah jam termasuk dalam jam istirahat (inklusif)
+        const isInBreakTime = hour >= breakStart && hour <= breakEnd;
+
+        // Cek apakah jam sudah lewat (untuk hari ini)
+        const now = new Date();
+        const isToday = selectedDate === formatDate(now);
+        const isPastTime = isToday && (
+            hour < now.getHours() ||
+            (hour === now.getHours() && now.getMinutes() > 0)
+        );
+
+        // Jam tersedia jika:
+        // 1. Termasuk jam kerja (inklusif)
+        // 2. Bukan jam istirahat
+        // 3. Belum lewat (jika hari ini)
+        return isInWorkHours && !isInBreakTime && !isPastTime;
+    };
 
     console.log(capsterHours);
     console.log(capsters);
@@ -345,7 +388,7 @@ function page({ }: Props) {
 
                 <ModalDefault isOpen={isOpen} onClose={onClose}>
                     <h1 className="text-black text-xl font-semibold mb-4">JAM</h1>
-                    <div className="bg-gray-100  rounded-md shadow text-center  w-full">
+                    <div className="bg-gray-100 rounded-md shadow text-center w-full">
                         <h2 className="text-gray-600 font-semibold text-lg mb-4 tracking-wide uppercase">
                             Waktu tersedia
                         </h2>
@@ -355,16 +398,20 @@ function page({ }: Props) {
                                     <h3 className="font-bold mb-2">{label}</h3>
                                     <div className="flex flex-col items-center gap-3">
                                         {times.map((time) => {
-                                            const disabled = isHourBooked(time);
+                                            const selectedCapster = capsters.find((c: any) => c._id === form.capster_id);
+                                            const isDisabled = isHourBooked(time) ||
+                                                !selectedCapster ||
+                                                !isHourAvailable(time, formatDate(form.date), selectedCapster.schedule);
+
                                             return (
                                                 <button
                                                     key={time}
-                                                    disabled={disabled}
-                                                    className={`px-3 py-1 rounded transition ${disabled
+                                                    disabled={isDisabled}
+                                                    className={`px-3 py-1 rounded transition ${isDisabled
                                                         ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                                         : 'bg-yellow-300 hover:bg-yellow-400'
                                                         }`}
-                                                    onClick={() => !disabled && handleSelectTime(`${time}:00`)}
+                                                    onClick={() => !isDisabled && handleSelectTime(`${time}:00`)}
                                                 >
                                                     {time}:00
                                                 </button>
@@ -373,9 +420,7 @@ function page({ }: Props) {
                                     </div>
                                 </div>
                             ))}
-
                         </div>
-
                         <p className="mt-3 text-sm text-gray-500">
                             Waktu dipilih: <strong>{form.hour ? `${form.hour}:00` : 'Belum dipilih'}</strong>
                         </p>
