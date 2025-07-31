@@ -136,7 +136,7 @@ function page({ }: Props) {
             `Nama: ${item.name || '-'}\n` +
             `Tanggal: ${item.formatted_date || '-'}\n` +
             `Jenis Cukuran: ${item.haircut_type || '-'}\n` +
-            `Jam: ${item.hour || '-'}`;
+            `Jam: ${item.hour || '-'} : 00`;
 
         // Encode message untuk URL
         const encodedMessage = encodeURIComponent(message);
