@@ -134,9 +134,9 @@ function page({ }: Props) {
         // Buat pesan default dengan detail booking
         const message = `Hallo, bookingan anda telah tiba.\n\n` +
             `Nama: ${item.name || '-'}\n` +
-            `Tanggal: ${item.date || '-'}\n` +
-            `Jenis Cukuran: ${item.haircutType || '-'}\n` +
-            `Jam: ${item.time || '-'}`;
+            `Tanggal: ${item.formatted_date || '-'}\n` +
+            `Jenis Cukuran: ${item.haircut_type || '-'}\n` +
+            `Jam: ${item.hour || '-'}`;
 
         // Encode message untuk URL
         const encodedMessage = encodeURIComponent(message);
