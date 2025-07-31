@@ -236,6 +236,22 @@ function page({ }: Props) {
         return isInWorkHours && !isInBreakTime && !isPastTime;
     };
 
+    const isDateUnavailable = (date: any) => {
+        if (!form.capster_id) return true; // Jika belum pilih capster, semua tanggal disabled
+
+        const selectedCapster = capsters.find((c: any) => c._id === form.capster_id);
+        if (!selectedCapster) return true;
+
+        // Konversi tanggal ke hari dalam bahasa Indonesia (lowercase)
+        const days = ['minggu', 'senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'];
+        const jsDate = new Date(date.year, date.month - 1, date.day);
+        const dayName = days[jsDate.getDay()];
+
+        // Cek apakah hari ini aktif atau tidak
+        const daySchedule = selectedCapster.schedule[dayName];
+        return !daySchedule || !daySchedule.is_active;
+    };
+
     console.log(capsterHours);
     console.log(capsters);
     console.log(services);
@@ -320,6 +336,7 @@ function page({ }: Props) {
                                     value={form.date}
                                     showMonthAndYearPickers
                                     onChange={(e: any) => setForm({ ...form, date: e })}
+                                    isDateUnavailable={isDateUnavailable}
                                 />
                             </div>
 
