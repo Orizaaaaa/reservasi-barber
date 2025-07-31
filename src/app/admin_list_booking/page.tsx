@@ -123,14 +123,25 @@ function page({ }: Props) {
     console.log('caoster', capsters);
     console.log('form', form);
     console.log('data', data);
-
     const handleWhatsApp = (item: any) => {
         if (!item || !item.phone) {
             console.error("Nomor telepon tidak ditemukan");
             return;
         }
+
         const phoneNumber = item.phone.replace(/\D/g, ''); // hapus karakter selain angka
-        const waUrl = `https://wa.me/${phoneNumber}`;
+
+        // Buat pesan default dengan detail booking
+        const message = `Hallo, bookingan anda telah tiba.\n\n` +
+            `Nama: ${item.name || '-'}\n` +
+            `Tanggal: ${item.date || '-'}\n` +
+            `Jenis Cukuran: ${item.haircutType || '-'}\n` +
+            `Jam: ${item.time || '-'}`;
+
+        // Encode message untuk URL
+        const encodedMessage = encodeURIComponent(message);
+
+        const waUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
         window.open(waUrl, '_blank'); // buka di tab baru
     };
 
