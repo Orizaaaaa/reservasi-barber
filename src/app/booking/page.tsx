@@ -38,12 +38,39 @@ function page({ }: Props) {
         service_id: '',
         status: 'Menunggu',
     });
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
+
+        // Khusus validasi untuk nomor telepon
+        if (name === 'phone') {
+            // Hapus semua karakter selain angka dan tanda '+'
+            let sanitizedValue = value.replace(/[^\d+]/g, '');
+
+            // Format nomor telepon Indonesia
+            if (sanitizedValue.startsWith('0')) {
+                // Ubah 08... menjadi +628...
+                sanitizedValue = '+62' + sanitizedValue.slice(1);
+            } else if (sanitizedValue.startsWith('62')) {
+                // Ubah 62... menjadi +62...
+                sanitizedValue = '+' + sanitizedValue;
+            }
+
+            // Batasan panjang nomor telepon
+            const maxLength = 15; // +6281234567890 (13 digit) atau +62812345678901 (14 digit)
+            if (sanitizedValue.length > maxLength) {
+                // Potong jika melebihi maxLength
+                sanitizedValue = sanitizedValue.substring(0, maxLength);
+            }
+
+            // Update state
+            setForm({ ...form, [name]: sanitizedValue });
+            return;
+        }
+
+        // Untuk field lainnya, update seperti biasa
         setForm({ ...form, [name]: value });
-
     };
-
     const handleSelectTime = (time: string) => {
         const [hour] = time.split(':');
         setForm(prev => ({ ...prev, hour: parseInt(hour) }));
