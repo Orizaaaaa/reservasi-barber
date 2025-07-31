@@ -391,7 +391,10 @@ function page({ }: Props) {
                                 value={form.service_id}
                             >
                                 {services.map((item: any) => (
-                                    <AutocompleteItem key={item._id}>{item.name} <span className='text-green-800' >{formatRupiah(item.price)}</span>  </AutocompleteItem>
+                                    <AutocompleteItem key={item._id} textValue={item.name}>
+                                        {item.name} <span className="text-green-800">{formatRupiah(item.price)}</span>
+                                    </AutocompleteItem>
+
                                 ))}
                             </Autocomplete>
                         </div>
