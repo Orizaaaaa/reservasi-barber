@@ -1,5 +1,5 @@
 'use client'
-import { deleteBooking, getAllCapster, getAllReservation, updateBooking } from '@/api/method';
+import { deleteBooking, getAllCapster, getAllPayments, getAllReservation, updateBooking } from '@/api/method';
 import DefaultLayout from '@/fragments/layout/adminLayout/DefaultLayout';
 import ModalDefault from '@/fragments/modal/modal';
 import ModalAlert from '@/fragments/modal/modalAlert';
@@ -20,6 +20,7 @@ function page({ }: Props) {
     const { isOpen: isWarningOpen, onOpen: onWarningOpen, onClose: onWarningClose } = useDisclosure();
     const [loading, setLoading] = React.useState(false)
     const [capsters, setCapster] = React.useState<any[]>([])
+    const [payments, setPayment] = React.useState<any[]>([])
     const [data, setData] = React.useState<any[]>([])
     const [page, setPage] = React.useState(1)
     const rowsPerPage = 4
@@ -33,6 +34,7 @@ function page({ }: Props) {
         setLoading(true)
         const result = await getAllReservation()
         const capster = await getAllCapster()
+        const payment = await getAllPayments()
         const formatted = result?.data?.map((item: any) => ({
             ...item,
             capster_name: item.capster_id?.username || '-',
@@ -44,6 +46,7 @@ function page({ }: Props) {
                 year: 'numeric',
             }),
         }))
+        setPayment(payment?.data || [])
         setData(formatted || [])
         setCapster(capster?.data || [])
         setLoading(false)
@@ -116,6 +119,13 @@ function page({ }: Props) {
         });
     };
 
+    const onSelectionPayment = (_id: string) => {
+        setForm({
+            ...form,
+            payment_id: _id
+        })
+    }
+
     const dataTipe = [
         { key: 'Menunggu', label: 'Menunggu', value: 'Menunggu' },
         { key: 'Selesai', label: 'Selesai', value: 'Selesai' }
@@ -146,12 +156,22 @@ function page({ }: Props) {
     };
 
     const handleUpdate = async (e: any) => {
-        e.preventDefault()
-        await updateBooking(id, form, () => {
-            fetchData()
-            onClose()
-        })
-    }
+        e.preventDefault();
+
+        const toastId = toast.loading('Sedang memperbarui data...');
+
+        try {
+            await updateBooking(id, form, () => {
+                fetchData();
+                onClose();
+            });
+
+            toast.success('Berhasil diperbarui!', { id: toastId });
+        } catch (error) {
+            toast.error('Gagal memperbarui data.', { id: toastId });
+        }
+    };
+
 
     const handleStatusFinished = async (item: any) => {
         // Validasi apakah payment_id dan capster_id ada
@@ -184,6 +204,7 @@ function page({ }: Props) {
         }
     };
     console.log(id);
+    console.log('payments', payments);
 
     return (
         <DefaultLayout>
@@ -261,6 +282,21 @@ function page({ }: Props) {
 
             <ModalDefault isOpen={isOpen} onClose={onClose}>
                 <h1 className='font font-medium' >EDIT LIST BOOKING</h1>
+
+                <div className="">
+                    <h1>Jenis Pembayaran</h1>
+                    <Autocomplete
+                        className="w-full"
+                        variant='bordered'
+                        onSelectionChange={(e: any) => onSelectionPayment(e)}
+                        value={form.status}
+                        selectedKey={form.payment_id}
+                    >
+                        {payments.map((item: any) => (
+                            <AutocompleteItem key={item._id}>{item.name}</AutocompleteItem>
+                        ))}
+                    </Autocomplete>
+                </div>
 
                 <div className="">
                     <h1>Status</h1>
