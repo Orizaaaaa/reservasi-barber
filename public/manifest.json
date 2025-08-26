@@ -1,35 +1,28 @@
 {
+    "background_color": "#2EC6FE",
+    "icons": [
+        {
+            "purpose": "maskable",
+            "sizes": "512x512",
+            "src": "icon512_maskable.png",
+            "type": "image/png"
+        },
+        {
+            "purpose": "any",
+            "sizes": "512x512",
+            "src": "icon512_rounded.png",
+            "type": "image/png"
+        }
+    ],
+    "orientation": "any",
+    "display": "standalone",
+    "dir": "auto",
+    "lang": "en-US",
     "name": "reservasi-barber",
     "short_name": "reservasi-barber",
     "description": "k-barbershop",
-    "start_url": "/?source=pwa",
-    "id": "/?source=pwa",
-    "display": "standalone",
-    "orientation": "any",
-    "dir": "auto",
-    "lang": "en-US",
-    "background_color": "black",
-    "theme_color": "black",
-    "icons": [
-        {
-            "src": "/icon192.png",
-            "sizes": "192x192",
-            "type": "image/png",
-            "purpose": "any"
-        },
-        {
-            "src": "/icon512_maskable.png",
-            "sizes": "512x512",
-            "type": "image/png",
-            "purpose": "maskable"
-        },
-        {
-            "src": "/icon512_rounded.png",
-            "sizes": "512x512",
-            "type": "image/png",
-            "purpose": "any"
-        }
-    ],
+    "start_url": "/",
+    "id": "/",
     "screenshots": [
         {
             "src": "/screenshots/desktop-home.png",
