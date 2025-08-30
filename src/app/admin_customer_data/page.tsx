@@ -101,7 +101,7 @@ const Page = (props: Props) => {
             const url = window.URL.createObjectURL(new Blob([result]));
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', 'data_customer.xlsx');
+            link.setAttribute('download', 'data_customer.pdf');
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
